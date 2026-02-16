@@ -1,0 +1,47 @@
+############################
+# VS Code
+############################
+.vscode/
+*.code-workspace
+
+############################
+# LaTeX – arquivos auxiliares
+############################
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.nav
+*.snm
+*.vrb
+
+############################
+# LaTeX – arquivos temporários/backup
+############################
+*.bak
+*.backup
+*.swp
+*.swo
+*~
+.#*
+
+############################
+# PDFs gerados (opcional)
+# Remova esta linha se quiser versionar o PDF final
+############################
+*.pdf
+
+############################
+# Sistemas operacionais
+############################
+.DS_Store
+Thumbs.db
