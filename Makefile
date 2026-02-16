@@ -57,9 +57,9 @@ github-push:
 	git push $(GITHUB_REMOTE) $(GIT_BRANCH)
 
 overleaf-pull:
-	git subtree pull --prefix=$(PROJECT_PATH) overleaf main --squash
+	git subtree pull --prefix=$(PROJECT_PATH) overleaf master --squash
 
 overleaf-push:
-	git subtree push --prefix=$(PROJECT_PATH) overleaf master
+	git subtree push --prefix=$(PROJECT_PATH) overleaf main
 
 sync: github-pull overleaf-pull github-push overleaf-push
