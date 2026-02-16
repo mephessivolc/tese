@@ -60,6 +60,6 @@ overleaf-pull:
 	git subtree pull --prefix=$(PROJECT_PATH) overleaf main --squash
 
 overleaf-push:
-	git subtree push --prefix=$(PROJECT_PATH) overleaf main
+	git subtree push --prefix=$(PROJECT_PATH) overleaf master
 
 sync: github-pull overleaf-pull github-push overleaf-push
