@@ -1,0 +1,16 @@
+services:
+  latex:
+    build: .
+    tty: true
+    stdin_open: true
+    working_dir: /workspace
+    user: "${UID:-1000}:${GID:-1000}"
+    volumes:
+      - ./:/workspace
+      - texlive-cache:/texlive-cache
+    environment:
+      - TEXMFVAR=/texlive-cache/texmf-var
+      - TEXMFCACHE=/texlive-cache/texmf-cache
+
+volumes:
+  texlive-cache:
