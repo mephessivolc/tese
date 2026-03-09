@@ -50,8 +50,9 @@
 % Pacotes de CITAÇÕES
 % ---------------------
 \usepackage[brazilian,hyperpageref]{backref}	% Paginas com as citações na bibl
-\usepackage[alf]{abntex2cite}				% Citações padrão ABNT (alfa)
+% \usepackage[alf]{abntex2cite}				% Citações padrão ABNT (alfa)
 %\usepackage[num]{abntex2cite}				% Citações padrão ABNT (numericas)
+\usepackage[backend=biber, style=abnt, justify]{biblatex}
 % ---------------------
 
 % Configurações Extras
@@ -81,6 +82,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%  INICIO DO DOCUMENTO  %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\addbibresource{bibliografia.bib}
 \begin{document}
 
 % Retira espaço extra obsoleto entre as frases.
@@ -98,46 +100,25 @@
 \imprimirfolhaderosto*
 
 % Imprimir Ficha Catalografica
-\include{pretextual/catalografica}
+% \include{pretextual/catalografica}
 
 % Inserir Folha de Aprovação
-\include{pretextual/assinaturas}
+% \include{pretextual/assinaturas}
 
 % Dedicatória
-\include{pretextual/dedicatoria}
+% \include{pretextual/dedicatoria}
 
 % Agradecimentos
-\include{pretextual/agradecimentos}
+% \include{pretextual/agradecimentos}
 
 % Epígrafe
-\include{pretextual/epigrafe}
+% \include{pretextual/epigrafe}
 
 % Resumo e Abstract
-\include{pretextual/resumos}
+% \include{pretextual/resumos}
 
-% Lista de ilustrações
-\pdfbookmark[0]{\listfigurename}{lof}
-\listoffigures*
-\cleardoublepage
 
-% Lista de tabelas
-\pdfbookmark[0]{\listtablename}{lot}
-\listoftables*
-\cleardoublepage
-
-% Lista de abreviaturas e siglas
-\begin{siglas}
-  \item[ABNT] Associação Brasileira de Normas Técnicas
-  \item[abnTeX] Normas para TeX
-\end{siglas}
-
-% Lista de símbolos
-\begin{simbolos}
-  \item[$ \Gamma $] Letra grega Gama
-  \item[$ \Lambda $] Lambda
-  \item[$ \zeta $] Letra grega minúscula zeta
-  \item[$ \in $] Pertence
-\end{simbolos}
+\include{pretextual/listas}
 
 % Inserir o SUMÁRIO
 \pdfbookmark[0]{\contentsname}{toc}
@@ -159,9 +140,9 @@
 % PARTE - Define a divisão do documento em partes (Não é obrigatório)
 \hiddenpart{Preparação da pesquisa}
 
-\include{capitulos/referencias}
-\include{capitulos/estadodaarte}
-\include{capitulos/ferramentas}
+\include{capitulos/fundamentacao}
+% \include{capitulos/estadodaarte}
+% \include{capitulos/ferramentas}
 
 % PARTE
 \hiddenpart{Proposta}
@@ -178,16 +159,17 @@
 \postextual
 
 % Referências bibliográficas
-\bibliography{bibliografia}
+% \bibliography{bibliografia}
+\printbibliography
 
 % Glossário (Consulte o manual)
 %\glossary
 
 % Apêndices
-\include{postextual/apendices}
+% \include{postextual/apendices}
 
 % Anexos
-\include{postextual/anexos}
+% \include{postextual/anexos}
 
 % Índice remissivo (Consultar manual)
 %\phantompart

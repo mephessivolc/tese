@@ -9,7 +9,7 @@ export UID := $(shell id -u)
 export GID := $(shell id -g)
 
 LATEXMK := latexmk
-LATEXMK_OPTS := -cd -pdf -bibtex -interaction=nonstopmode -halt-on-error -file-line-error
+LATEXMK_OPTS := -cd -pdf -bibtex -synctex=1 -interaction=nonstopmode -halt-on-error -file-line-error 
 
 # Descobre onde está o main.tex (procura até 3 níveis)
 MAIN_PATH := $(shell find . -maxdepth 3 -name "$(MAIN_NAME).tex" -print -quit)
@@ -60,6 +60,6 @@ overleaf-pull:
 	git subtree pull --prefix=$(PROJECT_PATH) overleaf master --squash
 
 overleaf-push:
-	git subtree push --prefix=$(PROJECT_PATH) overleaf main
+	git subtree push --prefix=$(PROJECT_PATH) overleaf master
 
 sync: github-pull overleaf-pull github-push overleaf-push
