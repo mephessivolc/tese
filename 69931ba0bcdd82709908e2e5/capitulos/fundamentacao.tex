@@ -3,12 +3,474 @@
 % ---
 
 \section{Problemas de Otimização Combinatória}
-um teste de inserção
-\cite{killoran_strawberry_2019}
+
 
 \subsection{Formulação Matemática do VRP}
 \subsection{Métodos Clássicos de Resolução}
 \section{Fundamentos de Computação Quântica}
+
+
+A fundamentação teórica a seguir foi elaborada pensando em apresentar os desenvolvimentos conceituais atuais e históricos nesta área, para que seja um ponto de partida para aqueles que estejam iniciando neste estudo. Ao fazê-lo, visamos não apenas ampliar o escopo daqueles capazes de contribuir para esta área, mas também fornecer uma base sólida sobre a qual futuras pesquisas possam ser construídas. Esta abordagem é fundamental não só para o enriquecimento do campo, mas também para a construção de uma comunidade acadêmica mais inclusiva e diversificada.
+
+No contexto deste estudo, é fundamental distinguir entre abordagens clássicas e quânticas, assim, utilizaremos o termo ``clássico'' para se referir a sistemas baseados em máquinas tradicionais de silício e seus algoritmos correspondentes, que operam dentro dos paradigmas convencionais da computação. Por outro lado, o termo ``quântico'' será empregado para descrever máquinas e algoritmos que exploram as propriedades da mecânica quântica, tais como superposição e emaranhamento.
+
+Inicialmente será apresentado os conceitos e fundamentos do aprendizado de máquinas clássicas. Serão abordados os conceitos algébricos iniciais da mecânica quântica, seguido pela apresentação das principais característica dos qubits, portas lógicas quânticas, conceitos de estados quânticos de dois ou mais qubits, seguindo com suas aplicação a computação quântica. Na sequência será apresentado uma introdução a algoritmo de aprendizado de máquina quântica e introdução ao uso da plataforma do IBM Quantum Experience. % \textcolor{red}{Posteriormente, será descritas as portas lógicas quânticas. Finalmente serão apresentado os conceitos de estados quânticos de dois ou mais qubits.}
+
+\subsection{Introdução a Mecânica Quântica e Computação Quântica}
+
+
+\textcite{Schuld2021} afirma que os computadores são dispositivos físicos baseados em circuitos eletrônicos que processam informações. Embora os processos físicos envolvam partículas macroscópicas e/ou atômicas/subatômicas, como elétrons, átomos e moléculas, podemos descrevê-los utilizando métodos da teoria das probabilidades e estatística. Em particular, aplicamos conceitos matemáticos para lidar com grandes populações e aproximações na solução de problemas físicos. Por exemplo, utilizamos uma teoria clássica e macroscópica das propriedades eletrônicas para a construção de circuitos que executam tarefas. No entanto, os sistemas microscópicos, como fótons, elétrons e átomos, requerem uma outra descrição matemática, conhecida como \textit{teoria quântica}.
+
+
+Para compreender minimamente a teoria quântica é necessário uma revisão de conceitos de Álgebra Linear. Para isso, \textcite{Almeida2020} nos apresenta uma metodologia satisfatória para introduzir esses conceitos e outros, como \textit{kets} e \textit{bras}, tão comuns na teoria quântica, também é importante conhecer os conceitos de incerteza, superposição e emaranhamento \cite{hewitt2000fundamentos, mahon2000mecanica}. 
+
+% \textcolor{red}{Colocar sobre superposição e coerência que se encontra no artigo de \cite{ricks_training_2003} existe marcações de leitura no caderno do batman tbm.}
+
+Iniciando com espaço vetorial no corpo dos reais um vetor de $n$ dimensões pode ser representado, de forma linear quanto matricial, por
+$$
+    \vec{v} = v_1\vec{b_1}+v_2\vec{b_2}+\ldots+v_n\vec{b_n}=\left[\vec{b_1}, \vec{b_2},\cdots, \vec{b_n}\right]\left[\begin{array}{c}
+         v_1\\
+         v_2\\ 
+         \vdots\\
+         v_n
+    \end{array}\right];\ v_1, v_2,\ldots, v_n \in \R
+$$
+
+Sendo $\left[\vec{b_1}, \vec{b_2},\dots, \vec{b_n}\right]$ uma base ortonormal para o espaço vetorial $\R^n$, podemos representar o vetor $\vec{v}$ de forma única tal como:
+\begin{equation}
+    \label{eq:vetor_v_em_R}
+    \vec{v}=\left[\begin{array}{c}
+         v_1\\
+         v_2\\ 
+         \vdots\\
+         v_n
+    \end{array}\right];\ v_1, v_2,\ldots, v_n \in \R
+\end{equation} 
+
+Nos conceitos de Mecânica Quântica um vetor em $\C^n$, é representado, semelhante a \autoref{eq:vetor_v_em_R}
+$$
+    \label{eq:vetor_em_C}
+    \ket{\varphi} = \left[\begin{array}{c}
+         z_0 \\
+         z_1 \\
+         \vdots \\
+         z_{n-1}
+    \end{array}\right];\ z_0,z_1,\ldots, z_{n-1}\in\C
+$$
+
+O simbolismo proposto por \textcite{dirac1981principles} para tratar dos conceitos de Mecânica Quântica apresenta a notação deum vetor de estado ser dado pelo símbolo $\ket{\ }$, que se pronuncia \textit{ket} e um elemento do espaço dual ser denotado por $\bra{\ }$, que se pronuncia por \textit{bra}. Assim, como exemplo, o vetor $\ket{\varphi}$ é lido como ``\textit{ket} $\varphi$'' e o vetor dual $\bra{\varphi}$ é lido como ``\textit{bra} $\varphi$''. Veja que se tomarmos, como um exemplo, $n=2$ teremos então que $\ket{\varphi}\in\C^2$ e $a,b\in\C$ então
+\begin{equation}\label{eq:varphi_matricial}
+    \ket{\varphi}=a\left(\begin{array}{c}
+         1 \\ 
+         0
+    \end{array}\right)+b\left(\begin{array}{c}
+         0 \\
+         1
+    \end{array}\right)
+\end{equation}
+
+Observe que os vetores $\left(\begin{array}{c}
+         1 \\ 
+         0
+    \end{array}\right)$ e $\left(\begin{array}{c}
+         0 \\
+         1
+    \end{array}\right)$ formam uma base para $\C^2$, com isso é possível definir esses vetores como sendo
+\begin{equation}\label{eq:varphi_ket_notation}
+\left(\begin{array}{c}
+     1 \\
+     0
+\end{array}\right)=\ket{0}\text{ e }\left(\begin{array}{c}
+     0 \\
+     1
+\end{array}\right)=\ket{1}
+\end{equation}
+com isso a \autoref{eq:varphi_matricial} com a \autoref{eq:varphi_ket_notation} temos:
+$$\ket{\varphi}=a\ket{0}+b\ket{1}$$
+    
+Mudanças de estado quânticos são transformações lineares de $\C^n\Rightarrow \C^m$. Uma transformação linear é uma função entre dois espaços vetoriais que preserva as operações de adição vetorial e multiplicação por escalar, ou seja, se $T$ é uma transformação linear, $T:\V[n]\rightarrow\V[m]$, onde $\V[n]
+$ é um espaço vetorial com $n$ entradas (dimensão $n$) e $\V[m]$ é um espaço vetorial com $m$ entradas (dimensão $m$), $T$ preserva
+\begin{enumerate}
+    \item $T(\ket{\phi}+\ket{\psi}) = T(\ket{\phi})+T(\ket{\psi})$
+    \item $T(z\ket{\phi})=zT(\ket{\phi})$, $\forall z\in\C$
+\end{enumerate}
+
+Quando a transformação linear $T:\V\rightarrow\V$ é dito que $T$ é um \textit{operador linear}. Uma transformação linear, por conveniência, pode ser representada por uma matriz, o que possibilita a utilização de conceitos de operações entre matrizes e relacioná-las às transformações lineares \cite{dettman1986introduction}.
+
+Na computação clássica, a unidade básica de memória é chamada de \textit{bit}, que pode assumir valores entre 0 e 1. Um bit é o potencial elétrico nulo (ou baixo) representado pelo 0 e o potencial elétrico alto representado pelo 1. Na computação quântica a unidade básica de memória é o \textit{qubit} que é representado por um vetor bidimensional de norma 1 e os estados\footnote{O termo estado pode sempre ser identificado como sendo um vetor de norma 1 e pode ser visto como o ``valor'' do qubit antes da medição} de um qubit correspondentes aos valores 0 e 1 são $\ket{0}$ e $\ket{1}$. A coexistência quântica é representada matematicamente por
+    \begin{equation}
+        \label{eq:estados_superposicao}
+        \ket{\phi}=\alpha_0\ket{0}+\alpha_1\ket{1}
+    \end{equation}
+    onde $\alpha_0, \alpha_1\in\C$ que obedecem a
+    $$
+        |\alpha_0|^2+|\alpha_1|^2=1
+    $$
+    
+Os números complexos $\alpha_0$ e $\alpha_1$ são chamados de \textit{amplitude} do estado $\ket{\phi}$. A coexistência dos bits 0 e 1 não podem ser implementada em um sistema computacional clássico, pois não é possível obter um estado baixo e alto ao mesmo tempo, porém na mecânica quântica, é possível ter sistemas com potencial baixo e alto ao mesmo tempo, definido como \textit{superposição}. Matematicamente, um estado em superposição é uma combinação linear dos estados básicos, tal como por exemplo $\ket{0}$ e $\ket{1}$ apresentados na \autoref{eq:estados_superposicao} \cite[pág. 13]{nielsen_quantum_2002}.
+    
+    % \*n se usa a primeira pessoa do plural neste tipo de texto, mas sempre a terceira do singular. Por exemplo: "É possível decompor..."*\
+    É possível decompor unicamente o amplitude complexa de $\alpha$ como um produto $e^{i\theta}|\alpha|$, onde $|\alpha|$ é um numero real não-negativo correspondente a magnitude $\alpha$, e $e^{i\theta}=\frac{\alpha}{|\alpha|}$ tem norma 1, o valor $\theta$ é conhecido como \textit{fase} e podemos nos referir a $e^{i\theta}$ como um \textit{fator de fase} \cite{Rieffel2000}.
+    
+    O estado de um qubit pode ser caracterizado por dois ângulos $\theta$ e $\varphi$ de forma:
+    $$
+        \label{eq:ket_psi}
+        \ket{\psi}=\cos\left(\dfrac{\theta}{2}\right)\ket{0}+e^{i\varphi}\sen\left(\dfrac{\theta}{2}\right)\ket{1}
+    $$
+    
+    onde $0\leq\theta\leq\pi$ e $0\leq\varphi\leq2\pi$, o que mostra que existe uma relação entre o conjunto de estados de 1 qubit e pontos na superfície de uma esfera de raio 1, denominada de \textit{esfera de Bloch}, como apresentado na \autoref{fig:esfera_de_bloch}.
+    
+
+\begin{figure}[!htb]
+    \centering
+    \caption{Esfera de Bloch para $\ket{\psi}$}    
+    \label{fig:esfera_de_bloch}
+\begin{tikzpicture}[line cap=round, line join=round, >=Triangle]
+  \clip(-2.19,-2.49) rectangle (2.66,2.58);
+  \draw [shift={(0,0)}, lightgray, fill, fill opacity=0.1] (0,0) -- (56.7:0.4) arc (56.7:90.:0.4) -- cycle;
+  \draw [shift={(0,0)}, lightgray, fill, fill opacity=0.1] (0,0) -- (-135.7:0.4) arc (-135.7:-33.2:0.4) -- cycle;
+  \draw(0,0) circle (2cm);
+  \draw [rotate around={0.:(0.,0.)},dash pattern=on 3pt off 3pt] (0,0) ellipse (2cm and 0.9cm);
+  \draw (0,0)-- (0.70,1.07);
+  \draw [->] (0,0) -- (0,2);
+  \draw [->] (0,0) -- (-0.81,-0.79);
+  \draw [->] (0,0) -- (2,0);
+  \draw [dotted] (0.7,1)-- (0.7,-0.46);
+  \draw [dotted] (0,0)-- (0.7,-0.46);
+  \draw (-0.08,-0.3) node[anchor=north west] {$\varphi$};
+  \draw (0.01,0.9) node[anchor=north west] {$\theta$};
+  \draw (-1.01,-0.72) node[anchor=north west] {$x$};
+  \draw (2.07,0.3) node[anchor=north west] {$y$};
+  \draw (-0.5,2.6) node[anchor=north west] {$\ket{0}$};
+  \draw (-0.4,-2) node[anchor=north west] {$\ket{1}$};
+  \draw (0.4,1.65) node[anchor=north west] {$\ket{\psi}$};
+  \scriptsize
+  \draw [fill] (0,0) circle (1.5pt);
+  \draw [fill] (0.7,1.1) circle (0.5pt);
+\end{tikzpicture}
+\fonte{Própria, 2024}
+\end{figure}
+
+  % \subsection{Portas Lógicas Quânticas}\label{sec:portas_logicas}
+    
+    Portas lógicas quânticas são transformações lineares $T:\C^n\rightarrow\C^n$, ou seja, são operadores lineares, isto é, portas lógicas para 1 qubit é uma matriz quadrada bidimensional unitária. Por exemplo, a porta Hadamard:
+    $$
+        \label{eq:hadamard}
+        H=\dfrac{1}{\sqrt{2}}\left[\begin{array}{cc}
+             1 & 1 \\
+             1 & -1
+        \end{array}\right]
+    $$
+    
+    Aplicando a porta Hadamard ao vetor $\ket{0}$, obtemos:
+    $$
+        \label{eq:aplicacao_hadamard_0}
+        H\ket{0}=H\left[\begin{array}{c}
+             1 \\
+             0
+        \end{array}\right] = \dfrac{1}{\sqrt{2}}\left[\begin{array}{cc}
+             1 & 1 \\
+             1 & -1
+        \end{array}\right]\left[\begin{array}{c}
+             1 \\
+             0
+        \end{array}\right]=\dfrac{1}{\sqrt{2}}\left[\begin{array}{c}
+             1 \\
+             1
+        \end{array}\right]=\dfrac{1}{\sqrt{2}}\ket{0}+\dfrac{1}{\sqrt{2}}\ket{1}
+    $$
+    
+Perceba que o vetor resultante tem norma 1 e podemos denotar esse vetor por $\ket{+}$, isto é
+    $$
+        \label{eq:ket_mais}
+        \ket{+}=\dfrac{1}{\sqrt{2}}\ket{0}+\dfrac{1}{\sqrt{2}}\ket{1}
+    $$
+    
+    Ao aplicar a porta Hadamard no vetor $\ket{1}$ resulta em
+    $$
+        \label{eq:aplicacao_hadamard_1}
+        H\ket{1}=H\left[\begin{array}{c}
+             0\\
+             1
+        \end{array}\right] = \dfrac{1}{\sqrt{2}}\left[\begin{array}{cc}
+             1 & 1 \\
+             1 & -1
+        \end{array}\right]\left[\begin{array}{c}
+             0\\
+             1
+        \end{array}\right]=\dfrac{1}{\sqrt{2}}\left[\begin{array}{c}
+             1 \\
+             -1
+        \end{array}\right]=\dfrac{1}{\sqrt{2}}\ket{0}-\dfrac{1}{\sqrt{2}}\ket{1},
+    $$
+    
+que pode ser denotado por $\ket{-}$, isto é, 
+    $$
+        \ket{-}=\dfrac{1}{\sqrt{2}}\ket{0}-\dfrac{1}{\sqrt{2}}\ket{1}
+    $$
+    
+    Outras portas lógicas podem ser apresentadas:
+    \begin{enumerate}
+    \begin{minipage}{0.5\textwidth}
+        \item Identidade
+        $$
+            id=\left[\begin{array}{cc}
+                 1 & 0 \\
+                 0 & 1
+            \end{array}\right]
+        $$
+    \end{minipage}
+    \begin{minipage}{0.5\textwidth}
+        \item Matriz de \textit{Pauli X}
+        $$
+            X=\left[\begin{array}{cc}
+                 0 & 1 \\
+                 1 & 0
+            \end{array}\right]
+        $$
+    \end{minipage}
+    \begin{minipage}{0.5\textwidth}
+        \item Matriz de \textit{Pauli Y}
+        $$
+            X=\left[\begin{array}{cc}
+                 1 & -i \\
+                 i & 0
+            \end{array}\right]
+        $$
+    \end{minipage}
+    \begin{minipage}{0.5\textwidth}
+        \item Matriz de \textit{Pauli Z}
+        $$
+            Z=\left[\begin{array}{cc}
+                 1 & 0 \\
+                 0 & -1
+            \end{array}\right]
+        $$
+    \end{minipage}
+    \begin{minipage}{0.5\textwidth}
+        \item Porta fase
+        $$
+            S=\left[\begin{array}{cc}
+                 1 & 0 \\
+                 0 & i
+            \end{array}\right]
+        $$
+    \end{minipage}
+    \begin{minipage}{0.5\textwidth}
+        \item Porta fase conjugada
+        $$
+            S^{\dagger}=\left[\begin{array}{cc}
+                 1 & 0 \\
+                 0 & -i
+            \end{array}\right]
+        $$
+    \end{minipage}
+    \begin{minipage}{0.5\textwidth}
+        \item Porta $\pi/8$ ou Porta $T$
+        $$
+            T=\left[\begin{array}{cc}
+                 1 & -i \\
+                 i & e^{\frac{i\pi}{4}}
+            \end{array}\right]
+        $$
+    \end{minipage}
+    \begin{minipage}{0.5\textwidth}
+        \item Porta $\pi/8$ conjugada ou Porta $T$ \\   
+        conjugada
+        $$
+            T^{\dagger}=\left[\begin{array}{cc}
+                 1 & -i \\
+                 i & e^{-\frac{i\pi}{4}}
+            \end{array}\right]
+        $$
+    \end{minipage}
+    \end{enumerate}
+    
+A matriz transposta conjugada é denotada pelo símbolo ``$\dagger$''. Podemos reescrever os números complexos, utilizando a fórmula de Euler:
+    $$
+        e^{\pm\frac{i\pi}{4}} = \dfrac{1\pm i}{\sqrt{2}}
+    $$
+    
+Interessante notar que as portas quânticas são reversíveis, como por exemplo para qualquer $\ket{\phi}$ teremos:
+    $$
+        H\otimes H\ket{\phi} = \ket{\phi}.
+    $$
+    
+De fato, pois tomando $\ket{\phi}=\left[\begin{array}{c}
+         \alpha \\
+         \beta
+    \end{array}\right]$ teremos
+    $$
+        H\ket{\phi}= \dfrac{1}{\sqrt{2}} \left[\begin{array}{cc}
+             1 & 1 \\
+             1 & -1
+        \end{array}\right]\left[\begin{array}{c}
+             \alpha \\
+             \beta
+        \end{array}\right] = \left[\begin{array}{c}
+             \dfrac{1}{\sqrt{2}}(\alpha+\beta) \\
+             \dfrac{1}{\sqrt{2}}(\alpha - \beta)
+        \end{array}\right].
+    $$
+    
+    Com isto
+    $$
+        H\otimes H\ket{\phi}= \dfrac{1}{\sqrt{2}}\left[\begin{array}{cc}
+             1 & 1 \\
+             1 & -1 
+        \end{array}\right]\left[\begin{array}{c}
+             \dfrac{1}{\sqrt{2}}(\alpha+\beta) \\
+             \dfrac{1}{\sqrt{2}}(\alpha - \beta)
+        \end{array}\right] = \left[\begin{array}{c}
+             \alpha \\
+             \beta 
+        \end{array}\right]=\ket{\phi}.
+    $$
+    
+    
+Como dito no início do capítulo, quaisquer portas lógicas quânticas são matrizes quadradas bidimensionais unitárias e \textcite[pag. 425]{Anton2012} apresenta a seguinte \autoref{def:matriz_hermetiana}:
+
+    \begin{defi}
+        \label{def:matriz_hermetiana}
+        Uma matriz quadrada complexa $A$ é dita \textbf{unitária} se $$A^{-1}=A^*,$$ onde $A^*$ representa o complexo conjugado da matriz $A$ e $A^{-1}$ a matriz inversa de $A$ e é dita \textbf{hermitiana} se $$A^*=A$$
+    \end{defi}
+    
+Sendo assim, a $UU=I_n$, onde $U$ é a matriz de transformação equivalente a uma porta quântica e $I_n$ é a matriz identidade de ordem $n$.
+
+% {\color{red} (Novo - Continuação do Relatório)}
+
+    % \subsection{Estados Quânticos de 2 ou mais qubits}
+Como visto anteriormente 1 qubit é representado por um vetor bidimensional de norma 1 e os seus estados correspondem aos valores $\ket{0}$ ou $\ket{1}$, e \textcite{Amaral2011MecanicaFormacao} diz que dois qubits podem assumir quatro valores entre 00, 01, 10 e 11 que correspondem a um sistema quântico de 4 níveis e seus estados serão respectivamente $\ket{00}, \ket{01}, \ket{10}$ e $\ket{11}$, assim qualquer $\ket{\psi}$ é uma superposição escrita da forma:
+    $$
+        \ket{\psi}=\alpha_{00}\ket{00}+\alpha_{01}\ket{01}\alpha_{10}\ket{10}\alpha_{11}\ket{11},
+    $$
+onde $\alpha_{00}, \alpha_{01}, \alpha_{10}, \alpha_{11}\in\C$. A medição resultará em algum estado apresentado de forma exclusiva e estocástica, isso significa que não há forma de saber o resultado da medição mesmo conhecendo $\ket{\psi}$, mas se é conhecido então sabemos suas probabilidades \cite{Marquezino2019}, que serão 
+    $$
+        \begin{array}{lcl}
+             \text{prob}(00) & = &|\alpha_{00}|^2 \\
+             \text{prob}(01) & = &|\alpha_{01}|^2 \\
+             \text{prob}(10) & = &|\alpha_{10}|^2 \\
+             \text{prob}(11) & = &|\alpha_{11}|^2 \\
+        \end{array} 
+    $$
+    
+    Com isso, apenas uma única medição não possibilita determinar $\ket{\psi}$, então é necessário gerar $\ket{\psi}$ novamente e refazer as medições, mas mesmo assim, ainda não será possível determinar o estado exatamente.
+   
+    Na referência \textcite{Marquezino2019} encontramos que para determinar o estado $\ket{\psi}$ de 2 qubits se $\ket{\psi}$ for um dos estados de base computacional então sabemos o estado de cada qubit, pois tomando como exemplo o estado $\ket{\psi}=\ket{10}$ fatoramos da seguinte forma:
+    $$
+        \ket{10}=\ket{1}\otimes\ket{0}=\ket{1}\ket{0}
+    $$
+    onde $\otimes$ é chamado de \textit{produto de Kronecker} e sua operação esta descrito na \autoref{def:kronecker}.
+    \begin{defi}\label{def:kronecker}
+       Seja $A$ uma matriz $m\times n$ e $B$ uma matriz $p\times q$, a operação $\otimes$ entre $A$ e $B$ é dada da seguinte forma:
+       $$
+           A\otimes B =\left[\begin{array}{ccc}
+                a_{11}B & \cdots & a_{1n}B \\
+                \vdots & \ddots & \vdots \\
+                a_{m1}B & \cdots & a_{mn}B
+           \end{array}\right] = 
+       $$ $$
+          = \left[\begin{array}{ccc}
+                a_{11}\left[\begin{array}{ccc}
+                b_{11} & \cdots & b_{1q} \\
+                \vdots & \ddots & \vdots \\
+                b_{p1} & \cdots & b_{pq}
+           \end{array}\right]   & \cdots & a_{1n}\left[\begin{array}{ccc}
+                b_{11} & \cdots & b_{1q} \\
+                \vdots & \ddots & \vdots \\
+                b_{p1} & \cdots & b_{pq}
+           \end{array}\right]  \\
+                \vdots & \ddots & \vdots \\
+                a_{m1}\left[\begin{array}{ccc}
+                b_{11} & \cdots & b_{1q} \\
+                \vdots & \ddots & \vdots \\
+                b_{p1} & \cdots & b_{pq}
+           \end{array}\right]  & \cdots & a_{mn}\left[\begin{array}{ccc}
+                b_{11} & \cdots & b_{1q} \\
+                \vdots & \ddots & \vdots \\
+                b_{p1} & \cdots & b_{pq}
+           \end{array}\right] 
+           \end{array}\right] =
+       $$ $$
+          = \left[\begin{array}{ccccccc}
+                a_{11}b_{11} & \cdots & a_{11}b_{1q} &  & a_{1n}b_{11} & \cdots & a_{1n}b_{1q} \\
+                \vdots & \ddots & \vdots & \cdots & \vdots & \ddots & \vdots \\
+                a_{11}b_{p1} & \cdots & a_{11}b_{pq} &  & a_{1n}b_{11} & \cdots & a_{1n}b_{pq}\\
+                & \vdots &  & \ddots &  & \vdots &  \\
+                a_{m1}b_{11} & \cdots & a_{m1}b_{1q} &  & a_{mn}b_{11} & \cdots & a_{mn}b_{1q}\\
+                \vdots & \ddots & \vdots & \cdots & \vdots & \ddots & \vdots \\
+                a_{m1}b_{p1} & \cdots & a_{m1}b_{pq} &  & a_{mn}b_{11} & \cdots & a_{mn}b_{pq}\\
+           \end{array}\right].
+       $$
+    \end{defi}
+   \noindent observe que a matriz resultante tem dimensão $mp\times nq$. Assim com a \autoref{def:kronecker} teremos que, por exemplo, para $\ket{10}$ o vetor resultante é apresentado na \autoref{eq:produto_externo_ket_10}.
+   \begin{equation}
+       \ket{10} =\ket{1}\otimes\ket{0}=\left[\begin{array}{c}
+            0 \\
+            1
+       \end{array}\right] \otimes \left[\begin{array}{c}
+            1 \\
+            0
+       \end{array}\right] = \left[\begin{array}{cc}
+            0 \left[\begin{array}{c}
+            1 \\
+            0
+       \end{array}\right]\\ \\
+            1 \left[\begin{array}{c}
+            1 \\
+            0
+       \end{array}\right]
+       \end{array}\right] = \left[\begin{array}{c}
+            0 \\
+            0 \\
+            1 \\
+            0 \\
+       \end{array}\right].
+       \label{eq:produto_externo_ket_10}
+   \end{equation}
+   
+   Desta forma, podemos generalizar para uma base $n$ ortonormal teremos que o estado $\ket{\psi}=\ket{\alpha_1\dots\alpha_n}$ para $\alpha_i\in \{0,1\}\ (i=1,\hdots,n)$, será da forma:
+   $$
+       \ket{\psi}=\ket{\alpha_1\hdots\alpha_n}=\ket{\alpha_1}\otimes\hdots\otimes\ket{\alpha_n}.
+   $$
+   
+   Um sistema quântico composto pode estar em um estado onde suas partes não tem um estado definido, como por exemplo, para encontrar o estado de 1 qubit de $\ket{\psi_1}=\alpha\ket{0}+\beta\ket{1}$ e $\ket{\psi_2}=\gamma\ket{0}+\delta\ket{1}$ de tal forma que
+   $$
+       \dfrac{\ket{00}+\ket{11}}{\sqrt{2}}=(\alpha\ket{0}+\beta\ket{1})\otimes(\gamma\ket{0}+\delta\ket{1}),
+   $$
+   teremos que $\alpha\gamma = \frac{1}{\sqrt{2}}, \alpha\delta=0, \beta\gamma=0$ e $\beta\delta=\frac{1}{\sqrt{2}}$ e esse sistema não admite nenhuma solução, sendo assim o estado $\ket{\psi}$ de 2 qubits não pode ser descrito como um produto de Kronecker de 1 qubit. 
+   
+    % Para \cite{Marquezino2019} um estado emaranhado é definido por um sistema composto que não pode ser fatorado pelo produto de Kronecker, isto é, enquanto que em um circuito booleano um estado está definido entre 0 e 1 em cada junção de porta, nem sempre é verdade para um estado quântico \cite{lipton_quantum_2014}.
+    Um estado emaranhado é definido por um sistema composto que não pode ser fatorado pelo produto de Kronecker, isto é, enquanto que em um circuito booleano um estado está definido entre 0 e 1 em cada junção de porta, nem sempre é verdade para um estado quântico \cite{Marquezino2019, lipton_quantum_2014}.
+   
+\subsubsection{Computação Quântica}
+
+A computação é o processo sistemático de manipular e processar informações utilizando recursos computacionais, tais como dispositivos eletrônicos e algoritmos, com o objetivo de realizar tarefas específicas, resolver problemas ou tomar decisões. Isso envolve não apenas a manipulação de dados, mas também a execução de instruções lógicas e matemáticas, a fim de transformar esses dados em resultados úteis e significativos para os usuários.
+
+Não se espera que um Computador Quântico (do inglês ``\textit{Quantum Computer}'', QC) sejam classicamente simuláveis e para obter vantagem sobre as abordagens clássicas é necessário implementar um codificador que seja difícil de ser simulado classicamente \cite{havlicekSupervisedLearningQuantumenhanced2019}. \textcite{Schuld_Petruccione_2018} afirma que existem diferentes maneiras de codificar uma informação clássica em um sistema quântico tal como codificação de base, codificação de amplitude e outras formas. A codificação de base é a forma mais direta de cálculo, que associa uma base de estado de um sistema de $n$-qubits em uma cadeia de bits clássicos, por exemplo o estado $\ket{3}=\ket{0011}$ é associado a cadeia clássica $(0011)$. Codificação de amplitude é menos comum na computação quântica, que associa um vetor real com uma amplitude quântica, a normalização clássica de vetor de forma que $x\in\C^{2^n}, \sum_k|x_k|^2=1$ pode representar a  amplitude de um estado quântico $\ket{\psi}=\displaystyle\sum_{j=1}^{2^n}x_j\ket{j}$.
+
+    
+\textcite{houssein_machine_2022} apresenta uma divisão de categorias sobre a integração de algoritmos clássicos e quânticos como mostrado na \autoref{fig:category_quantum_classical_algorithm}.
+
+\begin{figure}[!htb]
+    \centering
+    \caption{Integração de algoritmos e dados quânticos e clássicos.}
+    \includegraphics[scale=1]{figs/quadro_quantico_classico.png}
+    \label{fig:category_quantum_classical_algorithm}
+    \fonte{Própria, baseada em \cite{houssein_machine_2022}, 2024.}
+\end{figure}
+
+Atualmente os computadores quânticos estão marcados por realizarem cálculos quânticos de maneira limitada e sujeita a ruídos, assim como outras restrições. Denominado era Quântica de Escala Intermediária e Ruidosa (do inglês ``\textit{Noisy Intermediate-Scale Quantum}'', NISQ) como sendo o período de transição entre os estágios iniciais experimentais da computação quântica e a futura era tolerante a falhas e que podem realizar operações complexas e precisas em escala muito maior 
+\cite{Lau_Lim_Shrotriya_Kwek_2022}, são dificuldades a serem superadas com os avanços na área. As principais características dos computadores quântico da era NISQ são:
+\begin{enumerate}
+    \item \textbf{Capacidade Limitada}: não são capazes de cálculos em grande escala ou altamente complexos;
+    \item \textbf{Erros e Ruídos}: apesar de serem capazes de realizar cálculos, estes podem ser afetados por erros introduzidos pela interação do sistema quântico com o ambiente externo o que pode levar à decoerência e a outros tipos de erro;
+    \item \textbf{Número de qubits}: possui quantidade de qubits que não podem ser simulados de forma eficiente por computadores clássicos, mas ainda não têm qubits suficientes para permitir correção de erros eficaz e computação à prova de falhas;
+    \item \textbf{Computação sem Correção de Erro}: os computadores operam sem correção de erros quânticos completos, limitando a complexidade e precisão dos cálculos que podem realizar.
+\end{enumerate}
+
+% \textcolor{red}{Colocar alguns artigos que utilizam aprendizado de máquina quântica explicando-as rapidamente.}
+
 \subsection{Computação Quântica de Variáveis Contínuas}
 \subsection{Computação Fotônica e Implementações Físicas}
 \section{Abordagens Quânticas para Otimização}

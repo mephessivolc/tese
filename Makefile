@@ -9,7 +9,7 @@ export UID := $(shell id -u)
 export GID := $(shell id -g)
 
 LATEXMK := latexmk
-LATEXMK_OPTS := -cd -pdf -bibtex -synctex=1 -interaction=nonstopmode -halt-on-error -file-line-error 
+LATEXMK_OPTS := -cd -pdf -synctex=1 -interaction=nonstopmode -halt-on-error -file-line-error -f
 
 # Descobre onde está o main.tex (procura até 3 níveis)
 MAIN_PATH := $(shell find . -maxdepth 3 -name "$(MAIN_NAME).tex" -print -quit)

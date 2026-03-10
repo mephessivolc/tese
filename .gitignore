@@ -14,6 +14,9 @@
 *.fdb_latexmk
 *.fls
 *.lof
+*.idx
+*.ilg
+*.ind
 *.log
 *.lot
 *.out

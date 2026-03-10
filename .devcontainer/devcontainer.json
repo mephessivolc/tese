@@ -1,0 +1,65 @@
+{
+  "name": "latex-container",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "latex",
+  "workspaceFolder": "/workspace",
+  "remoteUser": "vscode",
+  "shutdownAction": "stopCompose",
+  "overrideCommand": false,
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "James-Yu.latex-workshop"
+      ],
+      "settings": {
+        "latex-workshop.view.pdf.viewer": "tab",
+        "latex-workshop.synctex.afterBuild.enabled": true,
+        "latex-workshop.latex.autoBuild.run": "onSave",
+        "latex-workshop.message.error.show": true,
+        "latex-workshop.message.warning.show": false,
+        "latex-workshop.latex.outDir": "%DIR%/build",
+        "latex-workshop.latex.recipes": [
+          {
+            "name": "latexmk (pdf + biber + synctex)",
+            "tools": [
+              "latexmk"
+            ]
+          }
+        ],
+        "latex-workshop.latex.tools": [
+          {
+            "name": "latexmk",
+            "command": "latexmk",
+            "args": [
+              "-f",
+              "-pdf",
+              "-interaction=nonstopmode",
+              "-file-line-error",
+              "-synctex=1",
+              "-outdir=%DIR%/build",
+              "%DOC%"
+            ]
+          }
+        ],
+        "latex-workshop.latex.clean.fileTypes": [
+          "*.aux",
+          "*.bbl",
+          "*.bcf",
+          "*.blg",
+          "*.fdb_latexmk",
+          "*.fls",
+          "*.idx",
+          "*.ilg",
+          "*.ind",
+          "*.lof",
+          "*.log",
+          "*.lot",
+          "*.out",
+          "*.run.xml",
+          "*.synctex.gz",
+          "*.toc"
+        ]
+      }
+    }
+  }
+}
