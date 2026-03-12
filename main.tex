@@ -51,8 +51,6 @@
 % ---------------------
 \usepackage{csquotes}
 \usepackage[backend=biber, style=abnt, justify, backref=true]{biblatex}
-\usepackage{csquotes}
-\usepackage[backend=biber, style=abnt, justify, backref=true]{biblatex}
 % ---------------------
 
 % ---------------------
@@ -123,76 +121,15 @@
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta}
 
-% ---------------------
-% Extras
-% ---------------------
-\usepackage{physics}
-
-\newtheorem{defi}{Definição}[chapter]
-\newcommand{\defiautorefname}{Definição}
-\newtheorem{thm}{Teorema}[chapter]
-\newcommand{\thmautorefname}{Definição}
-\newtheorem{cor}{Corolário}[chapter]
-\newcommand{\corautorefname}{Definição}
-\newtheorem{lem}{Lema}[chapter]
-\newcommand{\lemautorefname}{Definição}
-\newtheorem{axm}{Axioma}[chapter]
-\newcommand{\axmautorefname}{Definição}
-\newtheorem{prop}{Proposição}[chapter]
-\newcommand{\propautorefname}{Definição}
-
-\usepackage{algorithm}
-\usepackage{algpseudocode}
-
-\floatname{algorithm}{Algoritmo}
-\renewcommand{\listalgorithmname}{Lista de Algoritmos}
-
-% Tradução dos comandos
-\renewcommand{\algorithmicrequire}{\textbf{Entrada:}}
-\renewcommand{\algorithmicensure}{\textbf{Saída:}}
-\renewcommand{\algorithmicwhile}{\textbf{enquanto}}
-\renewcommand{\algorithmicdo}{\textbf{faça}}
-\renewcommand{\algorithmicend}{\textbf{fim}}
-\renewcommand{\algorithmicif}{\textbf{se}}
-\renewcommand{\algorithmicthen}{\textbf{então}}
-\renewcommand{\algorithmicelse}{\textbf{senão}}
-\renewcommand{\algorithmicfor}{\textbf{para}}
-\renewcommand{\algorithmicforall}{\textbf{para todo}}
-\renewcommand{\algorithmicfunction}{\textbf{função}}
-\renewcommand{\algorithmicprocedure}{\textbf{procedimento}}
-\renewcommand{\algorithmicloop}{\textbf{laço}}
-\renewcommand{\algorithmicrepeat}{\textbf{repita}}
-\renewcommand{\algorithmicuntil}{\textbf{até que}}
-\renewcommand{\algorithmicreturn}{\textbf{retorne}}
-
-% ---------------------
-% Declaração de comandos matemáticos
-% ---------------------
-\DeclareMathOperator{\sen}{sen}
-\DeclareMathOperator{\tg}{tg}
-\DeclareMathOperator{\cotg}{cotg}
-\DeclareMathOperator{\cosec}{cossec}
-
-\DeclareMathOperator{\R}{\mathbb{R}}
-\DeclareMathOperator{\C}{\mathbb{C}}
-\DeclareMathOperator{\V}{\mathbb{V}}
-\DeclareMathOperator{\K}{\mathbb{K}}
 
 
 % Configurações Extras
 \input{extras/extras}
-\input{extras/extras}
-
-% Configurações de CITAÇÕES para abntex2
-
-
 
 % Inclusão de dados para CAPA e FOLHA DE ROSTO (título, autor, orientador, etc.)
 \input{extras/dados}
-\input{extras/dados}
 
 % Inclui Configurações de aparência do PDF Final
-\input{extras/conf_pdf}
 \input{extras/conf_pdf}
 
 % O tamanho da identação do parágrafo é dado por:
