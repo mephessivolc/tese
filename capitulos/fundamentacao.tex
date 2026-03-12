@@ -2,22 +2,25 @@
 \chapter{Fundamentação Teórica}
 % ---
 
+A fundamentação teórica a seguir foi elaborada com o objetivo de apresentar os desenvolvimentos conceituais atuais e históricos nesta área, para que seja um ponto de partida para aqueles que estejam iniciando neste estudo. Ao fazê-lo, visamos não apenas ampliar o escopo daqueles capazes de contribuir para esta área, mas também fornecer uma base sólida sobre a qual futuras pesquisas possam ser construídas. Esta abordagem é fundamental não só para o enriquecimento do campo, mas também para a construção de uma comunidade acadêmica mais inclusiva e diversificada.
+
+No contexto deste estudo, é fundamental distinguir entre abordagens clássicas e quânticas, assim, utilizaremos o termo ``clássico'' para se referir a sistemas baseados em máquinas tradicionais de silício e seus algoritmos correspondentes, que operam dentro dos paradigmas convencionais da computação. Por outro lado, o termo ``quântico'' será empregado para descrever máquinas e algoritmos que exploram as propriedades da mecânica quântica, tais como superposição e emaranhamento.
+
+Inicialmente será apresentado o conceito de Otimização, depois o formulação matemática do Problema do Caixeiro Viajante (TSP) com alguns métodos clássicos de resolução, e por fim, iniciaremos os conceitos introdutórios para a Mecânica Quântica e Computação Quântica.
+
+\section{Problemas de Otimização Combinatória}
+
+\subsection{Formulação Matemática do TSP}
+
 \section{Problemas de Otimização Combinatória}
 
 
 \subsection{Formulação Matemática do VRP}
+
 \subsection{Métodos Clássicos de Resolução}
 \section{Fundamentos de Computação Quântica}
 
-
-A fundamentação teórica a seguir foi elaborada pensando em apresentar os desenvolvimentos conceituais atuais e históricos nesta área, para que seja um ponto de partida para aqueles que estejam iniciando neste estudo. Ao fazê-lo, visamos não apenas ampliar o escopo daqueles capazes de contribuir para esta área, mas também fornecer uma base sólida sobre a qual futuras pesquisas possam ser construídas. Esta abordagem é fundamental não só para o enriquecimento do campo, mas também para a construção de uma comunidade acadêmica mais inclusiva e diversificada.
-
-No contexto deste estudo, é fundamental distinguir entre abordagens clássicas e quânticas, assim, utilizaremos o termo ``clássico'' para se referir a sistemas baseados em máquinas tradicionais de silício e seus algoritmos correspondentes, que operam dentro dos paradigmas convencionais da computação. Por outro lado, o termo ``quântico'' será empregado para descrever máquinas e algoritmos que exploram as propriedades da mecânica quântica, tais como superposição e emaranhamento.
-
-Inicialmente será apresentado os conceitos e fundamentos do aprendizado de máquinas clássicas. Serão abordados os conceitos algébricos iniciais da mecânica quântica, seguido pela apresentação das principais característica dos qubits, portas lógicas quânticas, conceitos de estados quânticos de dois ou mais qubits, seguindo com suas aplicação a computação quântica. Na sequência será apresentado uma introdução a algoritmo de aprendizado de máquina quântica e introdução ao uso da plataforma do IBM Quantum Experience. % \textcolor{red}{Posteriormente, será descritas as portas lógicas quânticas. Finalmente serão apresentado os conceitos de estados quânticos de dois ou mais qubits.}
-
 \subsection{Introdução a Mecânica Quântica e Computação Quântica}
-
 
 \textcite{Schuld2021} afirma que os computadores são dispositivos físicos baseados em circuitos eletrônicos que processam informações. Embora os processos físicos envolvam partículas macroscópicas e/ou atômicas/subatômicas, como elétrons, átomos e moléculas, podemos descrevê-los utilizando métodos da teoria das probabilidades e estatística. Em particular, aplicamos conceitos matemáticos para lidar com grandes populações e aproximações na solução de problemas físicos. Por exemplo, utilizamos uma teoria clássica e macroscópica das propriedades eletrônicas para a construção de circuitos que executam tarefas. No entanto, os sistemas microscópicos, como fótons, elétrons e átomos, requerem uma outra descrição matemática, conhecida como \textit{teoria quântica}.
 
@@ -449,7 +452,6 @@ A computação é o processo sistemático de manipular e processar informações
 
 Não se espera que um Computador Quântico (do inglês ``\textit{Quantum Computer}'', QC) sejam classicamente simuláveis e para obter vantagem sobre as abordagens clássicas é necessário implementar um codificador que seja difícil de ser simulado classicamente \cite{havlicekSupervisedLearningQuantumenhanced2019}. \textcite{Schuld_Petruccione_2018} afirma que existem diferentes maneiras de codificar uma informação clássica em um sistema quântico tal como codificação de base, codificação de amplitude e outras formas. A codificação de base é a forma mais direta de cálculo, que associa uma base de estado de um sistema de $n$-qubits em uma cadeia de bits clássicos, por exemplo o estado $\ket{3}=\ket{0011}$ é associado a cadeia clássica $(0011)$. Codificação de amplitude é menos comum na computação quântica, que associa um vetor real com uma amplitude quântica, a normalização clássica de vetor de forma que $x\in\C^{2^n}, \sum_k|x_k|^2=1$ pode representar a  amplitude de um estado quântico $\ket{\psi}=\displaystyle\sum_{j=1}^{2^n}x_j\ket{j}$.
 
-    
 \textcite{houssein_machine_2022} apresenta uma divisão de categorias sobre a integração de algoritmos clássicos e quânticos como mostrado na \autoref{fig:category_quantum_classical_algorithm}.
 
 \begin{figure}[!htb]
@@ -469,9 +471,50 @@ Atualmente os computadores quânticos estão marcados por realizarem cálculos q
     \item \textbf{Computação sem Correção de Erro}: os computadores operam sem correção de erros quânticos completos, limitando a complexidade e precisão dos cálculos que podem realizar.
 \end{enumerate}
 
-% \textcolor{red}{Colocar alguns artigos que utilizam aprendizado de máquina quântica explicando-as rapidamente.}
-
 \subsection{Computação Quântica de Variáveis Contínuas}
+
+A QC fundamenta-se nas propriedades estatísticas das partículas subatômicas, que se dividem em duas categorias: férmions e bósons. Os férmions obedecem ao Princípio de Exclusão de Pauli, segundo o qual duas partículas não podem ocupar simultaneamente o mesmo estado quântico. Essa exclusão confere aos férmions um caráter naturalmente discreto, tornando-os a base conceitual dos computadores quânticos convencionais. Em decorrência disso, é muito difícil — embora teoricamente possível em contextos específicos — construir um modelo de variáveis contínuas puro com férmions, uma vez que eles tendem a formar sistemas de níveis finitos.
+
+Os bósons, por sua vez, podem ocupar o mesmo estado quântico simultaneamente. O exemplo mais comum são os fótons, que são naturalmente descritos por osciladores harmônicos quânticos com infinitos níveis de energia, permitindo codificar grande quantidade de informação em um único sistema físico. Isso traz uma vantagem operacional relevante: é mais eficiente corrigir erros quânticos explorando a redundância dos níveis de energia de um único bóson do que interligando centenas de qubits. Enquanto os bósons se destacam no transporte e no processamento de informação, os férmions constituem a base da matéria e são frequentemente o objeto de simulação dos computadores quânticos.
+
+A Computação Quântica de Variáveis Contínuas (CVQC) é uma abordagem na qual a informação não é processada em bits binários, mas em estados que podem assumir qualquer valor dentro de um intervalo contínuo — como amplitudes e fases de campos eletromagnéticos. Enquanto os qubits são descritos por estados discretos como \textit{spin up} e \textit{spin down}, na CVQC as grandezas mensuráveis são propriedades contínuas do campo, como amplitude e fase. Uma analogia ilustrativa é comparar a QC convencional a um interruptor de luz, que alterna entre os estados ligado e desligado (com suas respectivas superposições), e a CVQC a um dimmer, capaz de ajustar o brilho a qualquer nível dentro de uma faixa contínua.
+
+O estado de um sistema de CVQC é descrito no Espaço de Fase, definido por dois observáveis conjugados denominados quadraturas:
+\begin{enumerate}
+    \item \textbf{Posição ($\hat{x}$):} associada à amplitude do campo.
+    \item \textbf{Momento ($\hat{p}$):} associado à fase do campo.
+\end{enumerate}
+
+Essas variáveis estão sujeitas ao Princípio da Incerteza de Heisenberg, o que implica que não é possível determinar ambas com precisão arbitrária de forma simultânea. Nesse paradigma, a unidade fundamental de informação deixa de ser o \textit{qubit} e passa a ser o \textit{qumode}, ou modo quântico.
+
+A CVQC bosônica figura entre as abordagens mais promissoras para a computação tolerante a falhas. Em vez de controlar individualmente milhares de átomos — sistemas inerentemente frágeis —, pulsos de luz são ``moldados'' em estados quânticos complexos que são intrinsecamente mais robustos contra ruídos e decoerência.
+
+
+\subsubsection{Portas Gaussianas} Unitárias de primeira e segunda ordem
+
+\paragraph*{Deslocamento ($D(\alpha)$)} Move o estado no espaço de fase. Pela \autoref{eq:displacement_continuous_variables}
+\begin{equation}
+    \label{eq:displacement_continuous_variables}
+    D(\alpha)=\exp(\alpha\hat{a}^\dagger-\alpha^*\hat{a})
+\end{equation}
+
+\paragraph*{Rotação $(R(\phi))$} Gira o estado de espaço de fase por um ângulo $\phi$. Corresponde a evolução livre do oscilador harmônico.
+
+
+\paragraph*{Compressão ($S(r)$)} Comprime a incerteza de uma quadratura (por exemplo $\hat{x}$) enquanto expande a outra ($\hat{p}$), mantendo o Princípio da Incerteza, é uma porta que gera emaranhamento.
+
+
+\paragraph*{Divisão de Feixe $(BS(\theta))$} Comprime dois modos bosônicos, usada para criar interferência e emaranhamento entre feixes de luz.
+
+\subsubsection{Portas não Gaussianas} 
+Para que a computação quântica bosônica seja universal (capaz de realizar qualquer cálculo) as portas gaussianas não são suficientes, é necessário de não-linearidade de ordem superior, no caso de 3ª ordem ou mais.
+
+\paragraph*{Fase Cúbica $(V(\gamma)$)}
+Transforma a quadratura do momento com base no cubo da posição $\hat{p} \rightarrow \hat{p}+\gamma\hat{x}^2$, sendo extremamente difícil de implementar experimentalmente.
+
+\paragraph*{Efeito Kerr}
+Uma não-linearidade onde o índice de refração depende da intensidade da luz, sendo representada pelo Hamiltoniano $H=\chi(\hat{a}^\dagger\hat{a})^2$
+
 \subsection{Computação Fotônica e Implementações Físicas}
 \section{Abordagens Quânticas para Otimização}
 
