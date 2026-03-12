@@ -51,7 +51,71 @@
 % ---------------------
 \usepackage{csquotes}
 \usepackage[backend=biber, style=abnt, justify, backref=true]{biblatex}
+\usepackage{csquotes}
+\usepackage[backend=biber, style=abnt, justify, backref=true]{biblatex}
 % ---------------------
+
+% ---------------------
+% Pacotes Tikzi
+% ---------------------
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+
+% ---------------------
+% Extras
+% ---------------------
+\usepackage{physics}
+
+\newtheorem{defi}{Definição}[chapter]
+\newcommand{\defiautorefname}{Definição}
+\newtheorem{thm}{Teorema}[chapter]
+\newcommand{\thmautorefname}{Definição}
+\newtheorem{cor}{Corolário}[chapter]
+\newcommand{\corautorefname}{Definição}
+\newtheorem{lem}{Lema}[chapter]
+\newcommand{\lemautorefname}{Definição}
+\newtheorem{axm}{Axioma}[chapter]
+\newcommand{\axmautorefname}{Definição}
+\newtheorem{prop}{Proposição}[chapter]
+\newcommand{\propautorefname}{Definição}
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\floatname{algorithm}{Algoritmo}
+\renewcommand{\listalgorithmname}{Lista de Algoritmos}
+
+% Tradução dos comandos
+\renewcommand{\algorithmicrequire}{\textbf{Entrada:}}
+\renewcommand{\algorithmicensure}{\textbf{Saída:}}
+\renewcommand{\algorithmicwhile}{\textbf{enquanto}}
+\renewcommand{\algorithmicdo}{\textbf{faça}}
+\renewcommand{\algorithmicend}{\textbf{fim}}
+\renewcommand{\algorithmicif}{\textbf{se}}
+\renewcommand{\algorithmicthen}{\textbf{então}}
+\renewcommand{\algorithmicelse}{\textbf{senão}}
+\renewcommand{\algorithmicfor}{\textbf{para}}
+\renewcommand{\algorithmicforall}{\textbf{para todo}}
+\renewcommand{\algorithmicfunction}{\textbf{função}}
+\renewcommand{\algorithmicprocedure}{\textbf{procedimento}}
+\renewcommand{\algorithmicloop}{\textbf{laço}}
+\renewcommand{\algorithmicrepeat}{\textbf{repita}}
+\renewcommand{\algorithmicuntil}{\textbf{até que}}
+\renewcommand{\algorithmicreturn}{\textbf{retorne}}
+
+% ---------------------
+% Declaração de comandos matemáticos
+% ---------------------
+\DeclareMathOperator{\sen}{sen}
+\DeclareMathOperator{\tg}{tg}
+\DeclareMathOperator{\cotg}{cotg}
+\DeclareMathOperator{\cosec}{cossec}
+
+\DeclareMathOperator{\R}{\mathbb{R}}
+\DeclareMathOperator{\C}{\mathbb{C}}
+\DeclareMathOperator{\V}{\mathbb{V}}
+\DeclareMathOperator{\K}{\mathbb{K}}
+
 
 % ---------------------
 % Pacotes Tikzi
@@ -117,14 +181,18 @@
 
 % Configurações Extras
 \input{extras/extras}
+\input{extras/extras}
 
 % Configurações de CITAÇÕES para abntex2
 
 
+
 % Inclusão de dados para CAPA e FOLHA DE ROSTO (título, autor, orientador, etc.)
+\input{extras/dados}
 \input{extras/dados}
 
 % Inclui Configurações de aparência do PDF Final
+\input{extras/conf_pdf}
 \input{extras/conf_pdf}
 
 % O tamanho da identação do parágrafo é dado por:
@@ -144,6 +212,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \addbibresource{bibliografia.bib}
 
+\addbibresource{bibliografia.bib}
+
 \begin{document}
 
 % Retira espaço extra obsoleto entre as frases.
@@ -155,27 +225,33 @@
 \pretextual
 
 % Capa
-\include{pretextual/capa}
+% \include{pretextual/capa}
 
 % Folha de rosto (o * indica que haverá a ficha bibliográfica)
-\imprimirfolhaderosto*
+% \imprimirfolhaderosto*
 
 % Imprimir Ficha Catalografica
+% \include{pretextual/catalografica}
 % \include{pretextual/catalografica}
 
 % Inserir Folha de Aprovação
 % \include{pretextual/assinaturas}
+% \include{pretextual/assinaturas}
 
 % Dedicatória
+% \include{pretextual/dedicatoria}
 % \include{pretextual/dedicatoria}
 
 % Agradecimentos
 % \include{pretextual/agradecimentos}
+% \include{pretextual/agradecimentos}
 
 % Epígrafe
 % \include{pretextual/epigrafe}
+% \include{pretextual/epigrafe}
 
 % Resumo e Abstract
+% \include{pretextual/resumos}
 % \include{pretextual/resumos}
 
 
@@ -183,7 +259,7 @@
 
 % Inserir o SUMÁRIO
 \pdfbookmark[0]{\contentsname}{toc}
-\tableofcontents*
+% \tableofcontents*
 \cleardoublepage
 
 % ----------------------------------------------------------
@@ -196,7 +272,7 @@
 \setcounter{page}{1}
 
 % Inclui cada capitulo da Dissertação
-\include{capitulos/introducao}
+% \include{capitulos/introducao}
 
 % PARTE - Define a divisão do documento em partes (Não é obrigatório)
 \hiddenpart{Preparação da pesquisa}
@@ -204,15 +280,18 @@
 \include{capitulos/fundamentacao}
 % \include{capitulos/estadodaarte}
 % \include{capitulos/ferramentas}
+\include{capitulos/fundamentacao}
+% \include{capitulos/estadodaarte}
+% \include{capitulos/ferramentas}
 
 % PARTE
-\hiddenpart{Proposta}
-\include{capitulos/proposta}
+% \hiddenpart{Proposta}
+% \include{capitulos/proposta}
 
 % PARTE
-\hiddenpart{Parte Final}
-\include{capitulos/resultados}
-\include{capitulos/conclusao}
+% \hiddenpart{Parte Final}
+% \include{capitulos/resultados}
+% \include{capitulos/conclusao}
 
 % ----------------------------------------------------------
 % ELEMENTOS PÓS-TEXTUAIS (Referências, Glossário, Apêndices)
@@ -222,14 +301,18 @@
 % Referências bibliográficas
 % \bibliography{bibliografia}
 \printbibliography
+% \bibliography{bibliografia}
+\printbibliography
 
 % Glossário (Consulte o manual)
 %\glossary
 
 % Apêndices
 % \include{postextual/apendices}
+% \include{postextual/apendices}
 
 % Anexos
+% \include{postextual/anexos}
 % \include{postextual/anexos}
 
 % Índice remissivo (Consultar manual)
