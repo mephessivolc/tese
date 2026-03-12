@@ -41,7 +41,7 @@
 # PDFs gerados (opcional)
 # Remova esta linha se quiser versionar o PDF final
 ############################
-*.pdf
+# *.pdf
 
 ############################
 # Sistemas operacionais
