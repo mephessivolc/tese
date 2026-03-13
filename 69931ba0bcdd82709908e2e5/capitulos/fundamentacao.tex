@@ -9,24 +9,14 @@ No contexto deste estudo, é fundamental distinguir entre abordagens clássicas 
 Inicialmente será apresentado o conceito de Otimização, depois o formulação matemática do Problema do Caixeiro Viajante (TSP) com alguns métodos clássicos de resolução, e por fim, iniciaremos os conceitos introdutórios para a Mecânica Quântica e Computação Quântica.
 
 \section{Problemas de Otimização Combinatória}
-
-\subsection{Formulação Matemática do TSP}
-
-\section{Problemas de Otimização Combinatória}
-
-
 \subsection{Formulação Matemática do VRP}
 
-\subsection{Métodos Clássicos de Resolução}
-\section{Fundamentos de Computação Quântica}
-
-
 \subsection{Introdução a Mecânica Quântica e Computação Quântica}
 
 \subsection{Métodos Clássicos de Resolução}
-\section{Fundamentos de Computação Quântica}
 
-\subsection{Introdução a Mecânica Quântica e Computação Quântica}
+\section{Introdução a Mecânica Quântica e Computação Quântica}
+\subsection{Mecânica Quântica}
 
 \textcite{Schuld2021} afirma que os computadores são dispositivos físicos baseados em circuitos eletrônicos que processam informações. Embora os processos físicos envolvam partículas macroscópicas e/ou atômicas/subatômicas, como elétrons, átomos e moléculas, podemos descrevê-los utilizando métodos da teoria das probabilidades e estatística. Em particular, aplicamos conceitos matemáticos para lidar com grandes populações e aproximações na solução de problemas físicos. Por exemplo, utilizamos uma teoria clássica e macroscópica das propriedades eletrônicas para a construção de circuitos que executam tarefas. No entanto, os sistemas microscópicos, como fótons, elétrons e átomos, requerem uma outra descrição matemática, conhecida como \textit{teoria quântica}.
 
@@ -452,11 +442,11 @@ onde $\alpha_{00}, \alpha_{01}, \alpha_{10}, \alpha_{11}\in\C$. A medição resu
     % Para \cite{Marquezino2019} um estado emaranhado é definido por um sistema composto que não pode ser fatorado pelo produto de Kronecker, isto é, enquanto que em um circuito booleano um estado está definido entre 0 e 1 em cada junção de porta, nem sempre é verdade para um estado quântico \cite{lipton_quantum_2014}.
     Um estado emaranhado é definido por um sistema composto que não pode ser fatorado pelo produto de Kronecker, isto é, enquanto que em um circuito booleano um estado está definido entre 0 e 1 em cada junção de porta, nem sempre é verdade para um estado quântico \cite{Marquezino2019, lipton_quantum_2014}.
    
-\subsubsection{Computação Quântica}
+\subsection{Computação Quântica}
 
 A computação é o processo sistemático de manipular e processar informações utilizando recursos computacionais, tais como dispositivos eletrônicos e algoritmos, com o objetivo de realizar tarefas específicas, resolver problemas ou tomar decisões. Isso envolve não apenas a manipulação de dados, mas também a execução de instruções lógicas e matemáticas, a fim de transformar esses dados em resultados úteis e significativos para os usuários.
 
-Não se espera que um Computador Quântico (do inglês ``\textit{Quantum Computer}'', QC) sejam classicamente simuláveis e para obter vantagem sobre as abordagens clássicas é necessário implementar um codificador que seja difícil de ser simulado classicamente \cite{havlicekSupervisedLearningQuantumenhanced2019}. \textcite{Schuld_Petruccione_2018} afirma que existem diferentes maneiras de codificar uma informação clássica em um sistema quântico tal como codificação de base, codificação de amplitude e outras formas. A codificação de base é a forma mais direta de cálculo, que associa uma base de estado de um sistema de $n$-qubits em uma cadeia de bits clássicos, por exemplo o estado $\ket{3}=\ket{0011}$ é associado a cadeia clássica $(0011)$. Codificação de amplitude é menos comum na computação quântica, que associa um vetor real com uma amplitude quântica, a normalização clássica de vetor de forma que $x\in\C^{2^n}, \sum_k|x_k|^2=1$ pode representar a  amplitude de um estado quântico $\ket{\psi}=\displaystyle\sum_{j=1}^{2^n}x_j\ket{j}$.
+Não se espera que um Computador Quântico (QC) sejam classicamente simuláveis e para obter vantagem sobre as abordagens clássicas é necessário implementar um codificador que seja difícil de ser simulado classicamente \cite{havlicekSupervisedLearningQuantumenhanced2019}. \textcite{Schuld_Petruccione_2018} afirma que existem diferentes maneiras de codificar uma informação clássica em um sistema quântico tal como codificação de base, codificação de amplitude e outras formas. A codificação de base é a forma mais direta de cálculo, que associa uma base de estado de um sistema de $n$-qubits em uma cadeia de bits clássicos, por exemplo o estado $\ket{3}=\ket{0011}$ é associado a cadeia clássica $(0011)$. Codificação de amplitude é menos comum na computação quântica, que associa um vetor real com uma amplitude quântica, a normalização clássica de vetor de forma que $x\in\C^{2^n}, \sum_k|x_k|^2=1$ pode representar a  amplitude de um estado quântico $\ket{\psi}=\displaystyle\sum_{j=1}^{2^n}x_j\ket{j}$.
 
 \textcite{houssein_machine_2022} apresenta uma divisão de categorias sobre a integração de algoritmos clássicos e quânticos como mostrado na \autoref{fig:category_quantum_classical_algorithm}.
 
@@ -468,7 +458,7 @@ Não se espera que um Computador Quântico (do inglês ``\textit{Quantum Compute
     \fonte{Própria, baseada em \cite{houssein_machine_2022}, 2024.}
 \end{figure}
 
-Atualmente os computadores quânticos estão marcados por realizarem cálculos quânticos de maneira limitada e sujeita a ruídos, assim como outras restrições. Denominado era Quântica de Escala Intermediária e Ruidosa (do inglês ``\textit{Noisy Intermediate-Scale Quantum}'', NISQ) como sendo o período de transição entre os estágios iniciais experimentais da computação quântica e a futura era tolerante a falhas e que podem realizar operações complexas e precisas em escala muito maior 
+Atualmente os computadores quânticos estão marcados por realizarem cálculos quânticos de maneira limitada e sujeita a ruídos, assim como outras restrições. Denominado era Quântica de Escala Intermediária e Ruidosa (NISQ) como sendo o período de transição entre os estágios iniciais experimentais da computação quântica e a futura era tolerante a falhas e que podem realizar operações complexas e precisas em escala muito maior 
 \cite{Lau_Lim_Shrotriya_Kwek_2022}, são dificuldades a serem superadas com os avanços na área. As principais características dos computadores quântico da era NISQ são:
 \begin{enumerate}
     \item \textbf{Capacidade Limitada}: não são capazes de cálculos em grande escala ou altamente complexos;
@@ -477,7 +467,7 @@ Atualmente os computadores quânticos estão marcados por realizarem cálculos q
     \item \textbf{Computação sem Correção de Erro}: os computadores operam sem correção de erros quânticos completos, limitando a complexidade e precisão dos cálculos que podem realizar.
 \end{enumerate}
 
-\subsection{Computação Quântica de Variáveis Contínuas}
+\subsubsection{Computação Quântica de Variáveis Contínuas}
 
 A QC fundamenta-se nas propriedades estatísticas das partículas subatômicas, que se dividem em duas categorias: férmions e bósons. Os férmions obedecem ao Princípio de Exclusão de Pauli, segundo o qual duas partículas não podem ocupar simultaneamente o mesmo estado quântico. Essa exclusão confere aos férmions um caráter naturalmente discreto, tornando-os a base conceitual dos computadores quânticos convencionais. Em decorrência disso, é muito difícil — embora teoricamente possível em contextos específicos — construir um modelo de variáveis contínuas puro com férmions, uma vez que eles tendem a formar sistemas de níveis finitos.
 
@@ -495,8 +485,10 @@ Essas variáveis estão sujeitas ao Princípio da Incerteza de Heisenberg, o que
 
 A CVQC bosônica figura entre as abordagens mais promissoras para a computação tolerante a falhas. Em vez de controlar individualmente milhares de átomos — sistemas inerentemente frágeis —, pulsos de luz são ``moldados'' em estados quânticos complexos que são intrinsecamente mais robustos contra ruídos e decoerência.
 
+As equações abaixo para as \autoref{sec:gaussians_gate} e \autoref{sec:non_gaussians_gate} foram obtidas de \textcite{de_lima_redes_nodate} e ... 
 
-\subsubsection{Portas Gaussianas} Unitárias de primeira e segunda ordem
+\subsubsection{Portas Gaussianas} \label{sec:gaussians_gate}
+Unitárias de primeira e segunda ordem
 
 \paragraph*{Deslocamento ($D(\alpha)$)} Move o estado no espaço de fase. Pela \autoref{eq:displacement_continuous_variables}
 \begin{equation}
@@ -504,21 +496,49 @@ A CVQC bosônica figura entre as abordagens mais promissoras para a computação
     D(\alpha)=\exp(\alpha\hat{a}^\dagger-\alpha^*\hat{a})
 \end{equation}
 
-\paragraph*{Rotação $(R(\phi))$} Gira o estado de espaço de fase por um ângulo $\phi$. Corresponde a evolução livre do oscilador hamônico.
+\paragraph*{Rotação $(R(\phi))$} Gira o estado de espaço de fase por um ângulo $\phi$. Corresponde a evolução livre do oscilador hamônico, sendo também a única com um análogo ao qubit, e que quando aplicada em estado de vácuo, essa operação não apresenta efeito, porém, sua aplicação em um estado coerente resulta em uma rotação de $\phi$ do estado em torno do centro do espaço de fase. Sua representação é dada por \autoref{eq:rotation_continuous_variables}
 
-\paragraph*{Compressão ($S(r)$)} Comprime a incerteza de uma quadratura (por exemplo $\hat{x}$) enquanto expande a outra ($\hat{p}$), mantendo o Princípio da Incerteza, é uma porta que gera emaranhamento.
+\begin{equation}
+    \label{eq:rotation_continuous_variables}
+    R(\phi)=\exp\left[i\frac{\theta}{2}\left(\hat(x)^2+\hat{p}^2-\mathrm{I}\right)\right]
+\end{equation}
+
+onde $\mathrm{I}$ é a matriz identidade de ordem igual a $\hat{x}$ e $\hat{p}$.
+
+\paragraph*{Compressão ($S(r,\phi)$)} Comprime a incerteza de uma quadratura (por exemplo $\hat{x}$) enquanto expande a outra ($\hat{p}$), mantendo o Princípio da Incerteza, é uma porta que gera emaranhamento. A expressão da compressão é dada na equação \autoref{eq:squeezing_continuous_variables}
+
+\begin{equation}
+    \label{eq:squeezing_continuous_variables}
+    S(r) = \exp\left[ \frac{r}{2}\left(e^{-i\phi}\hat{a}^2-e^{i\phi}\hat{a}^{\dagger^2}\right)\right]
+\end{equation}
+onde $r\geq 0$ e fase $\phi\in [0,2\pi]$.
 
 
-\paragraph*{Divisão de Feixe $(BS(\theta))$} Comprime dois modos bosônicos, usada para criar interferência e emaranhamento entre feixes de luz.
+\paragraph*{Divisão de Feixe $(BS(\mu,\phi))$} Combina dois modos bosônicos, usada para criar interferência e emaranhamento entre feixes de luz, onde a operação é dada pela \autoref{eq:beam_splitter_continuous_variables}
 
-\subsubsection{Portas não Gaussianas} 
+\begin{equation}
+    \label{eq:beam_splitter_continuous_variables}
+    BS_{i,j}(\mu,\phi)=\exp\left[\mu\left(e^{i\phi}\hat{a}_i\hat{a}_j^\dagger-e^{-i\phi}\hat{a}_i\hat{a}_j^\dagger\right) \right]
+\end{equation}
+
+\subsubsection{Portas não Gaussianas} \label{sec:non_gaussians_gate}
 Para que a computação quântica bosônica seja universal (capaz de realizar qualquer cálculo) as portas gaussianas não são suficientes, é necessário de não-linearidade de ordem superior, no caso de 3ª ordem ou mais.
 
 \paragraph*{Fase Cúbica $(V(\gamma)$)}
-Transforma a quadratura do momento com base no cubo da posição $\hat{p} \rightarrow \hat{p}+\gamma\hat{x}^2$, sendo extremamente difícil de implementar experimentalmente.
+Transforma a quadratura do momento com base no cubo da posição $\hat{p} \rightarrow \hat{p}+\gamma\hat{x}^2$, sendo extremamente difícil de implementar experimentalmente. A sua representação é dada na \autoref{eq:cubic_continuous_variables}
 
-\paragraph*{Efeito Kerr}
-Uma não-linearidade onde o índice de refração depende da intensidade da luz, sendo representada pelo Hamiltoniano $H=\chi(\hat{a}^\dagger\hat{a})^2$
+\begin{equation}
+    \label{eq:cubic_continuous_variables}
+    V(\gamma)=\exp\left(\frac{i\gamma\hat{x}^3}{3}\right)
+\end{equation}
+
+\paragraph*{Efeito Kerr $(K(\kappa))$}
+Uma não-linearidade onde o índice de refração depende da intensidade da luz, sendo representada pelo Hamiltoniano na \autoref{eq:kerr_continuous_variables}
+
+\begin{equation}
+    \label{eq:kerr_continuous_variables}
+    H=\chi(\hat{a}^\dagger\hat{a})^2    
+\end{equation}
 
 \subsection{Computação Fotônica e Implementações Físicas}
 \section{Abordagens Quânticas para Otimização}

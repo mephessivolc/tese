@@ -162,42 +162,36 @@
 \pretextual
 
 % Capa
-% \include{pretextual/capa}
+\include{pretextual/capa}
 
 % Folha de rosto (o * indica que haverá a ficha bibliográfica)
-% \imprimirfolhaderosto*
+\imprimirfolhaderosto*
 
 % Imprimir Ficha Catalografica
-% \include{pretextual/catalografica}
 % \include{pretextual/catalografica}
 
 % Inserir Folha de Aprovação
 % \include{pretextual/assinaturas}
-% \include{pretextual/assinaturas}
 
 % Dedicatória
-% \include{pretextual/dedicatoria}
-% \include{pretextual/dedicatoria}
+\include{pretextual/dedicatoria}
 
 % Agradecimentos
-% \include{pretextual/agradecimentos}
-% \include{pretextual/agradecimentos}
+\include{pretextual/agradecimentos}
 
 % Epígrafe
-% \include{pretextual/epigrafe}
-% \include{pretextual/epigrafe}
+\include{pretextual/epigrafe}
 
 % Resumo e Abstract
-% \include{pretextual/resumos}
-% \include{pretextual/resumos}
+\include{pretextual/resumos}
 
 
 \include{pretextual/listas}
 
 % Inserir o SUMÁRIO
 \pdfbookmark[0]{\contentsname}{toc}
-% \tableofcontents*
-\cleardoublepage
+\tableofcontents*
+% \cleardoublepage
 
 % ----------------------------------------------------------
 % ELEMENTOS TEXTUAIS (Capítulos)
@@ -209,7 +203,7 @@
 \setcounter{page}{1}
 
 % Inclui cada capitulo da Dissertação
-% \include{capitulos/introducao}
+\include{capitulos/introducao}
 
 % PARTE - Define a divisão do documento em partes (Não é obrigatório)
 \hiddenpart{Preparação da pesquisa}
@@ -217,13 +211,10 @@
 \include{capitulos/fundamentacao}
 % \include{capitulos/estadodaarte}
 % \include{capitulos/ferramentas}
-\include{capitulos/fundamentacao}
-% \include{capitulos/estadodaarte}
-% \include{capitulos/ferramentas}
 
 % PARTE
 % \hiddenpart{Proposta}
-% \include{capitulos/proposta}
+\include{capitulos/proposta}
 
 % PARTE
 % \hiddenpart{Parte Final}
@@ -235,10 +226,6 @@
 % ----------------------------------------------------------
 \postextual
 
-% Referências bibliográficas
-% \bibliography{bibliografia}
-\printbibliography
-% \bibliography{bibliografia}
 \printbibliography
 
 % Glossário (Consulte o manual)
@@ -246,10 +233,8 @@
 
 % Apêndices
 % \include{postextual/apendices}
-% \include{postextual/apendices}
 
 % Anexos
-% \include{postextual/anexos}
 % \include{postextual/anexos}
 
 % Índice remissivo (Consultar manual)
