@@ -469,79 +469,100 @@ Atualmente os computadores quânticos estão marcados por realizarem cálculos q
 
 \subsubsection{Computação Quântica de Variáveis Contínuas}
 
-A QC fundamenta-se nas propriedades estatísticas das partículas subatômicas, que se dividem em duas categorias: férmions e bósons. Os férmions obedecem ao Princípio de Exclusão de Pauli, segundo o qual duas partículas não podem ocupar simultaneamente o mesmo estado quântico. Essa exclusão confere aos férmions um caráter naturalmente discreto, tornando-os a base conceitual dos computadores quânticos convencionais. Em decorrência disso, é muito difícil — embora teoricamente possível em contextos específicos — construir um modelo de variáveis contínuas puro com férmions, uma vez que eles tendem a formar sistemas de níveis finitos.
+A QC fundamenta-se nas propriedades estatísticas das partículas 
+subatômicas, classificadas em duas categorias fundamentais: férmions e bósons 
+\cite{cohen2019quantum}. Os férmions obedecem ao Princípio de Exclusão de Pauli, 
+que impede que duas partículas ocupem simultaneamente o mesmo estado quântico; 
+essa característica confere-lhes um caráter naturalmente discreto, tornando-os 
+a base conceitual dos computadores quânticos convencionais baseados em qubits 
+\cite{sakurai2020modern}.
 
-Os bósons, por sua vez, podem ocupar o mesmo estado quântico simultaneamente. O exemplo mais comum são os fótons, que são naturalmente descritos por osciladores harmônicos quânticos com infinitos níveis de energia, permitindo codificar grande quantidade de informação em um único sistema físico. Isso traz uma vantagem operacional relevante: é mais eficiente corrigir erros quânticos explorando a redundância dos níveis de energia de um único bóson do que interligando centenas de qubits. Enquanto os bósons se destacam no transporte e no processamento de informação, os férmions constituem a base da matéria e são frequentemente o objeto de simulação dos computadores quânticos.
+Em contrapartida, os bósons podem ocupar o mesmo estado quântico simultaneamente. 
+O exemplo mais proeminente são os fótons, que podem ser descritos matematicamente 
+como osciladores harmônicos quânticos possuidores de infinitos níveis de energia 
+\cite{braunstein2005quantum}. Essa propriedade permite a codificação de uma vasta 
+quantidade de informação em um único sistema físico, possibilitando estratégias 
+de correção de erros quânticos potencialmente mais eficientes e compactas — como 
+os códigos GKP — do que a abordagem tradicional baseada em grandes redes de 
+múltiplos qubits interligados \cite{gottesman2000encoding, weedbrook2012gaussian}.
 
-A Computação Quântica de Variáveis Contínuas (CVQC) é uma abordagem na qual a informação não é processada em bits binários, mas em estados que podem assumir qualquer valor dentro de um intervalo contínuo — como amplitudes e fases de campos eletromagnéticos. Enquanto os qubits são descritos por estados discretos como \textit{spin up} e \textit{spin down}, na CVQC as grandezas mensuráveis são propriedades contínuas do campo, como amplitude e fase. Uma analogia ilustrativa é comparar a QC convencional a um interruptor de luz, que alterna entre os estados ligado e desligado (com suas respectivas superposições), e a CVQC a um dimmer, capaz de ajustar o brilho a qualquer nível dentro de uma faixa contínua.
+A Computação Quântica de Variáveis Contínuas (CVQC) processa informação não em 
+bits binários, mas em estados que podem assumir qualquer valor dentro de um 
+intervalo contínuo, como amplitudes e fases de campos eletromagnéticos. 
+Analogamente, enquanto a QC convencional opera como um interruptor de luz --- 
+transitando entre estados discretos com suas superposições ---, a CVQC opera 
+como um dimmer, capaz de ajustar o brilho a qualquer nível dentro de uma faixa 
+contínua.
 
-O estado de um sistema de CVQC é descrito no Espaço de Fase, definido por dois observáveis conjugados denominados quadraturas:
-\begin{enumerate}
-    \item \textbf{Posição ($\hat{x}$):} associada à amplitude do campo.
-    \item \textbf{Momento ($\hat{p}$):} associado à fase do campo.
-\end{enumerate}
+O estado de um sistema de CVQC é descrito no espaço de fase por dois observáveis 
+conjugados denominados quadraturas: a posição ($\hat{x}$), associada à amplitude 
+do campo, e o momento ($\hat{p}$), associado à sua fase. Sujeitas ao Princípio 
+da Incerteza de Heisenberg, essas variáveis não podem ser determinadas 
+simultaneamente com precisão arbitrária \cite{serafini_quantum_2023, 
+weedbrook2012gaussian}. Nesse paradigma, a unidade fundamental de informação 
+não é o \textit{qubit}, mas o \textit{qumode} (modo quântico), que habita um 
+espaço de Hilbert de dimensão infinita \cite{lloyd1999quantum}. A CVQC bosônica 
+figura entre as abordagens mais promissoras para a computação tolerante a falhas: 
+em vez de controlar individualmente milhares de átomos ou íons, pulsos de luz 
+são ``moldados'' em estados quânticos complexos --- como os estados de gato de 
+Schrödinger ou os códigos GKP --- intrinsecamente mais robustos contra ruídos 
+e decoerência ambiental \cite{gottesman2000encoding, bourassa2021blueprint}.
 
-Essas variáveis estão sujeitas ao Princípio da Incerteza de Heisenberg, o que implica que não é possível determinar ambas com precisão arbitrária de forma simultânea. Nesse paradigma, a unidade fundamental de informação deixa de ser o \textit{qubit} e passa a ser o \textit{qumode}, ou modo quântico.
+As equações apresentadas nas \autoref{sec:gaussians_gate} e \autoref{sec:non_gaussians_gate} foram obtidas de \textcite{de_lima_redes_nodate}, \textcite{serafini_quantum_2023} e $\ldots$
 
-A CVQC bosônica figura entre as abordagens mais promissoras para a computação tolerante a falhas. Em vez de controlar individualmente milhares de átomos — sistemas inerentemente frágeis —, pulsos de luz são ``moldados'' em estados quânticos complexos que são intrinsecamente mais robustos contra ruídos e decoerência.
-
-As equações abaixo para as \autoref{sec:gaussians_gate} e \autoref{sec:non_gaussians_gate} foram obtidas de \textcite{de_lima_redes_nodate} e ... 
 
 \subsubsection{Portas Gaussianas} \label{sec:gaussians_gate}
-Unitárias de primeira e segunda ordem
 
-\paragraph*{Deslocamento ($D(\alpha)$)} Move o estado no espaço de fase. Pela \autoref{eq:displacement_continuous_variables}
+As portas gaussianas são unitárias de primeira e segunda ordem que preservam o caráter gaussiano dos estados quânticos.
+
+\paragraph*{Deslocamento ($D(\alpha)$)}
+Desloca o estado no espaço de fase, conforme a \autoref{eq:displacement_continuous_variables}:
 \begin{equation}
     \label{eq:displacement_continuous_variables}
-    D(\alpha)=\exp(\alpha\hat{a}^\dagger-\alpha^*\hat{a})
+    D(\alpha)=\exp\!\left(\alpha\hat{a}^\dagger-\alpha^*\hat{a}\right)
 \end{equation}
 
-\paragraph*{Rotação $(R(\phi))$} Gira o estado de espaço de fase por um ângulo $\phi$. Corresponde a evolução livre do oscilador hamônico, sendo também a única com um análogo ao qubit, e que quando aplicada em estado de vácuo, essa operação não apresenta efeito, porém, sua aplicação em um estado coerente resulta em uma rotação de $\phi$ do estado em torno do centro do espaço de fase. Sua representação é dada por \autoref{eq:rotation_continuous_variables}
-
+\paragraph*{Rotação ($R(\phi)$)}
+Gira o estado no espaço de fase por um ângulo $\phi$, correspondendo à evolução livre do oscilador harmônico. É a única porta gaussiana com análogo direto ao qubit: aplicada ao estado de vácuo não produz efeito, mas aplicada a um estado coerente resulta em uma rotação de $\phi$ em torno da origem do espaço de fase. Sua representação é dada pela \autoref{eq:rotation_continuous_variables}:
 \begin{equation}
     \label{eq:rotation_continuous_variables}
-    R(\phi)=\exp\left[i\frac{\theta}{2}\left(\hat(x)^2+\hat{p}^2-\mathrm{I}\right)\right]
+    R(\phi)=\exp\!\left[i\frac{\phi}{2}\left(\hat{x}^2+\hat{p}^2-\mathbb{I}\right)\right]
 \end{equation}
+onde $\mathbb{I}$ é a matriz identidade de mesma ordem que $\hat{x}$ e $\hat{p}$.
 
-onde $\mathrm{I}$ é a matriz identidade de ordem igual a $\hat{x}$ e $\hat{p}$.
-
-\paragraph*{Compressão ($S(r,\phi)$)} Comprime a incerteza de uma quadratura (por exemplo $\hat{x}$) enquanto expande a outra ($\hat{p}$), mantendo o Princípio da Incerteza, é uma porta que gera emaranhamento. A expressão da compressão é dada na equação \autoref{eq:squeezing_continuous_variables}
-
+\paragraph*{Compressão ($S(r,\phi)$)}
+Comprime a incerteza de uma quadratura (e.g., $\hat{x}$) enquanto expande a outra ($\hat{p}$), preservando o Princípio da Incerteza e gerando emaranhamento. É definida pela \autoref{eq:squeezing_continuous_variables}:
 \begin{equation}
     \label{eq:squeezing_continuous_variables}
-    S(r) = \exp\left[ \frac{r}{2}\left(e^{-i\phi}\hat{a}^2-e^{i\phi}\hat{a}^{\dagger^2}\right)\right]
+    S(r,\phi) = \exp\!\left[\frac{r}{2}\left(e^{-i\phi}\hat{a}^2-e^{i\phi}\hat{a}^{\dagger 2}\right)\right]
 \end{equation}
-onde $r\geq 0$ e fase $\phi\in [0,2\pi]$.
+com $r\geq 0$ e $\phi\in [0,2\pi]$.
 
-
-\paragraph*{Divisão de Feixe $(BS(\mu,\phi))$} Combina dois modos bosônicos, usada para criar interferência e emaranhamento entre feixes de luz, onde a operação é dada pela \autoref{eq:beam_splitter_continuous_variables}
-
+\paragraph*{Divisão de Feixe ($BS(\mu,\phi)$)}
+Combina dois modos bosônicos, criando interferência e emaranhamento entre feixes de luz, conforme a \autoref{eq:beam_splitter_continuous_variables}:
 \begin{equation}
     \label{eq:beam_splitter_continuous_variables}
-    BS_{i,j}(\mu,\phi)=\exp\left[\mu\left(e^{i\phi}\hat{a}_i\hat{a}_j^\dagger-e^{-i\phi}\hat{a}_i\hat{a}_j^\dagger\right) \right]
+    BS_{i,j}(\mu,\phi)=\exp\!\left[\mu\left(e^{i\phi}\hat{a}_i\hat{a}_j^\dagger-e^{-i\phi}\hat{a}_i^\dagger\hat{a}_j\right)\right]
 \end{equation}
 
 \subsubsection{Portas não Gaussianas} \label{sec:non_gaussians_gate}
-Para que a computação quântica bosônica seja universal (capaz de realizar qualquer cálculo) as portas gaussianas não são suficientes, é necessário de não-linearidade de ordem superior, no caso de 3ª ordem ou mais.
 
-\paragraph*{Fase Cúbica $(V(\gamma)$)}
-Transforma a quadratura do momento com base no cubo da posição $\hat{p} \rightarrow \hat{p}+\gamma\hat{x}^2$, sendo extremamente difícil de implementar experimentalmente. A sua representação é dada na \autoref{eq:cubic_continuous_variables}
+As portas gaussianas, por si só, não são suficientes para a universalidade computacional. Para realizar qualquer cálculo quântico, é necessário introduzir não-linearidades de ordem superior (terceira ordem ou maior).
 
+\paragraph*{Fase Cúbica ($V(\gamma)$)}
+Transforma a quadratura do momento segundo $\hat{p} \rightarrow \hat{p}+\gamma\hat{x}^2$, sendo experimentalmente de difícil implementação. Sua representação é dada pela \autoref{eq:cubic_continuous_variables}:
 \begin{equation}
     \label{eq:cubic_continuous_variables}
-    V(\gamma)=\exp\left(\frac{i\gamma\hat{x}^3}{3}\right)
+    V(\gamma)=\exp\!\left(\frac{i\gamma\hat{x}^3}{3}\right)
 \end{equation}
 
-\paragraph*{Efeito Kerr $(K(\kappa))$}
-Uma não-linearidade onde o índice de refração depende da intensidade da luz, sendo representada pelo Hamiltoniano na \autoref{eq:kerr_continuous_variables}
-
+\paragraph*{Efeito Kerr ($K(\kappa)$)}
+Introduz uma não-linearidade óptica na qual o índice de refração do meio depende da intensidade do campo, representada pelo Hamiltoniano da \autoref{eq:kerr_continuous_variables}:
 \begin{equation}
     \label{eq:kerr_continuous_variables}
-    H=\chi(\hat{a}^\dagger\hat{a})^2    
+    H=\chi\left(\hat{a}^\dagger\hat{a}\right)^2
 \end{equation}
+
 
 \subsection{Computação Fotônica e Implementações Físicas}
 \section{Abordagens Quânticas para Otimização}
-
-
-
