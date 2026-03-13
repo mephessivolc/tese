@@ -1,5 +1,7 @@
 # ===== Project configuration =====
 PROJECT_PATH := 69931ba0bcdd82709908e2e5
+PROJECT_BUILD_PATH := $(PROJECT_PATH)/build
+PROJECT_PDF_FILE := main.pdf
 
 # ===== Git remotes =====
 GITHUB_REMOTE   ?= origin
@@ -32,7 +34,7 @@ branch:
 
 # ===== Add + commit with automatic datetime =====
 commit-update:
-	mv $(PROJECT_PATH)/build/main.pdf $(PROJECT_PATH)
+	mv $(PROJECT_BUILD_PATH)/$(PROJECT_PDF_FILE) $(PROJECT_PATH)/$(PROJECT_PDF_FILE)
 	git add -A
 	git commit -m "update $$(date '+%Y-%m-%d %H:%M:%S')" || echo "Nothing to commit"
 
