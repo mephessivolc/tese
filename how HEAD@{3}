@@ -1,0 +1,93 @@
+[33mcommit 1036e919a2de2365473ca9c470c02e6d07d9fde9[m
+Author: Clovis Caface <clovis.caface@gmail.com>
+Date:   Fri Mar 13 11:21:29 2026 -0300
+
+    update 2026-03-13 11:21:29
+
+[1mdiff --git a/69931ba0bcdd82709908e2e5/bibliografia.bib b/69931ba0bcdd82709908e2e5/bibliografia.bib[m
+[1mindex 20cf5ab..c258207 100644[m
+[1m--- a/69931ba0bcdd82709908e2e5/bibliografia.bib[m
+[1m+++ b/69931ba0bcdd82709908e2e5/bibliografia.bib[m
+[36m@@ -592,7 +592,6 @@[m [myear={2024}}[m
+ 	month = jun,[m
+ 	year = {2021},[m
+ 	pages = {2037--2048},[m
+[31m-	file = {Li et al. - 2021 - Quantum Matrix Multiplier.pdf:/home/clovis/Dropbox/Zotero/storage/YJ7TACRA/Li et al. - 2021 - Quantum Matrix Multiplier.pdf:application/pdf},[m
+ }[m
+ [m
+ @manual{ibm2024simulationDoc,[m
+[36m@@ -634,7 +633,19 @@[m [murl={https://ionq.com/technology},[m
+ urlaccessdate={2 mai. 2024},[m
+ year={2024}}[m
+ [m
+[31m-@article{Lau_Lim_Shrotriya_Kwek_2022, title={NISQ computing: where are we and where do we go?}, volume={32}, ISSN={2309-4710}, DOI={10.1007/s43673-022-00058-z}, number={1}, journal={AAPPS Bulletin}, author={Lau, Jonathan Wei Zhong and Lim, Kian Hwee and Shrotriya, Harshank and Kwek, Leong Chuan}, year={2022}, month=sep, pages={27}, language={en} }[m
+[32m+[m[32m@article{Lau_Lim_Shrotriya_Kwek_2022,[m[41m [m
+[32m+[m[32m  title={NISQ computing: where are we and where do we go?},[m[41m [m
+[32m+[m[32m  volume={32},[m[41m [m
+[32m+[m[32m  ISSN={2309-4710},[m[41m [m
+[32m+[m[32m  DOI={10.1007/s43673-022-00058-z},[m[41m [m
+[32m+[m[32m  number={1},[m[41m [m
+[32m+[m[32m  journal={AAPPS Bulletin},[m[41m [m
+[32m+[m[32m  author={Lau, Jonathan Wei Zhong and Lim, Kian Hwee and Shrotriya, Harshank and Kwek, Leong Chuan},[m[41m [m
+[32m+[m[32m  year={2022},[m[41m [m
+[32m+[m[32m  month=sep,[m[41m [m
+[32m+[m[32m  pages={27},[m[41m [m
+[32m+[m[32m  language={en}[m[41m [m
+[32m+[m[32m}[m
+ [m
+ @article{de2021materials,[m
+   title={Materials challenges and opportunities for quantum computing hardware},[m
+[36m@@ -898,7 +909,7 @@[m [myear={2024}}[m
+   publisher={Verein zur F{\"o}rderung des Open Access Publizierens in den Quantenwissenschaften}[m
+ }[m
+ [m
+[31m-<<<<<<< HEAD[m
+[32m+[m
+ @article{gottesman2000encoding,[m
+   title={Encoding a qubit in an oscillator},[m
+   author={Gottesman, Daniel and Kitaev, Alexei and Preskill, John},[m
+[36m@@ -906,8 +917,6 @@[m [myear={2024}}[m
+   year={2000}[m
+ }[m
+ [m
+[31m-=======[m
+[31m->>>>>>> f9dd967a9252cc44b4a52e2f6bde22ec5d172164[m
+ @article{lloyd1999quantum,[m
+   title={Quantum computation over continuous variables},[m
+   author={Lloyd, Seth and Braunstein, Samuel L},[m
+[36m@@ -934,7 +943,6 @@[m [myear={2024}}[m
+ 	month = jun,[m
+ 	year = {2023},[m
+ }[m
+[31m-<<<<<<< HEAD[m
+ [m
+ @article{weedbrook2012gaussian,[m
+   title={Gaussian quantum information},[m
+[36m@@ -946,5 +954,3 @@[m [myear={2024}}[m
+   year={2012},[m
+   publisher={APS}[m
+ }[m
+[31m-=======[m
+[31m->>>>>>> f9dd967a9252cc44b4a52e2f6bde22ec5d172164[m
+[1mdiff --git a/69931ba0bcdd82709908e2e5/main.pdf b/69931ba0bcdd82709908e2e5/main.pdf[m
+[1mindex 23d76c4..f84bf48 100644[m
+Binary files a/69931ba0bcdd82709908e2e5/main.pdf and b/69931ba0bcdd82709908e2e5/main.pdf differ
+[1mdiff --git a/69931ba0bcdd82709908e2e5/pretextual/listas.tex b/69931ba0bcdd82709908e2e5/pretextual/listas.tex[m
+[1mindex cef853c..0f08bc8 100644[m
+[1m--- a/69931ba0bcdd82709908e2e5/pretextual/listas.tex[m
+[1m+++ b/69931ba0bcdd82709908e2e5/pretextual/listas.tex[m
+[36m@@ -12,11 +12,11 @@[m
+ % Lista de abreviaturas e siglas[m
+ \begin{siglas}[m
+   \item[CV] \descitem{Variáveis Contínuas}{Continuous Variables}[m
+[32m+[m[32m  \item[CVQC] \descitem{Computação Quântica de Variáveis Contínuas}{Continuous Variables Quantum Computing}[m
+[32m+[m[32m  \item[NISQ] \descitem{Quantica de Escala Intermediária e Ruidosa}{Noisy Intermediate-Scale Quantum}[m
+[32m+[m[32m  \item[QC] \descitem{Computação Quântica}{Quantum Computing}[m
+   \item[TSP] \descitem{Problema do Caixeito Viajante}{Traveling Salesman Problem} [m
+   \item[VRP] \descitem{Problema de Rotas de Veículos}{Vehicle Routing Problem}[m
+[31m-  \item[QC] \descitem{Computação Quântica}{Quantum Computing}[m
+[31m-  \item[CVQC] \descitem{Computação Quântica de Variáveis Contínuas}{Continuous-Variable Quantum Computing}[m
+[31m-  \item[NISQ] \descitem{Quantica de Escala Intermediária e Ruidosa}{Noisy Intermediate-Scale Quantum}[m
+ \end{siglas}[m
+ [m
+ % % Lista de símbolos[m
