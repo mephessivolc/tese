@@ -1,6 +1,7 @@
 ############################
 # VS Code
 ############################
+.devcontainer/
 .vscode/
 *.code-workspace
 
