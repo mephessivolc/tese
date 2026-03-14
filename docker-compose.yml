@@ -1,19 +1,25 @@
 services:
-  latex:
+  dev:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: monorepo-dev
     init: true
-    tty: true
     stdin_open: true
+    tty: true
     working_dir: /workspace
+    command: sleep infinity
     environment:
       HOME: /home/vscode
+      PYTHONUNBUFFERED: "1"
+      JUPYTER_ENABLE_LAB: "yes"
       TEXMFVAR: /texlive-cache/texmf-var
       TEXMFCACHE: /texlive-cache/texmf-cache
     volumes:
       - ./:/workspace
       - texlive-cache:/texlive-cache
+    ports:
+      - "8080:8080"
 
 volumes:
   texlive-cache:

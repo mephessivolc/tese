@@ -6,13 +6,13 @@ A fundamentação teórica a seguir foi elaborada com o objetivo de apresentar o
 
 No contexto deste estudo, é fundamental distinguir entre abordagens clássicas e quânticas, assim, utilizaremos o termo ``clássico'' para se referir a sistemas baseados em máquinas tradicionais de silício e seus algoritmos correspondentes, que operam dentro dos paradigmas convencionais da computação. Por outro lado, o termo ``quântico'' será empregado para descrever máquinas e algoritmos que exploram as propriedades da mecânica quântica, tais como superposição e emaranhamento.
 
-Inicialmente será apresentado o conceito de Otimização, depois o formulação matemática do Problema do Caixeiro Viajante (TSP) com alguns métodos clássicos de resolução, e por fim, iniciaremos os conceitos introdutórios para a Mecânica Quântica e Computação Quântica.
+Inicialmente será apresentado o conceito de Otimização, depois o formulação matemática do Problema de Rotas de Veículos (VRP) com alguns métodos clássicos de resolução, e por fim, iniciaremos os conceitos introdutórios para a Mecânica Quântica e Computação Quântica.
 
-\section{Problemas de Otimização Combinatória}
-\subsection{Formulação Matemática do VRP}
+\section{Problemas de Rotas de Veículos}
 
-\subsection{Introdução a Mecânica Quântica e Computação Quântica}
+{\color{red}$<$Modificar$>$} O VRP é um problema de otimização combinatória dos mais estudados, sendo a derivação mais conhecida do Problema do Caixeiro Viajante (TSP) \cite{gavish1978travelling}. Neste problema, são dados um conjunto de cidades e as distâncias entre elas, e devemos buscar a melhor rota para percorrer todas as cidades minimizando a distância total. Tanto o TSP quanto o VRP, são problemas de roteamento com grande impacto na maioria das questões da nossa sociedade, que por essa razão como também porque ambos são NP-difíceis \cite{hochba1997approximation}, a comunidade científica tem continuamente buscando por uma formulação melhor que torne sua resolução eficiente \cite{gonzalez-bermejo_gps_2022}.
 
+\subsection{Formulação Matemática do Problema do Caixeiro Viajante}
 \subsection{Métodos Clássicos de Resolução}
 
 \section{Introdução a Mecânica Quântica e Computação Quântica}
@@ -467,49 +467,27 @@ Atualmente os computadores quânticos estão marcados por realizarem cálculos q
     \item \textbf{Computação sem Correção de Erro}: os computadores operam sem correção de erros quânticos completos, limitando a complexidade e precisão dos cálculos que podem realizar.
 \end{enumerate}
 
+\subsubsection{Tecnologias em Computação Quântica}
+
+{\color{red}$<$Modificar$>$} Sistemas de computadores como o da empresa D-Wave que são computadores quânticos (ver qual é a tecnologia da D-Wave) $\ldots$
+
+{\color{red}$<$Modificar$>$} Bibliotecas computacionais como a Qiskit IBM e Pennylane Xanadu permitem que seja construidos circuitos quânticos simulados $\ldots$
+
+{\color{red}$<$Modificar$>$} Outras tecnologias que podemos apontar são $\ldots$
+
 \subsubsection{Computação Quântica de Variáveis Contínuas}
 
 A QC fundamenta-se nas propriedades estatísticas das partículas 
-subatômicas, classificadas em duas categorias fundamentais: férmions e bósons 
-\cite{cohen2019quantum}. Os férmions obedecem ao Princípio de Exclusão de Pauli, 
-que impede que duas partículas ocupem simultaneamente o mesmo estado quântico; 
-essa característica confere-lhes um caráter naturalmente discreto, tornando-os 
-a base conceitual dos computadores quânticos convencionais baseados em qubits 
-\cite{sakurai2020modern}.
+subatômicas, classificadas em duas categorias fundamentais: férmions e bósons \cite{cohen2019quantum}. Os férmions obedecem ao Princípio de Exclusão de Pauli, que impede que duas partículas ocupem simultaneamente o mesmo estado quântico;  essa característica confere-lhes um caráter naturalmente discreto, tornando-os  a base conceitual dos computadores quânticos convencionais baseados em qubits \cite{sakurai2020modern}.
 
-Em contrapartida, os bósons podem ocupar o mesmo estado quântico simultaneamente. 
-O exemplo mais proeminente são os fótons, que podem ser descritos matematicamente 
-como osciladores harmônicos quânticos possuidores de infinitos níveis de energia 
-\cite{braunstein2005quantum}. Essa propriedade permite a codificação de uma vasta 
-quantidade de informação em um único sistema físico, possibilitando estratégias 
-de correção de erros quânticos potencialmente mais eficientes e compactas — como 
-os códigos GKP — do que a abordagem tradicional baseada em grandes redes de 
-múltiplos qubits interligados \cite{gottesman2000encoding, weedbrook2012gaussian}.
+Em contrapartida, os bósons podem ocupar o mesmo estado quântico simultaneamente.  O exemplo mais proeminente são os fótons, que podem ser descritos matematicamente  como osciladores harmônicos quânticos possuidores de infinitos níveis de energia  \cite{braunstein2005quantum}. Essa propriedade permite a codificação de uma vasta quantidade de informação em um único sistema físico, possibilitando estratégias de correção de erros quânticos potencialmente mais eficientes e compactas — como os códigos GKP — do que a abordagem tradicional baseada em grandes redes de múltiplos qubits interligados \cite{gottesman2000encoding, weedbrook2012gaussian}.
 
-A Computação Quântica de Variáveis Contínuas (CVQC) processa informação não em 
-bits binários, mas em estados que podem assumir qualquer valor dentro de um 
-intervalo contínuo, como amplitudes e fases de campos eletromagnéticos. 
-Analogamente, enquanto a QC convencional opera como um interruptor de luz --- 
-transitando entre estados discretos com suas superposições ---, a CVQC opera 
-como um dimmer, capaz de ajustar o brilho a qualquer nível dentro de uma faixa 
-contínua.
+A Computação Quântica de Variáveis Contínuas (CVQC) processa informação não em bits binários, mas em estados que podem assumir qualquer valor dentro de um intervalo contínuo, como amplitudes e fases de campos eletromagnéticos. Analogamente, enquanto a QC convencional opera como um interruptor de luz --- transitando entre estados discretos com suas superposições ---, a CVQC opera como um dimmer, capaz de ajustar o brilho a qualquer nível dentro de uma faixa contínua.
 
-O estado de um sistema de CVQC é descrito no espaço de fase por dois observáveis 
-conjugados denominados quadraturas: a posição ($\hat{x}$), associada à amplitude 
-do campo, e o momento ($\hat{p}$), associado à sua fase. Sujeitas ao Princípio 
-da Incerteza de Heisenberg, essas variáveis não podem ser determinadas 
-simultaneamente com precisão arbitrária \cite{serafini_quantum_2023, 
-weedbrook2012gaussian}. Nesse paradigma, a unidade fundamental de informação 
-não é o \textit{qubit}, mas o \textit{qumode} (modo quântico), que habita um 
-espaço de Hilbert de dimensão infinita \cite{lloyd1999quantum}. A CVQC bosônica 
-figura entre as abordagens mais promissoras para a computação tolerante a falhas: 
-em vez de controlar individualmente milhares de átomos ou íons, pulsos de luz 
-são ``moldados'' em estados quânticos complexos --- como os estados de gato de 
-Schrödinger ou os códigos GKP --- intrinsecamente mais robustos contra ruídos 
-e decoerência ambiental \cite{gottesman2000encoding, bourassa2021blueprint}.
+O estado de um sistema de CVQC é descrito no espaço de fase por dois observáveis conjugados denominados quadraturas: a posição ($\hat{x}$), associada à amplitude do campo, e o momento ($\hat{p}$), associado à sua fase. Sujeitas ao Princípio da Incerteza de Heisenberg, essas variáveis não podem ser determinadas simultaneamente com precisão arbitrária \cite{serafini_quantum_2023, weedbrook2012gaussian}. Nesse paradigma, a unidade fundamental de informação não é o \textit{qubit}, mas o \textit{qumode} (modo quântico), que habita um espaço de Hilbert de dimensão infinita \cite{lloyd1999quantum}. A CVQC bosônica figura entre as abordagens mais promissoras para a computação tolerante a falhas: 
+em vez de controlar individualmente milhares de átomos ou íons, pulsos de luz são ``moldados'' em estados quânticos complexos --- como os estados de gato de Schrödinger ou os códigos GKP --- intrinsecamente mais robustos contra ruídos e decoerência ambiental \cite{gottesman2000encoding, bourassa2021blueprint}.
 
-As equações apresentadas nas \autoref{sec:gaussians_gate} e \autoref{sec:non_gaussians_gate} foram obtidas de \textcite{de_lima_redes_nodate}, \textcite{serafini_quantum_2023} e $\ldots$
-
+As equações apresentadas nas \autoref{sec:gaussians_gate} e \autoref{sec:non_gaussians_gate} foram obtidas de \textcite{de_lima_redes_nodate}, \textcite{serafini_quantum_2023} e \textcite{killoran_strawberry_2019}
 
 \subsubsection{Portas Gaussianas} \label{sec:gaussians_gate}
 
@@ -566,3 +544,8 @@ Introduz uma não-linearidade óptica na qual o índice de refração do meio de
 
 \subsection{Computação Fotônica e Implementações Físicas}
 \section{Abordagens Quânticas para Otimização}
+
+{\color{red}$<$Modificar$>$} Um dos modelos que nos permite escrever problemas do tipo TSP de forma mais genérica é a Otimização Binária Quadrática Irrestrita (QUBO) \cite{lewis2017quadratic}. O QUBO é uma estrutura que nos permite modelar problemas em forma quadrática sujeitos a restrições lineares de forma nativa. No entanto, com o auxílio de funções de penalidade, é possível reformular tarefas de ordem superior a dois e restrições de desigualdade para o modelo QUBO. Outra característica que torna o QUBO um ambiente de modelagem muito importante é sua estreita conexão com o modelo de Ising \cite{cipra1987introduction}. O modelo QUBO constitui um problema central para a computação quântica adiabática \cite{mcgeoch2013experimental}, que é resolvido por meio de um processo físico chamado recozimento quântico \cite{mcgeoch2022adiabatic, brooke1999quantum}.
+
+
+
