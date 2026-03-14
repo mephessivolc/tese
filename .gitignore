@@ -7,7 +7,7 @@
 
 .ipynb_checkpoints/
 __pycache__/
-
+.venv/
 ############################
 # LaTeX – arquivos auxiliares
 ############################
@@ -54,3 +54,4 @@ __pycache__/
 Thumbs.db
 
 build/
+dev/
