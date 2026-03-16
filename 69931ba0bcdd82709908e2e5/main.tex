@@ -50,7 +50,19 @@
 % Pacotes de CITAÇÕES
 % ---------------------
 \usepackage{csquotes}
-\usepackage[backend=biber, style=abnt, justify, backref=true]{biblatex}
+\usepackage[
+  backend=biber,
+  style=abnt,
+  justify,
+  citestyle=abnt,
+  giveninits=true,
+  uniquename=false,
+  maxcitenames=2,
+  maxbibnames=99,
+  backref=true
+]{biblatex}
+
+\addbibresource{bibliografia.bib}
 % ---------------------
 
 % ---------------------
@@ -147,9 +159,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%  INICIO DO DOCUMENTO  %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
-\addbibresource{bibliografia.bib}
-
-\addbibresource{bibliografia.bib}
 
 \begin{document}
 
@@ -222,13 +231,12 @@
 % \include{capitulos/conclusao}
 
 % ----------------------------------------------------------
-% ELEMENTOS PÓS-TEXTUAIS (Referências, Glossário, Apêndices)
+% ELEMENTOS POS-TEXTUAIS (Referencias, Glossario, Apendices)
 % ----------------------------------------------------------
 \postextual
-
 \printbibliography
 
-% Glossário (Consulte o manual)
+% Glossario (Consulte o manual)
 %\glossary
 
 % Apêndices
