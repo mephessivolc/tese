@@ -34,7 +34,7 @@ branch:
 
 # ===== Add + commit with automatic datetime =====
 commit-update:
-	mv $(PROJECT_BUILD_PATH)/$(PROJECT_PDF_FILE) $(PROJECT_PATH)/$(PROJECT_PDF_FILE)
+	cp $(PROJECT_BUILD_PATH)/$(PROJECT_PDF_FILE) $(PROJECT_PATH)/$(PROJECT_PDF_FILE)
 	git add -A
 	git commit -m "update $$(date '+%Y-%m-%d %H:%M:%S')" || echo "Nothing to commit"
 

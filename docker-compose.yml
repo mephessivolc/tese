@@ -9,6 +9,7 @@ services:
     tty: true
     working_dir: /workspace
     command: sleep infinity
+    user: vscode
     environment:
       HOME: /home/vscode
       PYTHONUNBUFFERED: "1"
@@ -19,6 +20,7 @@ services:
       - ./:/workspace
       - texlive-cache:/texlive-cache
     ports:
+      - "8888:8888"
       - "8080:8080"
 
 volumes:

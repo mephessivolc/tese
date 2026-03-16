@@ -14,8 +14,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     sudo \
     procps \
     build-essential \
+    wget \
+    unzip \
+    perl \
     biber \
     latexmk \
+    texlive-base \
     texlive-latex-base \
     texlive-latex-recommended \
     texlive-latex-extra \
