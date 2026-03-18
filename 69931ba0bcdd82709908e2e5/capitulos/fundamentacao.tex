@@ -10,10 +10,19 @@ Inicialmente será apresentado o conceito de Otimização, depois o formulação
 
 \section{Problemas de Rotas de Veículos}
 
-{\color{red}$<$Modificar$>$} O VRP é um problema de otimização combinatória dos mais estudados, sendo a derivação mais conhecida do TSP \cite{gavish1978travelling}. Neste problema, são dados um conjunto de cidades e as distâncias entre elas, e devemos buscar a melhor rota para percorrer todas as cidades minimizando a distância total. Tanto o TSP quanto o VRP, são problemas de roteamento com grande impacto na maioria das questões da nossa sociedade, que por essa razão como também porque ambos são NP-difíceis \cite{hochba1997approximation}, a comunidade científica tem continuamente buscando por uma formulação melhor que torne sua resolução eficiente \cite{gonzalez-bermejo_gps_2022}.
+O Problema de Roteamento de Veículos (Vehicle Routing Problem – VRP) é um dos problemas de otimização combinatória mais estudados na literatura, sendo frequentemente considerado uma generalização natural do Problema do Caixeiro Viajante (Travelling Salesman Problem – TSP) \cite{gavish1978travelling}. Enquanto o TSP busca determinar a rota mínima para um único agente visitar um conjunto de cidades, o VRP introduz múltiplos veículos e um conjunto mais amplo de restrições operacionais, tornando-o mais adequado para modelar situações reais. Entre essas restrições, destacam-se a capacidade limitada dos veículos, janelas de tempo para atendimento, múltiplos depósitos e custos associados às rotas, o que aumenta significativamente a complexidade do problema.
+
+O problema foi introduzido inicialmente no contexto de distribuição de combustível \cite{dantzig1959truck} e que vem acompanhando o desenvolvimento de métodos computacionais e técnicas de otimização. Houve avanços importantes na formulação matemática do problema especialmente com o uso de programação inteira. Posteriormente, devido a dificuldade computacional associada à sua natureza NP-Difícil \cite{hochba1997approximation}, a área passou a focar em propostas heurística e metaheurísticas capazes de encontrar soluções com boa qualidade em tempo de execução viável, dentre essas propostas podemos destacar: busca tabu \cite{glover1989tabu, glover1990tabu}, algoritmos genéticos \cite{boldberg1989genetic}, simulated annealing \cite{kirkpatrick1983optimization} e colônia de formigas \cite{dorigo2002ant}. 
+
+A relevância do VRP está diretamente relacionada ao seu amplo espectro de aplicações práticas. Problemas de roteamento são centrais em sistemas logísticos modernos, especialmente em contextos como distribuição urbana de mercadorias, coleta de resíduos, transporte escolar e planejamento de rotas para serviços de emergência \cite{golden2008vehicle,toth2002vehicle}. Além disso, com o avanço tecnológico, novas aplicações têm surgido, incluindo o roteamento de drones e veículos autônomos \cite{otto2018optimization}. Nessas aplicações, a eficiência das rotas impacta diretamente custos operacionais, consumo de combustível e emissões de gases poluentes \cite{lin2014survey}, tornando o VRP um problema de grande importância econômica e ambiental.
+
+Ao longo do tempo, diversas variantes do VRP foram propostas para capturar diferentes aspectos do mundo real. Entre as mais estudadas, destacam-se o Problema de Roteamento de Veículos Capacitado (Capacitated VRP – CVRP), no qual cada veículo possui uma capacidade limitada  \cite{solomon1987algorithms}; o VRP com Janelas de Tempo (VRPTW), que considera restrições temporais para atendimento \cite{christofides1979vehicle}; o VRP com Múltiplos Depósitos (MDVRP); e o VRP Estocástico, no qual parâmetros como demanda ou tempo de viagem são incertos \cite{renaud1996tabu, gendreau1996stochastic}. Essas variantes refletem a necessidade de modelos cada vez mais realistas e adaptados a cenários específicos.
+
+Mais recentemente, novas tendências têm emergido na literatura, impulsionadas pela disponibilidade de dados em tempo real e pelo avanço de tecnologias como Internet das Coisas (\textit{Internet of Things} - IoT) e sistemas de posicionamento global (GPS) \cite{ritzinger2016survey, boysen2018scheduling}. Nesse contexto, variantes dinâmicas do VRP têm ganhado destaque, permitindo a adaptação das rotas em tempo real. Além disso, há um crescente interesse em problemas de roteamento sustentáveis, como o VRP verde (Green VRP) \cite{lin2014survey} e o roteamento de veículos elétricos (Electric VRP – EVRP) \cite{schiffer2017electric}, que incorporam preocupações ambientais e restrições energéticas.
+
+Dessa forma, o VRP permanece como um campo de pesquisa ativo e desafiador, com inúmeras aplicações práticas e diversas oportunidades para avanços metodológicos. A complexidade inerente ao problema, aliada à crescente demanda por soluções eficientes e sustentáveis, reforça sua relevância tanto do ponto de vista teórico quanto aplicado \cite{braekers2016vehicle, moghdani2021green}.
 
 \subsection{Formulação Matemática do Problema do Caixeiro Viajante}
-\subsection{Métodos Clássicos de Resolução}
 
 \section{Introdução a Mecânica Quântica e Computação Quântica}
 \subsection{Mecânica Quântica}
@@ -22,8 +31,6 @@ Inicialmente será apresentado o conceito de Otimização, depois o formulação
 
 
 Para compreender minimamente a teoria quântica é necessário uma revisão de conceitos de Álgebra Linear. Para isso, \textcite{Almeida2020} nos apresenta uma metodologia satisfatória para introduzir esses conceitos e outros, como \textit{kets} e \textit{bras}, tão comuns na teoria quântica, também é importante conhecer os conceitos de incerteza, superposição e emaranhamento \cite{hewitt2000fundamentos, mahon2000mecanica}. 
-
-% \textcolor{red}{Colocar sobre superposição e coerência que se encontra no artigo de \cite{ricks_training_2003} existe marcações de leitura no caderno do batman tbm.}
 
 Iniciando com espaço vetorial no corpo dos reais um vetor de $n$ dimensões pode ser representado, de forma linear quanto matricial, por
 $$
@@ -361,13 +368,12 @@ onde $\alpha_{00}, \alpha_{01}, \alpha_{10}, \alpha_{11}\in\C$. A medição resu
     onde $\otimes$ é chamado de \textit{produto de Kronecker} e sua operação esta descrito na \autoref{def:kronecker}.
     \begin{defi}\label{def:kronecker}
        Seja $A$ uma matriz $m\times n$ e $B$ uma matriz $p\times q$, a operação $\otimes$ entre $A$ e $B$ é dada da seguinte forma:
-       $$
-           A\otimes B =\left[\begin{array}{ccc}
+       \begin{align*}
+           A\otimes B & =\left[\begin{array}{ccc}
                 a_{11}B & \cdots & a_{1n}B \\
                 \vdots & \ddots & \vdots \\
                 a_{m1}B & \cdots & a_{mn}B
-           \end{array}\right] = 
-       $$ $$
+           \end{array}\right] \\&
           = \left[\begin{array}{ccc}
                 a_{11}\left[\begin{array}{ccc}
                 b_{11} & \cdots & b_{1q} \\
@@ -388,8 +394,7 @@ onde $\alpha_{00}, \alpha_{01}, \alpha_{10}, \alpha_{11}\in\C$. A medição resu
                 \vdots & \ddots & \vdots \\
                 b_{p1} & \cdots & b_{pq}
            \end{array}\right] 
-           \end{array}\right] =
-       $$ $$
+           \end{array}\right] \\&
           = \left[\begin{array}{ccccccc}
                 a_{11}b_{11} & \cdots & a_{11}b_{1q} &  & a_{1n}b_{11} & \cdots & a_{1n}b_{1q} \\
                 \vdots & \ddots & \vdots & \cdots & \vdots & \ddots & \vdots \\
@@ -399,7 +404,7 @@ onde $\alpha_{00}, \alpha_{01}, \alpha_{10}, \alpha_{11}\in\C$. A medição resu
                 \vdots & \ddots & \vdots & \cdots & \vdots & \ddots & \vdots \\
                 a_{m1}b_{p1} & \cdots & a_{m1}b_{pq} &  & a_{mn}b_{11} & \cdots & a_{mn}b_{pq}\\
            \end{array}\right].
-       $$
+        \end{align*}
     \end{defi}
    \noindent observe que a matriz resultante tem dimensão $mp\times nq$. Assim com a \autoref{def:kronecker} teremos que, por exemplo, para $\ket{10}$ o vetor resultante é apresentado na \autoref{eq:produto_externo_ket_10}.
    \begin{equation}
@@ -467,14 +472,6 @@ Atualmente os computadores quânticos estão marcados por realizarem cálculos q
     \item \textbf{Computação sem Correção de Erro}: os computadores operam sem correção de erros quânticos completos, limitando a complexidade e precisão dos cálculos que podem realizar.
 \end{enumerate}
 
-\subsubsection{Algumas Tecnologias em Computação Quântica}
-
-Qubits fotônicos utilizam fótons para representar estados quânticos, codificando informação em propriedades como polarização, fase ou caminho. Sua principal vantagem reside na operação em temperatura ambiente e na capacidade de propagação a longas distâncias sem decoerência, tornando-os especialmente adequados para comunicações quânticas. A implementação computacional ocorre via circuitos ópticos integrados, com fontes de fótons entrelaçados, interferômetros reconfiguráveis e detectores de fóton único. Apesar do potencial para escalabilidade modular, o controle preciso do entrelaçamento fotônico permanece um desafio técnico significativo \cite{slussarenko2019photonic}. Entre os principais atores do setor, destaca-se a Xanadu (Toronto, Canadá), cujos processadores exploram variáveis contínuas por meio de estados de luz squeezed entrelaçados em arranjos interferométricos programáveis — culminando, em 2022, no lançamento do \textit{Borealis}, com 216 qubits disponíveis em nuvem pública \cite{xanadu2026borealis}. A startup francesa Quandela, oriunda do CNRS e da Universidade Paris-Saclay, desenvolveu fontes de fóton único de alta eficiência e, em novembro de 2022, inaugurou a primeira plataforma europeia de computação quântica fotônica em nuvem \cite{quandela2022european}.
-
-Qubits de íons aprisionados são obtidos pelo confinamento de íons em campos eletromagnéticos e pela manipulação de seus estados internos via lasers. Essa abordagem se distingue por longos tempos de coerência, alta fidelidade de portas lógicas e conectividade total entre qubits, ainda que as operações sejam comparativamente lentas \cite{bruzewicz_trapped-ion_2019}. A IonQ, empresa pioneira no setor, emprega íons de itérbio com arquitetura \textit{all-to-all}; seu sistema \textit{Aria} (2022) conta com 25 qubits físicos e 23–25 qubits algorítmicos (\#AQ) \cite{ionq2022}. Já a Quantinuum — resultante da fusão entre Honeywell Quantum Solutions e Cambridge Quantum — opera com foco em alta fidelidade, tendo disponibilizado comercialmente o \textit{System Model H1} \cite{quantinuum2022} desde 2020, posteriormente expandido de 10–12 para 20 qubits totalmente conectados.
-
-Qubits supercondutores do tipo transmon constituem atualmente a abordagem mais difundida em hardware quântico. Baseados em circuitos de Josephson operando a temperaturas criogênicas (\~15 mK) e controlados por pulsos de micro-ondas, combinam fabricação compatível com técnicas de microeletrônica e alta velocidade de operação \cite{koch2007charge}. A IBM, pioneira no acesso público a processadores quânticos reais desde 2016, disponibiliza via \textit{IBM Quantum Experience} dispositivos de 5 a mais de 100 qubits, tendo alcançado em 2021 o marco de 127 qubits com o chip \textit{Eagle} \cite{ibm2022quantumEagle}. O Google, por sua vez, embora não ofereça acesso público direto, registrou em 2019 um marco histórico com o chip \textit{Sycamore} (53 qubits), ao demonstrar vantagem quântica em uma tarefa de amostragem executada em 200 segundos \cite{arute_quantum_2019}.
-
 \subsubsection{Computação Quântica de Variáveis Contínuas}
 
 A QC fundamenta-se nas propriedades estatísticas das partículas 
@@ -482,15 +479,16 @@ subatômicas, classificadas em duas categorias fundamentais: férmions e bósons
 
 Em contrapartida, os bósons podem ocupar o mesmo estado quântico simultaneamente.  O exemplo mais proeminente são os fótons, que podem ser descritos matematicamente  como osciladores harmônicos quânticos possuidores de infinitos níveis de energia  \cite{braunstein2005quantum}. Essa propriedade permite a codificação de uma vasta quantidade de informação em um único sistema físico, possibilitando estratégias de correção de erros quânticos potencialmente mais eficientes e compactas — como os códigos Gottesman-Kitaev-Preskill (GKP) — do que a abordagem tradicional baseada em grandes redes de múltiplos qubits interligados \cite{gottesman2000encoding, weedbrook2012gaussian}.
 
-A Computação Quântica de Variáveis Contínuas (\textit{Continuous Variables Quantum Computing} - CVQC) processa informação não em bits binários, mas em estados que podem assumir qualquer valor dentro de um intervalo contínuo, como amplitudes e fases de campos eletromagnéticos. Analogamente, enquanto a QC convencional opera como um interruptor de luz --- transitando entre estados discretos com suas superposições ---, a CVQC opera como um dimmer, capaz de ajustar o brilho a qualquer nível dentro de uma faixa contínua.
+A Computação Quântica de Variáveis Contínuas (\textit{Continuous Variables Quantum Computing} - CVQC) processa informação não em bits binários, mas em estados que podem assumir qualquer valor dentro de um intervalo contínuo \cite{braunstein2005quantum}, como amplitudes e fases de campos eletromagnéticos. Analogamente, enquanto a QC convencional opera como um interruptor de luz --- transitando entre estados discretos com suas superposições ---, a CVQC opera como um dimmer \cite{lloyd1999quantum}, capaz de ajustar o brilho a qualquer nível dentro de uma faixa contínua.
 
 O estado de um sistema de CVQC é descrito no espaço de fase por dois observáveis conjugados denominados quadraturas: a posição ($\hat{x}$), associada à amplitude do campo, e o momento ($\hat{p}$), associado à sua fase. Sujeitas ao Princípio da Incerteza de Heisenberg, essas variáveis não podem ser determinadas simultaneamente com precisão arbitrária \cite{serafini_quantum_2023, weedbrook2012gaussian}. Nesse paradigma, a unidade fundamental de informação não é o \textit{qubit}, mas o \textit{qumode} (modo quântico), que habita um espaço de Hilbert de dimensão infinita \cite{lloyd1999quantum}. A CVQC bosônica figura entre as abordagens mais promissoras para a computação tolerante a falhas: 
 em vez de controlar individualmente milhares de átomos ou íons, pulsos de luz são ``moldados'' em estados quânticos complexos --- como os estados de gato de Schrödinger ou os códigos GKP --- intrinsecamente mais robustos contra ruídos e decoerência ambiental \cite{gottesman2000encoding, bourassa2021blueprint}.
 
 As equações apresentadas nas \autoref{sec:gaussians_gate} e \autoref{sec:non_gaussians_gate} foram obtidas de \textcite{de_lima_redes_nodate}, \textcite{serafini_quantum_2023} e \textcite{killoran_strawberry_2019}
 
-\subsubsection{Portas Gaussianas} \label{sec:gaussians_gate}
+\paragraph{Portas Gaussianas} \label{sec:gaussians_gate}
 
+{\color{red}Lembrar de colocar as imagens de cada porta no aplicado no ``gaussiano''}
 As portas gaussianas são unitárias de primeira e segunda ordem que preservam o caráter gaussiano dos estados quânticos.
 
 \paragraph*{Deslocamento ($D(\alpha)$)}
@@ -523,7 +521,7 @@ Combina dois modos bosônicos, criando interferência e emaranhamento entre feix
     BS_{i,j}(\mu,\phi)=\exp\!\left[\mu\left(e^{i\phi}\hat{a}_i\hat{a}_j^\dagger-e^{-i\phi}\hat{a}_i^\dagger\hat{a}_j\right)\right]
 \end{equation}
 
-\subsubsection{Portas não Gaussianas} \label{sec:non_gaussians_gate}
+\paragraph{Portas não Gaussianas} \label{sec:non_gaussians_gate}
 
 As portas gaussianas, por si só, não são suficientes para a universalidade computacional. Para realizar qualquer cálculo quântico, é necessário introduzir não-linearidades de ordem superior (terceira ordem ou maior).
 
@@ -540,6 +538,14 @@ Introduz uma não-linearidade óptica na qual o índice de refração do meio de
     \label{eq:kerr_continuous_variables}
     H=\chi\left(\hat{a}^\dagger\hat{a}\right)^2
 \end{equation}
+
+\subsubsection{Algumas Tecnologias em Computação Quântica}
+
+Qubits fotônicos utilizam fótons para representar estados quânticos, codificando informação em propriedades como polarização, fase ou caminho. Sua principal vantagem reside na operação em temperatura ambiente e na capacidade de propagação a longas distâncias sem decoerência, tornando-os especialmente adequados para comunicações quânticas. A implementação computacional ocorre via circuitos ópticos integrados, com fontes de fótons entrelaçados, interferômetros reconfiguráveis e detectores de fóton único. Apesar do potencial para escalabilidade modular, o controle preciso do entrelaçamento fotônico permanece um desafio técnico significativo \cite{slussarenko2019photonic}. Entre os principais atores do setor, destaca-se a Xanadu (Toronto, Canadá), cujos processadores exploram variáveis contínuas por meio de estados de luz squeezed entrelaçados em arranjos interferométricos programáveis — culminando, em 2022, no lançamento do \textit{Borealis}, com 216 qubits disponíveis em nuvem pública \cite{xanadu2026borealis}. A startup francesa Quandela, oriunda do CNRS e da Universidade Paris-Saclay, desenvolveu fontes de fóton único de alta eficiência e, em novembro de 2022, inaugurou a primeira plataforma europeia de computação quântica fotônica em nuvem \cite{quandela2022european}.
+
+Qubits de íons aprisionados são obtidos pelo confinamento de íons em campos eletromagnéticos e pela manipulação de seus estados internos via lasers. Essa abordagem se distingue por longos tempos de coerência, alta fidelidade de portas lógicas e conectividade total entre qubits, ainda que as operações sejam comparativamente lentas \cite{bruzewicz_trapped-ion_2019}. A IonQ, empresa pioneira no setor, emprega íons de itérbio com arquitetura \textit{all-to-all}; seu sistema \textit{Aria} (2022) conta com 25 qubits físicos e 23–25 qubits algorítmicos (\#AQ) \cite{ionq2022}. Já a Quantinuum — resultante da fusão entre Honeywell Quantum Solutions e Cambridge Quantum — opera com foco em alta fidelidade, tendo disponibilizado comercialmente o \textit{System Model H1} \cite{quantinuum2022} desde 2020, posteriormente expandido de 10–12 para 20 qubits totalmente conectados.
+
+Qubits supercondutores do tipo transmon constituem atualmente a abordagem mais difundida em hardware quântico. Baseados em circuitos de Josephson operando a temperaturas criogênicas (\textasciitilde 15 mK) e controlados por pulsos de micro-ondas, combinam fabricação compatível com técnicas de microeletrônica e alta velocidade de operação \cite{koch2007charge}. A IBM, pioneira no acesso público a processadores quânticos reais desde 2016, disponibiliza via \textit{IBM Quantum Experience} dispositivos de 5 a mais de 100 qubits, tendo alcançado em 2021 o marco de 127 qubits com o chip \textit{Eagle} \cite{ibm2022quantumEagle}. O Google, por sua vez, embora não ofereça acesso público direto, registrou em 2019 um marco histórico com o chip \textit{Sycamore} (53 qubits), ao demonstrar vantagem quântica em uma tarefa de amostragem executada em 200 segundos \cite{arute_quantum_2019}.
 
 \section{Abordagens Quânticas para Otimização}
 
