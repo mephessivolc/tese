@@ -581,31 +581,36 @@ As portas lógicas em Variáveis Contínuas (CV) são classificadas em dois grup
 
 \paragraph*{\textbf{Deslocamento}:}
 O operador de deslocamento coerente é uma das operações fundamentais da óptica quântica e pode ser expresso na forma em \autoref{eq:displacement_continuous_variables}:
-% \begin{wrapfigure}{r}{0.35\textwidth}
-%     \centering
-%     \includegraphics[width=0.35\textwidth]{figures/D.png}
-%     \caption{Deslocamento coerente representado no espaço de fase.}
-%     \label{fig:Displacimente}
-% \end{wrapfigure}
+
 \begin{equation}
     \label{eq:displacement_continuous_variables}
     D(\alpha)=\exp\!\left(\alpha\hat{a}^\dagger-\alpha^*\hat{a}\right)
 \end{equation}
 onde $\alpha = re^{i\theta}$, com magnitude $r \geq 0$ e fase $\theta \in [0, 2\pi)$, e o símbolo ``$*$'' denota o complexo conjugado. No contexto da computação quântica com variáveis contínuas (CQCV), essa operação desempenha papel central tanto na codificação de informação quanto como sub-rotina de algoritmos quânticos. Quando aplicada ao estado de vácuo $\ket{0}$, provoca um deslocamento rígido no espaço de fase, transformando-o no estado coerente $\ket{\alpha}$, isto é, $\hat{D}(\alpha)\ket{0} = \ket{\alpha}$.
 
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.25\linewidth]{figs/em_construcao.png}
+  \caption{Deslocamento coerente representado no espaço de fase.}
+  \label{fig:Displacimente}
+\end{figure}
+
 \paragraph*{\textbf{Compressão}:}
-% \begin{wrapfigure}{r}{0.35\textwidth}
-%     \centering
-%     \includegraphics[width=0.3\textwidth]{figures/squeez.png}
-%     \caption{Estado de vácuo comprimido representado no espaço de fase.}
-%     \label{fig:squeze}
-% \end{wrapfigure}
+
 O operador de compressão (\textit{squeezing}) atua reduzindo a flutuação quântica de uma das quadraturas do campo — amplitude ou fase — às expensas do aumento da flutuação na quadratura conjugada, em conformidade com o princípio da incerteza de Heisenberg. Sua expressão está representada em \autoref{eq:squeezing_continuous_variables}.
+
 \begin{equation}
     \label{eq:squeezing_continuous_variables}
     S(r,\phi) = \exp\!\left[\frac{r}{2}\left(e^{-i\phi}\hat{a}^2-e^{i\phi}\hat{a}^{\dagger 2}\right)\right]
 \end{equation}
 onde $z = re^{i\phi}$, com magnitude $r \geq 0$ e fase $\phi \in [0, 2\pi)$. No âmbito da CQCV, a aplicação dessa operação ao estado de vácuo gera o denominado estado de vácuo comprimido, $\hat{S}(z)\ket{0} = \ket{z}$, de ampla utilidade tanto em protocolos de codificação quanto em etapas intermediárias de algoritmos quânticos. O efeito geométrico da compressão no espaço de fase é ilustrado na \autoref{fig:squeze}, onde se observa o alongamento da quadratura conjugada à comprimida.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.25\linewidth]{figs/em_construcao.png}
+  \caption{Estado de vácuo comprimido representado no espaço de fase.}
+  \label{fig:squeze}
+\end{figure}
 
 \paragraph*{\textbf{Divisor de Feixe}:}
 As operações descritas anteriormente atuam sobre um único modo quântico. Para sistemas de múltiplos modos, torna-se necessária a introdução do divisor de feixe, uma operação que acopla dois modos distintos e é definida por:
@@ -617,18 +622,22 @@ As operações descritas anteriormente atuam sobre um único modo quântico. Par
 onde o parâmetro $\mu$ determina os coeficientes de transmissão e reflexão, e $\phi$ representa a fase relativa entre os feixes transmitido e refletido. Os índices $i$ e $j$ identificam os modos sobre os quais os operadores de criação e aniquilação atuam.
 
 \paragraph*{\textbf{Rotação}:}
-% \begin{wrapfigure}{l}{0.4\textwidth}
-%     \centering
-%     \includegraphics[width=0.3\textwidth]{figures/R.png}
-%     \caption{Rotação no espaço de fase.}
-%     \label{fig:rotacao}
-% \end{wrapfigure}
+
 A porta de rotação constitui a única operação em CV que possui um análogo direto no formalismo de qubits, sendo amplamente empregada em diversas plataformas de computação quântica. Sua representação é dada pela \autoref{eq:rotation_continuous_variables}:
+
 \begin{equation}
     \label{eq:rotation_continuous_variables}
     R(\phi)=\exp\!\left[i\frac{\phi}{2}\left(\hat{x}^2+\hat{p}^2-\mathbb{I}\right)\right]
 \end{equation}
+
 Quando aplicada ao estado de vácuo, essa operação não produz efeito, uma vez que o vácuo é invariante por rotações no espaço de fase. Por outro lado, ao atuar sobre um estado coerente, provoca uma rotação de ângulo $\theta$ em torno da origem do espaço de fase, conforme ilustrado na \autoref{fig:rotacao}.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.25\linewidth]{figs/em_construcao.png}
+  \caption{Rotação no espaço de fase.}
+  \label{fig:rotacao}
+\end{figure}
 
 \paragraph*{\textbf{Portas não gaussianas}:}
 As portas não gaussianas, também denominadas portas não lineares, introduzem não linearidades indispensáveis para a universalidade da computação quântica com variáveis contínuas. As mais relevantes são a porta de fase cúbica, caracterizada pelo parâmetro $\gamma$ e apresentada na \autoref{eq:cubic_continuous_variables}, e a porta de Kerr, caracterizada pelo parâmetro $\kappa$ e apresentada na \autoref{eq:kerr_continuous_variables}, definidas por:
@@ -637,11 +646,13 @@ As portas não gaussianas, também denominadas portas não lineares, introduzem 
     \label{eq:cubic_continuous_variables}
     V(\gamma)=\exp\!\left(\frac{i\gamma\hat{x}^3}{3}\right)
 \end{equation}
-teste
+
 \begin{equation}
     \label{eq:kerr_continuous_variables}
     \hat{K}(\kappa) = \exp{\left(i\kappa\left(\hat{a}^{\dagger}\hat{a}\right)^2\right)}.
 \end{equation}Embora ambas desempenhem papéis equivalentes nos algoritmos quânticos discutidos nas seções seguintes, diferem nos mecanismos físicos subjacentes às não linearidades geradas. Em particular, a porta de fase cúbica apresenta uma limitação prática significativa: sua aplicação induz a geração de múltiplos fótons mesmo em regimes de curta evolução temporal, o que eleva consideravelmente o número médio de fótons do estado resultante. Isso acarreta tanto alto custo computacional nas simulações quanto sérias dificuldades experimentais. Estratégias alternativas para a introdução de não linearidade no sistema incluem o uso de pós-seleção de medição e medições repetidas em modos auxiliares \cite{Bangar:22,PhysRevA.91.032321}.
+
+{\color{red} Inserir uma imagem das operações Cubica e Kerr}
 
 \subsubsection{Algumas Tecnologias em Computação Quântica}
 
