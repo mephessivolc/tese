@@ -3,15 +3,19 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        USERNAME: clovis-caface
+        USER_UID: 1000
+        USER_GID: 1000
     container_name: monorepo-dev
     init: true
     stdin_open: true
     tty: true
     working_dir: /workspace
     command: sleep infinity
-    user: vscode
+    user: clovis-caface
     environment:
-      HOME: /home/vscode
+      HOME: /home/clovis-caface
       PYTHONUNBUFFERED: "1"
       JUPYTER_ENABLE_LAB: "yes"
       TEXMFVAR: /texlive-cache/texmf-var

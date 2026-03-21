@@ -33,22 +33,26 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt requirements.txt
-
 RUN pip install -r requirements.txt
 
-RUN useradd -m -s /bin/bash -u 1000 vscode \
-    && echo "vscode ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/vscode \
-    && chmod 0440 /etc/sudoers.d/vscode \
+ARG USERNAME=clovis-caface
+ARG USER_UID=1000
+ARG USER_GID=1000
+
+RUN groupadd --gid ${USER_GID} ${USERNAME} \
+    && useradd -m -s /bin/bash -u ${USER_UID} -g ${USER_GID} ${USERNAME} \
+    && echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME} \
+    && chmod 0440 /etc/sudoers.d/${USERNAME} \
     && mkdir -p /workspace \
                /texlive-cache/texmf-var \
                /texlive-cache/texmf-cache \
-    && chown -R vscode:vscode /workspace /texlive-cache /home/vscode
+    && chown -R ${USERNAME}:${USERNAME} /workspace /texlive-cache /home/${USERNAME}
 
-ENV HOME=/home/vscode
+ENV HOME=/home/clovis-caface
 ENV TEXMFVAR=/texlive-cache/texmf-var
 ENV TEXMFCACHE=/texlive-cache/texmf-cache
 
 WORKDIR /workspace
-USER vscode
+USER clovis-caface
 
 CMD ["/bin/bash"]
