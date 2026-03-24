@@ -10,6 +10,7 @@ __pycache__/
 .venv/
 .devcontainer
 .vscode
+PPC_Matemática/
 
 ############################
 # LaTeX – arquivos auxiliares
