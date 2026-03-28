@@ -30,7 +30,7 @@
 \usepackage{indentfirst}			% Indenta o primeiro parágrafo de cada seção.
 \usepackage{color}				% Controle das cores
 \usepackage{graphicx}	% Inclusão de gráficos
-\usepackage{epsfig,subfig}		% Inclusão de figuras
+% \usepackage{epsfig,subfig}		% Inclusão de figuras
 \usepackage{microtype} 			% Melhorias de justificação
 % ---------------------
 		
@@ -79,10 +79,8 @@
 % ---------------------
 \usepackage{physics}
 
-\usepackage{wrapfig}
-\graphicspath{ {./figs/} }
-
-\newcommand{\modificar}{{\color{red}$<$Modificar$>$}}
+\usepackage[labelfont=bf,textfont=normalfont]{caption}
+\usepackage[labelfont=bf,textfont=normalfont]{subcaption}
 
 \newtheorem{defi}{Definição}[chapter]
 \newcommand{\defiautorefname}{Definição}

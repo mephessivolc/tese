@@ -1,0 +1,157 @@
+\documentclass{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[brazil]{babel}
+\usepackage{amsmath, amssymb}
+\usepackage{physics}
+
+\title{Computação Quântica de Variáveis Contínuas aplicada à Otimização Combinatória}
+\author{Clovis Aparecido Caface Filho}
+\institute{UFABC}
+\date{2026}
+
+\begin{document}
+
+\frame{\titlepage}
+
+%------------------------------------------------
+
+\begin{frame}{Introdução}
+\begin{itemize}
+    \item Computação clássica baseada no modelo de Turing
+    \item Problemas combinatórios possuem alta complexidade
+    \item Aplicações:
+    \begin{itemize}
+        \item Logística
+        \item Transporte
+        \item Planejamento de rotas
+    \end{itemize}
+    \item Problemas como VRP são NP-difíceis
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}{Problema de Roteamento de Veículos (VRP)}
+\begin{itemize}
+    \item Generalização do Problema do Caixeiro Viajante (TSP)
+    \item Múltiplos veículos e restrições:
+    \begin{itemize}
+        \item Capacidade
+        \item Tempo
+        \item Custos
+    \end{itemize}
+    \item Amplamente utilizado em logística e transporte
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}{Formulação Matemática do VRP}
+\begin{itemize}
+    \item Grafo completo $G=(V,E)$
+    \item Função objetivo:
+\end{itemize}
+
+$$
+\min \sum_{i \in V} \sum_{j \in V, j \neq i} c_{ij} x_{ij}
+$$
+
+\begin{itemize}
+    \item $x_{ij}$ indica se a aresta é utilizada
+    \item Restrições garantem:
+    \begin{itemize}
+        \item Visita única
+        \item Conservação de fluxo
+        \item Capacidade
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}{Computação Quântica}
+\begin{itemize}
+    \item Informação representada por qubits
+    \item Superposição:
+\end{itemize}
+
+$$
+\ket{\psi} = \alpha \ket{0} + \beta \ket{1}
+$$
+
+\begin{itemize}
+    \item Propriedades:
+    \begin{itemize}
+        \item Superposição
+        \item Emaranhamento
+    \end{itemize}
+    \item Possível vantagem sobre métodos clássicos
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}{Variáveis Contínuas (CVQC)}
+\begin{itemize}
+    \item Informação codificada em variáveis contínuas
+    \item Baseada em sistemas bosônicos (fótons)
+    \item Estados definidos por:
+\end{itemize}
+
+\[
+\ket{\psi} = \int \psi(x)\ket{x} \text{d}x
+\]
+
+\begin{itemize}
+    \item Espaço de Hilbert infinito
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}{Operadores em CVQC}
+\begin{itemize}
+    \item Deslocamento:
+\end{itemize}
+
+\[
+D(\alpha) = \exp(\alpha \hat{a}^\dagger - \alpha^* \hat{a})
+\]
+
+\begin{itemize}
+    \item Compressão (squeezing)
+    \item Rotação
+    \item Portas não gaussianas (Kerr, cúbica)
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}{Objetivos}
+\begin{itemize}
+    \item Desenvolver modelo quântico para otimização combinatória
+    \item Aplicação em VRP
+    \item Objetivos específicos:
+    \begin{itemize}
+        \item Estudo do TSP
+        \item Formulação matemática compatível com CVQC
+        \item Mapeamento em Hamiltonianos
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}{Conclusão}
+\begin{itemize}
+    \item VRP é um problema relevante e complexo
+    \item Computação quântica oferece novas abordagens
+    \item CVQC é promissora para problemas contínuos
+    \item Integração entre matemática e física é essencial
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+
+\end{document}
