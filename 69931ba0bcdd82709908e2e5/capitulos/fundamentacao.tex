@@ -4,7 +4,7 @@
 
 A fundamentação teórica a seguir foi elaborada com o objetivo de apresentar os desenvolvimentos conceituais atuais e históricos nesta área, para que seja um ponto de partida para aqueles que estejam iniciando neste estudo. Ao fazê-lo, visamos não apenas ampliar o escopo daqueles capazes de contribuir para esta área, mas também fornecer uma base sólida sobre a qual futuras pesquisas brasileiras possam ser construídas. Esta abordagem é fundamental não só para o enriquecimento do campo, mas também para a construção de uma comunidade acadêmica mais inclusiva e diversificada.
 
-No contexto deste estudo, é fundamental distinguir entre abordagens clássicas e quânticas, assim, utilizaremos o termo ``clássico'' para se referir a sistemas baseados em máquinas tradicionais de {\red transistores} e seus algoritmos correspondentes, que operam dentro dos paradigmas convencionais da computação. Por outro lado, o termo ``quântico'' será empregado para descrever máquinas e algoritmos que exploram as propriedades da mecânica quântica, tais como superposição e emaranhamento.
+No contexto deste estudo, é fundamental distinguir entre abordagens clássicas e quânticas, assim, utilizaremos o termo ``clássico'' para se referir a sistemas baseados em máquinas tradicionais de transistores e seus algoritmos correspondentes, que operam dentro dos paradigmas convencionais da computação. Por outro lado, o termo ``quântico'' será empregado para descrever máquinas e algoritmos que exploram as propriedades da mecânica quântica, tais como superposição e emaranhamento.
 
 Inicialmente será apresentado o conceito de Otimização, depois o formulação matemática do VRP com alguns métodos clássicos de resolução, e por fim, iniciaremos os conceitos introdutórios para a Mecânica Quântica e Computação Quântica.
 
@@ -48,7 +48,7 @@ As restrições do modelo asseguram a viabilidade das rotas. A obrigatoriedade d
 \sum_{\substack{i \in V \\ i \neq j}} x_{ij} = 1, & \quad \forall\, j \in V \setminus \{0\}. \label{eq:only_city}
 \end{eqnarray}
 
-\noindent {\red a \autoref{eq:only_client} garante que, para cada cliente \(i\), exatamente uma aresta de saída seja selecionada, ou seja, cada cliente é atendido por meio de uma única rota que parte dele. Já a \autoref{eq:only_city} assegura que, para cada cliente \(j\), exatamente uma aresta de entrada seja escolhida, garantindo que cada cliente seja visitado uma única vez por alguma rota. Em conjunto, essas restrições impõem a conservação de fluxo nos nós correspondentes aos clientes, evitando tanto visitas múltiplas quanto a omissão de clientes no conjunto de rotas. }
+\noindent a \autoref{eq:only_client} garante que, para cada cliente \(i\), exatamente uma aresta de saída seja selecionada, ou seja, cada cliente é atendido por meio de uma única rota que parte dele. Já a \autoref{eq:only_city} assegura que, para cada cliente \(j\), exatamente uma aresta de entrada seja escolhida, garantindo que cada cliente seja visitado uma única vez por alguma rota. Em conjunto, essas restrições impõem a conservação de fluxo nos nós correspondentes aos clientes, evitando tanto visitas múltiplas quanto a omissão de clientes no conjunto de rotas. 
 
 A conservação de fluxo no depósito, que controla o número de veículos $K$ utilizados, é garantida por:
 
@@ -68,7 +68,7 @@ Uma abordagem clássica consiste no uso de restrições explícitas de eliminaç
 \quad \forall S \subset V,\; 2 \leq |S| \leq |V|-1,
 \end{equation}
 
-{\red\noindent em que \(S\) representa qualquer subconjunto próprio de vértices que não inclui todos os nós do problema, podendo ser interpretado como um possível grupo de clientes que formaria uma rota isolada do restante da rede. A restrição impõe que o número de arestas selecionadas dentro desse subconjunto seja estritamente menor que o necessário para formar um ciclo fechado, impedindo assim a ocorrência de sub-rotas desconectadas do depósito. Alternativamente, podem ser empregadas formulações baseadas em fluxo, nas quais variáveis adicionais garantem que todo cliente esteja conectado ao depósito por meio de um fluxo viável ao longo das arestas selecionadas.}
+\noindent em que \(S\) representa qualquer subconjunto próprio de vértices que não inclui todos os nós do problema, podendo ser interpretado como um possível grupo de clientes que formaria uma rota isolada do restante da rede. A restrição impõe que o número de arestas selecionadas dentro desse subconjunto seja estritamente menor que o necessário para formar um ciclo fechado, impedindo assim a ocorrência de sub-rotas desconectadas do depósito. Alternativamente, podem ser empregadas formulações baseadas em fluxo, nas quais variáveis adicionais garantem que todo cliente esteja conectado ao depósito por meio de um fluxo viável ao longo das arestas selecionadas.
 
 Outra estratégia amplamente utilizada consiste no uso de variáveis auxiliares, como na formulação de Miller--Tucker--Zemlin (MTZ) \cite{miller1960integer}, na qual $u_i$ representa a carga acumulada no momento da chegada ao nó $i$. Nesse contexto, a variável binária $x_{ij}$ indica se a aresta $(i,j)$ é percorrida, enquanto $d_j$ corresponde à demanda associada ao nó $j$. As restrições são dadas por:
 
@@ -92,7 +92,7 @@ O TSP pode ser interpretado como um caso particular do VRP no qual há um único
 \sum_{\substack{i \in V \\ i \neq j}} x_{ij} = 1, & \quad \forall\, j \in V. \label{eq:one_in}
 \end{eqnarray}
 
-{\red A \autoref{eq:one_out} assegura que, após visitar cada vértice, o percurso segue para exatamente um vértice subsequente, enquanto a \autoref{eq:one_in} garante que cada vértice seja visitado exatamente uma vez. Em conjunto, essas restrições impõem a estrutura de grau unitário, prevenindo duplicações e omissões de visitas.}
+A \autoref{eq:one_out} assegura que, após visitar cada vértice, o percurso segue para exatamente um vértice subsequente, enquanto a \autoref{eq:one_in} garante que cada vértice seja visitado exatamente uma vez. Em conjunto, essas restrições impõem a estrutura de grau unitário, prevenindo duplicações e omissões de visitas.
 
 Assim como no VRP, à eliminação de sub-rotas no TSP pode ser tratada por diferentes formulações, incluindo restrições de eliminação de sub-rotas, modelos baseados em fluxo ou o uso de variáveis auxiliares. Em síntese, a transição do VRP para o TSP consiste na remoção das restrições de capacidade e na fixação de um único veículo, reduzindo o problema à determinação de um ciclo hamiltoniano de custo mínimo. Essa relação estrutural evidencia que o TSP constitui um caso particular do VRP, compartilhando a mesma base de modelagem matemática, embora operando sobre um conjunto reduzido de restrições.
 
@@ -109,8 +109,8 @@ Dessa forma, em vez de introduzir separadamente os elementos de Álgebra Linear,
 
 Para compreender minimamente a teoria quântica é necessário uma revisão de conceitos de Álgebra Linear. Para isso, \textcite{Almeida2020} nos apresenta uma metodologia satisfatória para introduzir esses conceitos e outros, como \textit{kets} e \textit{bras}, tão comuns na teoria quântica, também é importante conhecer os conceitos de incerteza, superposição e emaranhamento \cite{hewitt2000fundamentos, mahon2000mecanica}. 
 
-{\red Iniciando com espaço vetorial no corpo dos reais, um vetor de nn
-n dimensões pode ser representado, tanto de forma linear quanto matricial, por}
+Iniciando com espaço vetorial no corpo dos reais, um vetor de nn
+n dimensões pode ser representado, tanto de forma linear quanto matricial, por
 $$
     \vec{v} = v_1\vec{b_1}+v_2\vec{b_2}+\ldots+v_n\vec{b_n}=\left[\vec{b_1}, \vec{b_2},\cdots, \vec{b_n}\right]\left[\begin{array}{c}
          v_1\\
@@ -181,7 +181,7 @@ $ é um espaço vetorial com $n$ entradas (dimensão $n$) e $\V[m]$ é um espaç
 
 Quando a transformação linear $T:\V\rightarrow\V$ é dito que $T$ é um \textit{operador linear}. Uma transformação linear, por conveniência, pode ser representada por uma matriz, o que possibilita a utilização de conceitos de operações entre matrizes e relacioná-las às transformações lineares \cite{dettman1986introduction}.
 
-Na computação clássica, a unidade básica de memória é chamada de \textit{bit}, que pode assumir valores entre 0 e 1. Um bit é o potencial elétrico nulo (ou baixo) representado pelo 0 e o potencial elétrico alto representado pelo 1. Na computação quântica a unidade básica de memória é o \textit{qubit} que é representado por um vetor bidimensional de norma 1 {\red e os estados\footnote{O termo estado pode sempre ser identificado como sendo um vetor de norma 1 e pode ser visto como o ``valor'' do qubit antes da medição} de um qubit correspondentes aos valores 0 e 1 são $\ket{0}$ e $\ket{1}$. A possibilidade de combinação linear desses estados, posteriormente denominada superposição}, é representada matematicamente por
+Na computação clássica, a unidade básica de memória é chamada de \textit{bit}, que pode assumir valores entre 0 e 1. Um bit é o potencial elétrico nulo (ou baixo) representado pelo 0 e o potencial elétrico alto representado pelo 1. Na computação quântica a unidade básica de memória é o \textit{qubit} que é representado por um vetor bidimensional de norma 1 e os estados\footnote{O termo estado pode sempre ser identificado como sendo um vetor de norma 1 e pode ser visto como o ``valor'' do qubit antes da medição} de um qubit correspondentes aos valores 0 e 1 são $\ket{0}$ e $\ket{1}$. A possibilidade de combinação linear desses estados, posteriormente denominada superposição, é representada matematicamente por
     \begin{equation}
         \label{eq:estados_superposicao}
         \ket{\phi}=\alpha_0\ket{0}+\alpha_1\ket{1}
@@ -191,7 +191,7 @@ Na computação clássica, a unidade básica de memória é chamada de \textit{b
         |\alpha_0|^2+|\alpha_1|^2=1
     $$
     
-{\red Os números complexos $\alpha_0$ e $\alpha_1$ são chamados de \textit{amplitudes} do estado $\ket{\phi}$. Diferentemente dos sistemas computacionais tradicionais, nos quais um bit assume apenas um único valor discreto por vez, um sistema quântico pode estar em superposição dos estados $\ket{0}$ e $\ket{1}$. Matematicamente, essa superposição é descrita como uma combinação linear desses estados básicos, conforme apresentado na \autoref{eq:estados_superposicao} \cite[pág. 13]{nielsen_quantum_2002}.}
+Os números complexos $\alpha_0$ e $\alpha_1$ são chamados de \textit{amplitudes} do estado $\ket{\phi}$. Diferentemente dos sistemas computacionais tradicionais, nos quais um bit assume apenas um único valor discreto por vez, um sistema quântico pode estar em superposição dos estados $\ket{0}$ e $\ket{1}$. Matematicamente, essa superposição é descrita como uma combinação linear desses estados básicos, conforme apresentado na \autoref{eq:estados_superposicao} \cite[pág. 13]{nielsen_quantum_2002}.
     
 É possível decompor unicamente o amplitude complexa de $\alpha$ como um produto $e^{i\theta}|\alpha|$, onde $|\alpha|$ é um numero real não-negativo correspondente a magnitude $\alpha$, e $e^{i\theta}=\frac{\alpha}{|\alpha|}$ tem norma 1, o valor $\theta$ é conhecido como \textit{fase} e podemos nos referir a $e^{i\theta}$ como um \textit{fator de fase} \cite{Rieffel2000}.
 
@@ -233,7 +233,7 @@ onde $0\leq\theta\leq\pi$ e $0\leq\varphi\leq2\pi$, o que mostra que existe uma 
 \fonte{Própria, 2024}
 \end{figure}
 
-{\red Portas lógicas quânticas são transformações lineares \(T:\mathbb{C}^n \rightarrow \mathbb{C}^n\), representadas por operadores lineares unitários que atuam sobre o espaço de estados do sistema. No caso particular de um único qubit, cujo espaço de estados é \(\mathbb{C}^2\), essas transformações são descritas por matrizes unitárias \(2\times 2\). Algumas dessas portas são fixas, como as portas de Pauli e Hadamard, enquanto outras podem depender de parâmetros contínuos, o que permite representar rotações e transformações ajustáveis no espaço de estados. Essas portas parametrizáveis são particularmente relevantes na construção de circuitos variacionais e na modelagem de rotações na esfera de Bloch. Como exemplo de porta fixa, tem-se a porta Hadamard: }
+Portas lógicas quânticas são transformações lineares \(T:\mathbb{C}^n \rightarrow \mathbb{C}^n\), representadas por operadores lineares unitários que atuam sobre o espaço de estados do sistema. No caso particular de um único qubit, cujo espaço de estados é \(\mathbb{C}^2\), essas transformações são descritas por matrizes unitárias \(2\times 2\). Algumas dessas portas são fixas, como as portas de Pauli e Hadamard, enquanto outras podem depender de parâmetros contínuos, o que permite representar rotações e transformações ajustáveis no espaço de estados. Essas portas parametrizáveis são particularmente relevantes na construção de circuitos variacionais e na modelagem de rotações na esfera de Bloch. Como exemplo de porta fixa, tem-se a porta Hadamard: 
 
 $$
     \label{eq:hadamard}
@@ -367,7 +367,7 @@ que pode ser denotado por $\ket{-}$, isto é,
     \end{minipage}
     \end{enumerate}
 
-{\red No contexto de circuitos quânticos mais gerais, também se destacam as portas parametrizáveis, nas quais a transformação unitária depende de parâmetros contínuos. No caso de um qubit, destacam-se as rotações em torno dos eixos da esfera de Bloch, dadas por
+ No contexto de circuitos quânticos mais gerais, também se destacam as portas parametrizáveis, nas quais a transformação unitária depende de parâmetros contínuos. No caso de um qubit, destacam-se as rotações em torno dos eixos da esfera de Bloch, dadas por
 
 \begin{align}
     R_x(\theta)= &
@@ -387,9 +387,9 @@ que pode ser denotado por $\ket{-}$, isto é,
     \end{array} \right]
 \end{align}
 
-\noindent com \(\theta\in\mathbb{R}\). Essas portas são fundamentais em algoritmos variacionais e em procedimentos de otimização, pois permitem ajustar continuamente a transformação aplicada ao qubit.}
+\noindent com \(\theta\in\mathbb{R}\). Essas portas são fundamentais em algoritmos variacionais e em procedimentos de otimização, pois permitem ajustar continuamente a transformação aplicada ao qubit.
 
-{\red Além das portas unitárias de um único qubit, são fundamentais as portas que atuam sobre sistemas compostos por dois qubits, representadas por matrizes unitárias $4\times4$. Entre elas, destaca-se a porta \textit{Controlled-NOT} (CNOT), que realiza uma inversão no qubit alvo condicionada ao estado do qubit de controle. Na base computacional ordenada por $\{\ket{00},\ket{01},\ket{10},\ket{11}\}$, sua representação matricial é dada por
+Além das portas unitárias de um único qubit, são fundamentais as portas que atuam sobre sistemas compostos por dois qubits, representadas por matrizes unitárias $4\times4$. Entre elas, destaca-se a porta \textit{Controlled-NOT} (CNOT), que realiza uma inversão no qubit alvo condicionada ao estado do qubit de controle. Na base computacional ordenada por $\{\ket{00},\ket{01},\ket{10},\ket{11}\}$, sua representação matricial é dada por
 $$
     \mathrm{CNOT}= \left[
     \begin{array}{cccc}
@@ -411,14 +411,14 @@ $$
     \end{array} \right]
 $$
 
-\noindent de modo que $\mathrm{SWAP}\ket{ab}=\ket{ba}$, para $a,b\in\{0,1\}$. Essa operação é particularmente útil em arquiteturas nas quais apenas qubits vizinhos podem interagir.}
+\noindent de modo que $\mathrm{SWAP}\ket{ab}=\ket{ba}$, para $a,b\in\{0,1\}$. Essa operação é particularmente útil em arquiteturas nas quais apenas qubits vizinhos podem interagir.
 
 No formalismo matricial que descreve essas operações, a matriz transposta conjugada desempenha papel central, sendo denotada pelo símbolo ``$\dagger$''. Os números complexos podem ser reescritos utilizando a fórmula de Euler:
     $$
         e^{\pm\frac{i\pi}{4}} = \dfrac{1\pm i}{\sqrt{2}}
     $$
     
-Interessante notar que as portas quânticas são {\red unitárias}, como por exemplo para qualquer $\ket{\phi}$ teremos:
+Interessante notar que as portas quânticas são unitárias, como por exemplo para qualquer $\ket{\phi}$ teremos:
     $$
         H\otimes H\ket{\phi} = \ket{\phi}.
     $$
@@ -464,12 +464,12 @@ Como dito no início do capítulo, quaisquer portas lógicas quânticas são mat
     
 Sendo assim, a $UU=I_n$, onde $U$ é a matriz de transformação equivalente a uma porta quântica e $I_n$ é a matriz identidade de ordem $n$.
 
-Como visto anteriormente 1 qubit é representado por um vetor bidimensional de norma 1 e os seus estados correspondem aos valores $\ket{0}$ ou $\ket{1}$, e \textcite{Amaral2011MecanicaFormacao} diz que dois qubits podem assumir quatro valores entre 00, 01, 10 e 11 que correspondem a um sistema quântico de 4 níveis e seus estados serão respectivamente $\ket{00}, \ket{01}, \ket{10}$ e $\ket{11}$, assim qualquer {\red estado de dois qubits} $\ket{\psi}$ é uma superposição escrita da forma:
+Como visto anteriormente 1 qubit é representado por um vetor bidimensional de norma 1 e os seus estados correspondem aos valores $\ket{0}$ ou $\ket{1}$, e \textcite{Amaral2011MecanicaFormacao} diz que dois qubits podem assumir quatro valores entre 00, 01, 10 e 11 que correspondem a um sistema quântico de 4 níveis e seus estados serão respectivamente $\ket{00}, \ket{01}, \ket{10}$ e $\ket{11}$, assim qualquer estado de dois qubits $\ket{\psi}$ é uma superposição escrita da forma:
     $$
         \ket{\psi}=\alpha_{00}\ket{00}+\alpha_{01}\ket{01}\alpha_{10}\ket{10}\alpha_{11}\ket{11},
     $$
 
-\noindent onde $\alpha_{00}, \alpha_{01}, \alpha_{10}, \alpha_{11}\in\C$. {\red Nesse contexto, a medida corresponde ao processo de observação do sistema quântico, no qual o estado em superposição colapsa para um dos estados da base computacional. Esse processo é intrinsecamente probabilístico: cada possível resultado ocorre com uma probabilidade determinada pelo quadrado do módulo da amplitude associada ao respectivo estado. Dessa forma, embora não seja possível prever deterministicamente o resultado de uma medição mesmo conhecendo} $\ket{\psi}$ , é possível determinar as probabilidades de cada resultado \cite{griffiths2018introduction, Marquezino2019}, que serão
+\noindent onde $\alpha_{00}, \alpha_{01}, \alpha_{10}, \alpha_{11}\in\C$. Nesse contexto, a medida corresponde ao processo de observação do sistema quântico, no qual o estado em superposição colapsa para um dos estados da base computacional. Esse processo é intrinsecamente probabilístico: cada possível resultado ocorre com uma probabilidade determinada pelo quadrado do módulo da amplitude associada ao respectivo estado. Dessa forma, embora não seja possível prever deterministicamente o resultado de uma medição mesmo conhecendo $\ket{\psi}$ , é possível determinar as probabilidades de cada resultado \cite{griffiths2018introduction, Marquezino2019}, que serão
 
     $$
         \begin{array}{lcl}
@@ -480,7 +480,7 @@ Como visto anteriormente 1 qubit é representado por um vetor bidimensional de n
         \end{array} 
     $$
 
-Com isso, apenas uma única medição não possibilita determinar $\ket{\psi}$, sendo necessário preparar o estado $\ket{\psi}$ repetidamente e realizar múltiplas medições. {\red Ainda assim, o estado não pode ser obtido exatamente a partir de uma única realização do experimento, mas pode ser reconstruído de forma estatística por meio de técnicas conhecidas como tomografia de estado quântico \cite{james2001measurement}, nas quais diferentes medições são realizadas sobre várias cópias idênticas do sistema}.
+Com isso, apenas uma única medição não possibilita determinar $\ket{\psi}$, sendo necessário preparar o estado $\ket{\psi}$ repetidamente e realizar múltiplas medições. Ainda assim, o estado não pode ser obtido exatamente a partir de uma única realização do experimento, mas pode ser reconstruído de forma estatística por meio de técnicas conhecidas como tomografia de estado quântico \cite{james2001measurement}, nas quais diferentes medições são realizadas sobre várias cópias idênticas do sistema.
 
 Na referência \textcite{Marquezino2019} encontramos que, para determinar o estado $\ket{\psi}$ de 2 qubits, se $\ket{\psi}$ for um dos estados da base computacional, então é possível identificar diretamente o estado de cada qubit. Por exemplo, considerando o estado $\ket{\psi}=\ket{10}$, pode-se fatorá-lo da seguinte forma:
 
@@ -567,7 +567,7 @@ teremos que $\alpha\gamma = \frac{1}{\sqrt{2}}, \alpha\delta=0, \beta\gamma=0$ e
 
 Um estado emaranhado é definido por um sistema composto que não pode ser fatorado pelo produto de Kronecker, isto é, enquanto que em um circuito booleano um estado está definido entre 0 e 1 em cada junção de porta, nem sempre é verdade para um estado quântico \cite{Marquezino2019, lipton_quantum_2014}.
 
-{\red A porta CNOT desempenha papel central na geração de estados emaranhados. Por exemplo, ao aplicar inicialmente uma porta Hadamard ao primeiro qubit do estado $\ket{00}$, obtém-se
+A porta CNOT desempenha papel central na geração de estados emaranhados. Por exemplo, ao aplicar inicialmente uma porta Hadamard ao primeiro qubit do estado $\ket{00}$, obtém-se
 $$
 \frac{\ket{00}+\ket{10}}{\sqrt{2}}
 $$
@@ -577,13 +577,13 @@ $$
 =
 \frac{\ket{00}+\ket{11}}{\sqrt{2}}
 $$
-que corresponde a um dos estados de Bell. Esse exemplo evidencia como a combinação entre superposição e operações controladas permite criar correlações quânticas que não podem ser descritas por produtos tensoriais simples.}
+que corresponde a um dos estados de Bell. Esse exemplo evidencia como a combinação entre superposição e operações controladas permite criar correlações quânticas que não podem ser descritas por produtos tensoriais simples.
 
 \subsection{Computação Quântica}
 
 A computação é o processo sistemático de manipular e processar informações utilizando recursos computacionais, tais como dispositivos eletrônicos e algoritmos, com o objetivo de realizar tarefas específicas, resolver problemas ou tomar decisões. Isso envolve não apenas a manipulação de dados, mas também a execução de instruções lógicas e matemáticas, a fim de transformar esses dados em resultados úteis e significativos para os usuários.
 
-{\red Não se espera que um Computador Quântico (\textit{Quantum Computer} - QComp), de forma geral, seja eficientemente simulável por métodos computacionais tradicionais. Embora certos conjuntos de portas quânticas permitam simulação eficiente, a obtenção de vantagem computacional está associada à utilização de circuitos que não admitam tal simulação eficiente, exigindo codificações difíceis de reproduzir nesses modelos }\cite{havlicekSupervisedLearningQuantumenhanced2019}. \textcite{Schuld_Petruccione_2018} afirma que existem diferentes maneiras de codificar uma informação clássica em um sistema quântico tal como codificação de base, codificação de amplitude e outras formas. A codificação de base é a forma mais direta de cálculo, que associa uma base de estado de um sistema de $n$-qubits em uma cadeia de bits clássicos, por exemplo o estado $\ket{3}=\ket{0011}$ é associado a cadeia clássica $(0011)$. Codificação de amplitude é menos comum na computação quântica, que associa um vetor real com uma amplitude quântica, a normalização clássica de vetor de forma que $x\in\C^{2^n}, \sum_k|x_k|^2=1$ pode representar a  amplitude de um estado quântico $\ket{\psi}=\displaystyle\sum_{j=1}^{2^n}x_j\ket{j}$. \textcite{houssein_machine_2022} apresenta uma divisão de categorias sobre a integração de algoritmos clássicos e quânticos como mostrado na \autoref{fig:category_quantum_classical_algorithm}.
+Não se espera que um Computador Quântico (\textit{Quantum Computer} - QComp), de forma geral, seja eficientemente simulável por métodos computacionais tradicionais. Embora certos conjuntos de portas quânticas permitam simulação eficiente, a obtenção de vantagem computacional está associada à utilização de circuitos que não admitam tal simulação eficiente, exigindo codificações difíceis de reproduzir nesses modelos \cite{havlicekSupervisedLearningQuantumenhanced2019}. \textcite{Schuld_Petruccione_2018} afirma que existem diferentes maneiras de codificar uma informação clássica em um sistema quântico tal como codificação de base, codificação de amplitude e outras formas. A codificação de base é a forma mais direta de cálculo, que associa uma base de estado de um sistema de $n$-qubits em uma cadeia de bits clássicos, por exemplo o estado $\ket{3}=\ket{0011}$ é associado a cadeia clássica $(0011)$. Codificação de amplitude é menos comum na computação quântica, que associa um vetor real com uma amplitude quântica, a normalização clássica de vetor de forma que $x\in\C^{2^n}, \sum_k|x_k|^2=1$ pode representar a  amplitude de um estado quântico $\ket{\psi}=\displaystyle\sum_{j=1}^{2^n}x_j\ket{j}$. \textcite{houssein_machine_2022} apresenta uma divisão de categorias sobre a integração de algoritmos clássicos e quânticos como mostrado na \autoref{fig:category_quantum_classical_algorithm}.
 
 
 \begin{figure}[htb]
@@ -594,8 +594,7 @@ A computação é o processo sistemático de manipular e processar informações
     \label{fig:category_quantum_classical_algorithm}
 \end{figure}
 
-{\red Um dos aspectos centrais para compreender as limitações desses dispositivos é o conceito de coerência quântica, que corresponde à capacidade do sistema de preservar as relações de fase entre os estados em superposição ao longo do tempo. Essa propriedade é essencial para que interferência quântica, emaranhamento e operações unitárias ocorram de forma controlada durante a execução dos algoritmos \cite{nielsen_quantum_2002, streltsov2017colloquium}. Entretanto, devido à inevitável interação com o ambiente externo, os sistemas físicos sofrem perda gradual dessa coerência, fenômeno conhecido como decoerência \cite{zurek2003decoherence}. A decoerência introduz ruídos, reduz a fidelidade das operações e compromete diretamente a profundidade dos circuitos executáveis, constituindo uma das principais limitações dos dispositivos da era NISQ.}
-
+Um dos aspectos centrais para compreender as limitações desses dispositivos é o conceito de coerência quântica, que corresponde à capacidade do sistema de preservar as relações de fase entre os estados em superposição ao longo do tempo. Essa propriedade é essencial para que interferência quântica, emaranhamento e operações unitárias ocorram de forma controlada durante a execução dos algoritmos \cite{nielsen_quantum_2002, streltsov2017colloquium}. Entretanto, devido à inevitável interação com o ambiente externo, os sistemas físicos sofrem perda gradual dessa coerência, fenômeno conhecido como decoerência \cite{zurek2003decoherence}. A decoerência introduz ruídos, reduz a fidelidade das operações e compromete diretamente a profundidade dos circuitos executáveis, constituindo uma das principais limitações dos dispositivos da era NISQ.
 
 Atualmente os computadores quânticos estão marcados por realizarem cálculos quânticos de maneira limitada e sujeita a ruídos, assim como outras restrições. Denominado era Quântica de Escala Intermediária e Ruidosa (\textit{Noisy Intermediate-Scale Quantum} - NISQ) como sendo o período de transição entre os estágios iniciais experimentais da computação quântica e a futura era tolerante a falhas e que podem realizar operações complexas e precisas em escala muito maior 
 \cite{Lau_Lim_Shrotriya_Kwek_2022}, são dificuldades a serem superadas com os avanços na área. Como consequência dessas limitações físicas, as principais características dos computadores quânticos da era NISQ são:
@@ -614,7 +613,7 @@ subatômicas, classificadas em duas categorias fundamentais: férmions e bósons
 
 Em contrapartida, os bósons podem ocupar o mesmo estado quântico simultaneamente.  O exemplo mais proeminente são os fótons, que podem ser descritos matematicamente  como osciladores harmônicos quânticos possuidores de infinitos níveis de energia  \cite{braunstein2005quantum}. Essa propriedade permite a codificação de uma vasta quantidade de informação em um único sistema físico, possibilitando estratégias de correção de erros quânticos potencialmente mais eficientes e compactas — como os códigos Gottesman-Kitaev-Preskill (GKP) — do que a abordagem tradicional baseada em grandes redes de múltiplos qubits interligados \cite{gottesman2000encoding, weedbrook2012gaussian}.
 
-A Computação Quântica de Variáveis Contínuas (\textit{Continuous Variables Quantum Computing} - CVQC) processa informação não em bits binários, mas em estados que podem assumir qualquer valor dentro de um intervalo contínuo \cite{braunstein2005quantum}, como amplitudes e fases de campos eletromagnéticos. Analogamente, enquanto a QC convencional opera como um interruptor de luz, transitando entre estados discretos com suas superposições, {\red a CVQC opera de maneira análoga a um \textit{dimmer} \cite{lloyd1999quantum}, capaz de ajustar o brilho a qualquer nível dentro de uma faixa contínua. Mais do que isso, o sistema pode ser preparado em superposição de diferentes níveis dessa faixa, permitindo que múltiplos valores contínuos coexistam quânticamente até o processo de medição.}
+A Computação Quântica de Variáveis Contínuas (\textit{Continuous Variables Quantum Computing} - CVQC) processa informação não em bits binários, mas em estados que podem assumir qualquer valor dentro de um intervalo contínuo \cite{braunstein2005quantum}, como amplitudes e fases de campos eletromagnéticos. Analogamente, enquanto a QC convencional opera como um interruptor de luz, transitando entre estados discretos com suas superposições, a CVQC opera de maneira análoga a um \textit{dimmer} \cite{lloyd1999quantum}, capaz de ajustar o brilho a qualquer nível dentro de uma faixa contínua. Mais do que isso, o sistema pode ser preparado em superposição de diferentes níveis dessa faixa, permitindo que múltiplos valores contínuos coexistam quânticamente até o processo de medição.
 
 Do ponto de vista matemático, essa distinção reflete-se no espaço de estados utilizado. Enquanto a computação quântica convencional descreve qubits por vetores em um espaço de Hilbert finito de dimensão dois, tipicamente associado a $\C^2$ \cite{nielsen_quantum_2002}, na CVQC os estados quânticos pertencem a um espaço de Hilbert de dimensão infinita, frequentemente associado a modos bosônicos de campos eletromagnéticos \cite{braunstein2005quantum}. Nessa representação, observáveis como posição e momento, ou equivalentes em termos de quadraturas do campo, assumem valores contínuos \cite{lloyd1999quantum,o2007optical}.
 
@@ -623,7 +622,7 @@ Na prática, entretanto, para viabilizar a simulação numérica e a implementa�
 O estado de um sistema de CVQC é descrito no espaço de fase por dois observáveis conjugados denominados quadraturas: a posição ($\hat{x}$), associada à amplitude do campo, e o momento ($\hat{p}$), associado à sua fase. Sujeitas ao Princípio da Incerteza de Heisenberg, essas variáveis não podem ser determinadas simultaneamente com precisão arbitrária \cite{serafini_quantum_2023, weedbrook2012gaussian}. Nesse paradigma, a unidade fundamental de informação não é o \textit{qubit}, mas o \textit{qumode} (modo quântico), que habita um espaço de Hilbert de dimensão infinita \cite{lloyd1999quantum}. A CVQC bosônica figura entre as abordagens mais promissoras para a computação tolerante a falhas: 
 em vez de controlar individualmente milhares de átomos ou íons, pulsos de luz são ``moldados'' em estados quânticos complexos --- como os estados de gato de Schrödinger ou os códigos GKP --- intrinsecamente mais robustos contra ruídos e decoerência ambiental \cite{gottesman2000encoding, bourassa2021blueprint}.
 
-{\red Uma representação particularmente importante para os estados de um qumode é dada pela base de Fock, também denominada base de número, formada pelos autoestados ortonormais do operador número \(\hat{n}=\hat{a}^{\dagger}\hat{a}\). Nessa base, cada estado \(\ket{n}\), com \(n\in\mathbb{N}\), representa um número bem definido de excitações do modo bosônico, como fótons em um campo eletromagnético quantizado. O estado fundamental \(\ket{0}\), denominado estado de vácuo, satisfaz \(\hat{a}\ket{0}=0\), enquanto os demais estados podem ser gerados pela aplicação sucessiva do operador de criação, segundo a relação \(\ket{n}=\frac{(\hat{a}^{\dagger})^n}{\sqrt{n!}}\ket{0}\). Essa base fornece uma descrição discreta extremamente conveniente para a análise de estados gaussianos, estados coerentes e operações quânticas em variáveis contínuas \cite{serafini_quantum_2023}.}
+Uma representação particularmente importante para os estados de um qumode é dada pela base de Fock, também denominada base de número, formada pelos autoestados ortonormais do operador número \(\hat{n}=\hat{a}^{\dagger}\hat{a}\). Nessa base, cada estado \(\ket{n}\), com \(n\in\mathbb{N}\), representa um número bem definido de excitações do modo bosônico, como fótons em um campo eletromagnético quantizado. O estado fundamental \(\ket{0}\), denominado estado de vácuo, satisfaz \(\hat{a}\ket{0}=0\), enquanto os demais estados podem ser gerados pela aplicação sucessiva do operador de criação, segundo a relação \(\ket{n}=\frac{(\hat{a}^{\dagger})^n}{\sqrt{n!}}\ket{0}\). Essa base fornece uma descrição discreta extremamente conveniente para a análise de estados gaussianos, estados coerentes e operações quânticas em variáveis contínuas \cite{serafini_quantum_2023}.
 
 O campo eletromagnético quantizado é definido por:
 \begin{equation}
