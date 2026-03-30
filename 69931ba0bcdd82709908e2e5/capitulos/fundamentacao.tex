@@ -233,7 +233,7 @@ onde $0\leq\theta\leq\pi$ e $0\leq\varphi\leq2\pi$, o que mostra que existe uma 
 \fonte{Própria, 2024}
 \end{figure}
 
-{\red Portas lógicas quânticas são transformações lineares \(T:\mathbb{C}^n \rightarrow \mathbb{C}^n\), representadas por operadores lineares unitários que atuam sobre o espaço de estados do sistema. No caso particular de um único qubit, cujo espaço de estados é \(\mathbb{C}^2\), essas transformações são descritas por matrizes unitárias \(2 \times 2\). Como exemplo, tem-se a porta Hadamard:}
+{\red Portas lógicas quânticas são transformações lineares \(T:\mathbb{C}^n \rightarrow \mathbb{C}^n\), representadas por operadores lineares unitários que atuam sobre o espaço de estados do sistema. No caso particular de um único qubit, cujo espaço de estados é \(\mathbb{C}^2\), essas transformações são descritas por matrizes unitárias \(2\times 2\). Algumas dessas portas são fixas, como as portas de Pauli e Hadamard, enquanto outras podem depender de parâmetros contínuos, o que permite representar rotações e transformações ajustáveis no espaço de estados. Essas portas parametrizáveis são particularmente relevantes na construção de circuitos variacionais e na modelagem de rotações na esfera de Bloch. Como exemplo de porta fixa, tem-se a porta Hadamard: }
 
 $$
     \label{eq:hadamard}
@@ -366,8 +366,54 @@ que pode ser denotado por $\ket{-}$, isto é,
         $$
     \end{minipage}
     \end{enumerate}
-    
-A matriz transposta conjugada é denotada pelo símbolo ``$\dagger$''. Podemos reescrever os números complexos, utilizando a fórmula de Euler:
+
+{\red No contexto de circuitos quânticos mais gerais, também se destacam as portas parametrizáveis, nas quais a transformação unitária depende de parâmetros contínuos. No caso de um qubit, destacam-se as rotações em torno dos eixos da esfera de Bloch, dadas por
+
+\begin{align}
+    R_x(\theta)= &
+    \left[\begin{array}{cc}
+        \cos(\theta/2) & -i\sen(\theta/2)\\
+        -i\sen(\theta/2) & \cos(\theta/2)
+    \end{array}\right], \\
+    R_y(\theta)= &
+    \left[\begin{array}{cc}
+        \cos(\theta/2) & -\sen(\theta/2)\\
+        \sen(\theta/2) & \cos(\theta/2)
+    \end{array}\right], \\
+    R_z(\theta)= &
+    \left[\begin{array}{cc}
+        e^{-i\theta/2} & 0\\
+        0 & e^{i\theta/2}
+    \end{array} \right]
+\end{align}
+
+\noindent com \(\theta\in\mathbb{R}\). Essas portas são fundamentais em algoritmos variacionais e em procedimentos de otimização, pois permitem ajustar continuamente a transformação aplicada ao qubit.}
+
+{\red Além das portas unitárias de um único qubit, são fundamentais as portas que atuam sobre sistemas compostos por dois qubits, representadas por matrizes unitárias $4\times4$. Entre elas, destaca-se a porta \textit{Controlled-NOT} (CNOT), que realiza uma inversão no qubit alvo condicionada ao estado do qubit de controle. Na base computacional ordenada por $\{\ket{00},\ket{01},\ket{10},\ket{11}\}$, sua representação matricial é dada por
+$$
+    \mathrm{CNOT}= \left[
+    \begin{array}{cccc}
+        1 & 0 & 0 & 0\\
+        0 & 1 & 0 & 0\\
+        0 & 0 & 0 & 1\\
+        0 & 0 & 1 & 0
+    \end{array} \right]
+$$
+
+Essa porta preserva os estados em que o qubit de controle está em $\ket{0}$ e aplica a porta $X$ ao segundo qubit quando o primeiro está em $\ket{1}$. Outra porta importante é a porta SWAP, responsável por permutar os estados de dois qubits, trocando suas posições no sistema composto. Sua representação matricial é
+$$
+    \mathrm{SWAP}= \left[
+    \begin{array}{cccc}
+        1 & 0 & 0 & 0\\
+        0 & 0 & 1 & 0\\
+        0 & 1 & 0 & 0\\
+        0 & 0 & 0 & 1
+    \end{array} \right]
+$$
+
+\noindent de modo que $\mathrm{SWAP}\ket{ab}=\ket{ba}$, para $a,b\in\{0,1\}$. Essa operação é particularmente útil em arquiteturas nas quais apenas qubits vizinhos podem interagir.}
+
+No formalismo matricial que descreve essas operações, a matriz transposta conjugada desempenha papel central, sendo denotada pelo símbolo ``$\dagger$''. Os números complexos podem ser reescritos utilizando a fórmula de Euler:
     $$
         e^{\pm\frac{i\pi}{4}} = \dfrac{1\pm i}{\sqrt{2}}
     $$
@@ -519,9 +565,20 @@ $$
 $$
 teremos que $\alpha\gamma = \frac{1}{\sqrt{2}}, \alpha\delta=0, \beta\gamma=0$ e $\beta\delta=\frac{1}{\sqrt{2}}$ e esse sistema não admite nenhuma solução, sendo assim o estado $\ket{\psi}$ de 2 qubits não pode ser descrito como um produto de Kronecker de 1 qubit. 
 
-% Para \cite{Marquezino2019} um estado emaranhado é definido por um sistema composto que não pode ser fatorado pelo produto de Kronecker, isto é, enquanto que em um circuito booleano um estado está definido entre 0 e 1 em cada junção de porta, nem sempre é verdade para um estado quântico \cite{lipton_quantum_2014}.
 Um estado emaranhado é definido por um sistema composto que não pode ser fatorado pelo produto de Kronecker, isto é, enquanto que em um circuito booleano um estado está definido entre 0 e 1 em cada junção de porta, nem sempre é verdade para um estado quântico \cite{Marquezino2019, lipton_quantum_2014}.
-   
+
+{\red A porta CNOT desempenha papel central na geração de estados emaranhados. Por exemplo, ao aplicar inicialmente uma porta Hadamard ao primeiro qubit do estado $\ket{00}$, obtém-se
+$$
+\frac{\ket{00}+\ket{10}}{\sqrt{2}}
+$$
+Em seguida, ao aplicar a porta CNOT, o sistema evolui para
+$$
+\mathrm{CNOT}\left(\frac{\ket{00}+\ket{10}}{\sqrt{2}}\right)
+=
+\frac{\ket{00}+\ket{11}}{\sqrt{2}}
+$$
+que corresponde a um dos estados de Bell. Esse exemplo evidencia como a combinação entre superposição e operações controladas permite criar correlações quânticas que não podem ser descritas por produtos tensoriais simples.}
+
 \subsection{Computação Quântica}
 
 A computação é o processo sistemático de manipular e processar informações utilizando recursos computacionais, tais como dispositivos eletrônicos e algoritmos, com o objetivo de realizar tarefas específicas, resolver problemas ou tomar decisões. Isso envolve não apenas a manipulação de dados, mas também a execução de instruções lógicas e matemáticas, a fim de transformar esses dados em resultados úteis e significativos para os usuários.
@@ -537,8 +594,12 @@ A computação é o processo sistemático de manipular e processar informações
     \label{fig:category_quantum_classical_algorithm}
 \end{figure}
 
-Atualmente os computadores quânticos estão marcados por realizarem cálculos quânticos de maneira limitada e sujeita a ruídos, assim como outras restrições. Denominado era Quântica de Escala Intermediária e Ruidosa \textit{Noisy Intermediate-Scale Quantum} - NISQ) como sendo o período de transição entre os estágios iniciais experimentais da computação quântica e a futura era tolerante a falhas e que podem realizar operações complexas e precisas em escala muito maior 
-\cite{Lau_Lim_Shrotriya_Kwek_2022}, são dificuldades a serem superadas com os avanços na área. As principais características dos computadores quântico da era NISQ são:
+{\red Um dos aspectos centrais para compreender as limitações desses dispositivos é o conceito de coerência quântica, que corresponde à capacidade do sistema de preservar as relações de fase entre os estados em superposição ao longo do tempo. Essa propriedade é essencial para que interferência quântica, emaranhamento e operações unitárias ocorram de forma controlada durante a execução dos algoritmos \cite{nielsen_quantum_2002, streltsov2017colloquium}. Entretanto, devido à inevitável interação com o ambiente externo, os sistemas físicos sofrem perda gradual dessa coerência, fenômeno conhecido como decoerência \cite{zurek2003decoherence}. A decoerência introduz ruídos, reduz a fidelidade das operações e compromete diretamente a profundidade dos circuitos executáveis, constituindo uma das principais limitações dos dispositivos da era NISQ.}
+
+
+Atualmente os computadores quânticos estão marcados por realizarem cálculos quânticos de maneira limitada e sujeita a ruídos, assim como outras restrições. Denominado era Quântica de Escala Intermediária e Ruidosa (\textit{Noisy Intermediate-Scale Quantum} - NISQ) como sendo o período de transição entre os estágios iniciais experimentais da computação quântica e a futura era tolerante a falhas e que podem realizar operações complexas e precisas em escala muito maior 
+\cite{Lau_Lim_Shrotriya_Kwek_2022}, são dificuldades a serem superadas com os avanços na área. Como consequência dessas limitações físicas, as principais características dos computadores quânticos da era NISQ são:
+
 \begin{enumerate}
     \item \textbf{Capacidade Limitada}: não são capazes de cálculos em grande escala ou altamente complexos;
     \item \textbf{Erros e Ruídos}: apesar de serem capazes de realizar cálculos, estes podem ser afetados por erros introduzidos pela interação do sistema quântico com o ambiente externo o que pode levar à decoerência e a outros tipos de erro;
@@ -553,7 +614,7 @@ subatômicas, classificadas em duas categorias fundamentais: férmions e bósons
 
 Em contrapartida, os bósons podem ocupar o mesmo estado quântico simultaneamente.  O exemplo mais proeminente são os fótons, que podem ser descritos matematicamente  como osciladores harmônicos quânticos possuidores de infinitos níveis de energia  \cite{braunstein2005quantum}. Essa propriedade permite a codificação de uma vasta quantidade de informação em um único sistema físico, possibilitando estratégias de correção de erros quânticos potencialmente mais eficientes e compactas — como os códigos Gottesman-Kitaev-Preskill (GKP) — do que a abordagem tradicional baseada em grandes redes de múltiplos qubits interligados \cite{gottesman2000encoding, weedbrook2012gaussian}.
 
-A Computação Quântica de Variáveis Contínuas (\textit{Continuous Variables Quantum Computing} - CVQC) processa informação não em bits binários, mas em estados que podem assumir qualquer valor dentro de um intervalo contínuo \cite{braunstein2005quantum}, como amplitudes e fases de campos eletromagnéticos. Analogamente, enquanto a QC convencional opera como um interruptor de luz --- transitando entre estados discretos com suas superposições ---, a CVQC opera como um dimmer \cite{lloyd1999quantum}, capaz de ajustar o brilho a qualquer nível dentro de uma faixa contínua.
+A Computação Quântica de Variáveis Contínuas (\textit{Continuous Variables Quantum Computing} - CVQC) processa informação não em bits binários, mas em estados que podem assumir qualquer valor dentro de um intervalo contínuo \cite{braunstein2005quantum}, como amplitudes e fases de campos eletromagnéticos. Analogamente, enquanto a QC convencional opera como um interruptor de luz, transitando entre estados discretos com suas superposições, {\red a CVQC opera de maneira análoga a um \textit{dimmer} \cite{lloyd1999quantum}, capaz de ajustar o brilho a qualquer nível dentro de uma faixa contínua. Mais do que isso, o sistema pode ser preparado em superposição de diferentes níveis dessa faixa, permitindo que múltiplos valores contínuos coexistam quânticamente até o processo de medição.}
 
 Do ponto de vista matemático, essa distinção reflete-se no espaço de estados utilizado. Enquanto a computação quântica convencional descreve qubits por vetores em um espaço de Hilbert finito de dimensão dois, tipicamente associado a $\C^2$ \cite{nielsen_quantum_2002}, na CVQC os estados quânticos pertencem a um espaço de Hilbert de dimensão infinita, frequentemente associado a modos bosônicos de campos eletromagnéticos \cite{braunstein2005quantum}. Nessa representação, observáveis como posição e momento, ou equivalentes em termos de quadraturas do campo, assumem valores contínuos \cite{lloyd1999quantum,o2007optical}.
 
@@ -562,11 +623,13 @@ Na prática, entretanto, para viabilizar a simulação numérica e a implementa�
 O estado de um sistema de CVQC é descrito no espaço de fase por dois observáveis conjugados denominados quadraturas: a posição ($\hat{x}$), associada à amplitude do campo, e o momento ($\hat{p}$), associado à sua fase. Sujeitas ao Princípio da Incerteza de Heisenberg, essas variáveis não podem ser determinadas simultaneamente com precisão arbitrária \cite{serafini_quantum_2023, weedbrook2012gaussian}. Nesse paradigma, a unidade fundamental de informação não é o \textit{qubit}, mas o \textit{qumode} (modo quântico), que habita um espaço de Hilbert de dimensão infinita \cite{lloyd1999quantum}. A CVQC bosônica figura entre as abordagens mais promissoras para a computação tolerante a falhas: 
 em vez de controlar individualmente milhares de átomos ou íons, pulsos de luz são ``moldados'' em estados quânticos complexos --- como os estados de gato de Schrödinger ou os códigos GKP --- intrinsecamente mais robustos contra ruídos e decoerência ambiental \cite{gottesman2000encoding, bourassa2021blueprint}.
 
+{\red Uma representação particularmente importante para os estados de um qumode é dada pela base de Fock, também denominada base de número, formada pelos autoestados ortonormais do operador número \(\hat{n}=\hat{a}^{\dagger}\hat{a}\). Nessa base, cada estado \(\ket{n}\), com \(n\in\mathbb{N}\), representa um número bem definido de excitações do modo bosônico, como fótons em um campo eletromagnético quantizado. O estado fundamental \(\ket{0}\), denominado estado de vácuo, satisfaz \(\hat{a}\ket{0}=0\), enquanto os demais estados podem ser gerados pela aplicação sucessiva do operador de criação, segundo a relação \(\ket{n}=\frac{(\hat{a}^{\dagger})^n}{\sqrt{n!}}\ket{0}\). Essa base fornece uma descrição discreta extremamente conveniente para a análise de estados gaussianos, estados coerentes e operações quânticas em variáveis contínuas \cite{serafini_quantum_2023}.}
+
 O campo eletromagnético quantizado é definido por:
 \begin{equation}
     \hat{E}(r,t) = \sum \left( E_k(r,t)\hat{a}_k + E_k^{*}(r,t)\hat{a}_k^{\dagger} \right),
 \end{equation}
-onde $E_k(r,t)$ denota a função de onda complexa do campo clássico, representando os modos do campo, enquanto $\hat{a}_k$ e $\hat{a}^{\dagger}_k$ correspondem, respectivamente, aos operadores bosônicos de aniquilação e criação na base de Fock. Os autoestados do operador de aniquilação são denominados estados coerentes, satisfazendo a relação $\hat{a}\ket{\alpha} = \alpha \ket{\alpha}$, em que $\alpha$ é a amplitude complexa do estado coerente. A partir dessa estrutura, introduzem-se os operadores de quadratura: o operador de posição (amplitude do campo) $\hat{x} = (\hat{a}^{\dagger} + \hat{a})/\sqrt{2}$ e o operador de momento (fase do campo) $\hat{p} = (\hat{a}^{\dagger} - \hat{a})/\sqrt{2}$, de modo que as relações inversas são dadas por $\hat{a} = (\hat{x} + i\hat{p})/\sqrt{2}$ e $\hat{a}^{\dagger} = (\hat{x} - i\hat{p})/\sqrt{2}$, com a relação de comutação canônica $[\hat{x},\hat{p}] = i$\footnote{Adota-se, por convenção, $\hbar = 1$.}. Esses operadores fornecem uma representação conveniente para a análise de sistemas quânticos no espaço de fase.
+onde $E_k(r,t)$ denota a função de onda complexa do campo clássico, representando os modos do campo, enquanto $\hat{a}_k$ e $\hat{a}^{\dagger}_k$ correspondem, respectivamente, aos operadores bosônicos de aniquilação e criação na base de Fock. Os autoestados do operador de aniquilação são denominados estados coerentes, satisfazendo a relação $\hat{a}\ket{\alpha} = \alpha \ket{\alpha}$, em que $\alpha$ é a amplitude complexa do estado coerente. A partir dessa estrutura, introduzem-se os operadores de quadratura: o operador de posição (amplitude do campo) $\hat{x} = (\hat{a}^{\dagger} + \hat{a})/\sqrt{2}$ e o operador de momento (fase do campo) $\hat{p} = i(\hat{a}^{\dagger} - \hat{a})/\sqrt{2}$, de modo que as relações inversas são dadas por $\hat{a} = (\hat{x} + i\hat{p})/\sqrt{2}$ e $\hat{a}^{\dagger} = (\hat{x} - i\hat{p})/\sqrt{2}$, com a relação de comutação canônica $[\hat{x},\hat{p}] = i$\footnote{Adota-se, por convenção, $\hbar = 1$.}. Esses operadores fornecem uma representação conveniente para a análise de sistemas quânticos no espaço de fase.
 
 A distinção fundamental entre sistemas de qubits e sistemas de variáveis contínuas manifesta-se na estrutura dos estados quânticos. Enquanto um qubit é descrito por uma superposição de dois estados discretos,
 \begin{equation*}
@@ -588,7 +651,7 @@ O operador de deslocamento coerente é uma das operações fundamentais da ópti
     \label{eq:displacement_continuous_variables}
     D(\alpha)=\exp\!\left(\alpha\hat{a}^\dagger-\alpha^*\hat{a}\right)
 \end{equation}
-onde $\alpha = re^{i\theta}$, com magnitude $r \geq 0$ e fase $\theta \in [0, 2\pi)$, e o símbolo ``$*$'' denota o complexo conjugado. No contexto da computação quântica com variáveis contínuas (CQCV), essa operação desempenha papel central tanto na codificação de informação quanto como sub-rotina de algoritmos quânticos. Quando aplicada ao estado de vácuo $\ket{0}$, provoca um deslocamento rígido no espaço de fase, transformando-o no estado coerente $\ket{\alpha}$, isto é, $\hat{D}(\alpha)\ket{0} = \ket{\alpha}$.
+onde $\alpha = re^{i\theta}$, com magnitude $r \geq 0$ e fase $\theta \in [0, 2\pi)$, e o símbolo ``$*$'' denota o complexo conjugado. No contexto da CQCV, essa operação desempenha papel central tanto na codificação de informação quanto como sub-rotina de algoritmos quânticos. Quando aplicada ao estado de vácuo $\ket{0}$, provoca um deslocamento rígido no espaço de fase, transformando-o no estado coerente $\ket{\alpha}$, isto é, $\hat{D}(\alpha)\ket{0} = \ket{\alpha}$.
 
 \begin{figure}[!htb]
   \centering
@@ -642,7 +705,7 @@ Quando aplicada ao estado de vácuo, essa operação não produz efeito, uma vez
 \end{figure}
 
 \paragraph*{\textbf{Portas não gaussianas}:}
-As portas não gaussianas, também denominadas portas não lineares, introduzem não linearidades indispensáveis para a universalidade da computação quântica com variáveis contínuas. As mais relevantes são a porta de fase cúbica, caracterizada pelo parâmetro $\gamma$ e apresentada na \autoref{eq:cubic_continuous_variables}, e a porta de Kerr, caracterizada pelo parâmetro $\kappa$ e apresentada na \autoref{eq:kerr_continuous_variables}, definidas por:
+As portas não gaussianas, também denominadas portas não lineares, introduzem não linearidades indispensáveis para a universalidade da computação quântica com variáveis contínuas \cite{lloyd1999quantum}. As mais relevantes são a porta de fase cúbica, caracterizada pelo parâmetro $\gamma$ e apresentada na \autoref{eq:cubic_continuous_variables}, e a porta de Kerr, caracterizada pelo parâmetro $\kappa$ e apresentada na \autoref{eq:kerr_continuous_variables}, definidas por:
 
 \begin{equation}
     \label{eq:cubic_continuous_variables}
