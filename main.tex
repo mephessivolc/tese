@@ -29,8 +29,8 @@
 \usepackage{lastpage}			% Usado pela Ficha catalográfica
 \usepackage{indentfirst}			% Indenta o primeiro parágrafo de cada seção.
 \usepackage{color}				% Controle das cores
-\usepackage{graphicx,graphicx}	% Inclusão de gráficos
-\usepackage{epsfig,subfig}		% Inclusão de figuras
+\usepackage{graphicx}	% Inclusão de gráficos
+% \usepackage{epsfig,subfig}		% Inclusão de figuras
 \usepackage{microtype} 			% Melhorias de justificação
 % ---------------------
 		
@@ -50,7 +50,22 @@
 % Pacotes de CITAÇÕES
 % ---------------------
 \usepackage{csquotes}
-\usepackage[backend=biber, style=abnt, justify, backref=true]{biblatex}
+\usepackage[
+  backend=biber,
+  style=abnt,
+  justify,
+  citestyle=abnt,
+  giveninits=true,
+  uniquename=false,
+  maxcitenames=2,
+  maxbibnames=99,
+  backref=true
+]{biblatex}
+
+\renewcommand*{\UpperOrSC}[1]{#1}
+\renewcommand*{\UpperOrSCCite}[1]{#1}
+
+\addbibresource{bibliografia.bib}
 % ---------------------
 
 % ---------------------
@@ -63,6 +78,9 @@
 % Extras
 % ---------------------
 \usepackage{physics}
+
+% \usepackage[labelfont=bf,textfont=normalfont]{caption}
+\usepackage[labelfont=bf,textfont=normalfont]{subcaption}
 
 \newtheorem{defi}{Definição}[chapter]
 \newcommand{\defiautorefname}{Definição}
@@ -147,9 +165,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%  INICIO DO DOCUMENTO  %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
-\addbibresource{bibliografia.bib}
-
-\addbibresource{bibliografia.bib}
 
 \begin{document}
 
@@ -174,16 +189,16 @@
 % \include{pretextual/assinaturas}
 
 % Dedicatória
-\include{pretextual/dedicatoria}
+% \include{pretextual/dedicatoria}
 
 % Agradecimentos
-\include{pretextual/agradecimentos}
+% \include{pretextual/agradecimentos}
 
 % Epígrafe
-\include{pretextual/epigrafe}
+% \include{pretextual/epigrafe}
 
 % Resumo e Abstract
-\include{pretextual/resumos}
+% \include{pretextual/resumos}
 
 
 \include{pretextual/listas}
@@ -222,13 +237,12 @@
 % \include{capitulos/conclusao}
 
 % ----------------------------------------------------------
-% ELEMENTOS PÓS-TEXTUAIS (Referências, Glossário, Apêndices)
+% ELEMENTOS POS-TEXTUAIS (Referencias, Glossario, Apendices)
 % ----------------------------------------------------------
 \postextual
-
 \printbibliography
 
-% Glossário (Consulte o manual)
+% Glossario (Consulte o manual)
 %\glossary
 
 % Apêndices

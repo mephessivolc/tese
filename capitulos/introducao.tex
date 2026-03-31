@@ -6,12 +6,65 @@
 \chapter*[Introdução]{Introdução}
 \addcontentsline{toc}{chapter}{Introdução}
 
-Atualmente a construção de rotas para entregas de mercadorias, translado de passageiros, transportes de cargas, rotas de avião são problemas combinatório de grande importancia economica...
+A ciência da computação moderna tem suas bases nos trabalhos de Alan Turing na década de 1930, quando foi proposta uma noção abstrata de computação baseada em dispositivos programáveis, posteriormente denominada máquina de Turing \cite{farias2013introduccao}. Esse modelo teórico estabelece que a computação pode ser descrita por meio da manipulação de símbolos em uma fita, de acordo com um conjunto finito de regras. Na prática, essa ideia fundamenta o funcionamento dos computadores digitais, nos quais a informação é representada em forma binária e processada por meio de instruções lógicas, sendo posteriormente interpretada em formatos compreensíveis ao usuário. 
 
-Problemas de Rotas de Veículo (VRP) são considerados problemas NP-difíceis uma vez que sua dificuldade cresce de acordo com cada novo item, no caso uma nova cidade ou um novo passageiro é inserido no problema. Porém, dado uma solução é fácil verificar seu resultado...
+{\red Entre a formalização teórica da computação e suas aplicações práticas, emergem os chamados problemas combinatórios, que consistem na análise de um conjunto finito — porém frequentemente muito grande — de possíveis arranjos ou configurações, com o objetivo de identificar aquelas que satisfazem determinados critérios ou otimizam uma função específica \cite{papadimitriou1998combinatorial}. Esses problemas são caracterizados pela explosão combinatória do espaço de busca, tornando a exploração exaustiva e computacionalmente inviável. Nesse contexto, a ciência da computação desenvolve métodos e algoritmos capazes de lidar com essa complexidade, seja por meio de estratégias exatas, heurísticas ou aproximativas, estabelecendo uma ponte entre os modelos abstratos de computação e desafios concretos que demandam tomada de decisão eficiente.}
 
-Uma vairante do VRP pode ser o Problema do Caixeiro Viajante (TSP) que consiste em um viajante ter que percorrer uma quantidade de cidades, cada uma com uma dada distancia entre si, e retornar a cidade de origem no menor esforço possível, usualmente considerado o menor custo possível...
+Entre as aplicações práticas desses modelos computacionais, a construção de rotas para entregas de mercadorias, o translado de passageiros, o transporte de cargas e o planejamento de trajetórias aéreas constituem problemas combinatórios de grande relevância econômica e operacional \cite{toth2002vehicle}. Tais problemas envolvem a busca por soluções ótimas ou quase ótimas em espaços de busca extensos, nos quais múltiplas variáveis e restrições devem ser consideradas simultaneamente, como custos, distâncias, tempo e capacidade dos veículos \cite{braekers2016vehicle}.
 
-A computação quântica aparece como uma tecnologia capaz de solucionar problemas combinatório...
+{\red A teoria da complexidade computacional fornece um arcabouço formal para classificar a dificuldade desses problemas. Em particular, a classe NP (\textit{Nondeterministic Polynomial time}) engloba problemas para os quais uma solução candidata pode ser verificada em tempo polinomial, ainda que não se conheça, necessariamente, um método eficiente para encontrá-la. Já os problemas NP-difíceis correspondem àqueles que são, no mínimo, tão difíceis quanto os problemas mais complexos da classe NP, não havendo evidência de que possam ser resolvidos em tempo polinomial. Essa distinção é fundamental para compreender as limitações computacionais associadas a problemas de otimização combinatória e orientar o desenvolvimento de métodos de solução adequados.}
 
-As siglas utilizadas ao longo deste trabalho seguem a nomenclatura consagrada na literatura científica internacional, sendo apresentadas em inglês. Na lista de siglas são indicados o termo correspondente em português e o termo original em inglês.
+Dentro desse cenário, os Problemas de Roteamento de Veículos (\textit{Vehicle Routing Problems} — VRP) destacam-se como uma classe fundamental de problemas de otimização combinatória \cite{psaraftis1995dynamic, laporte1992vehicle}. {\red Esses problemas por serem classificados como NP-difíceis, sua complexidade cresce rapidamente com o aumento do número de elementos envolvidos}, como cidades, clientes ou passageiros \cite{karp2009reducibility}. Apesar da dificuldade em encontrar soluções ótimas em tempo computacional viável, a verificação da validade de uma solução candidata pode ser realizada de forma relativamente eficiente \cite{sipser1996introduction, lenstra1981complexity}.
+
+{\red Um caso particular clássico do VRP é o Problema do Caixeiro Viajante} (\textit{Traveling Salesman Problem} — TSP), que consiste em determinar a rota de menor custo para que um viajante percorra um conjunto de cidades, visitando cada uma exatamente uma vez e retornando à cidade de origem. Nesse problema, as distâncias entre as cidades são previamente definidas, e o objetivo principal é minimizar o custo total do percurso, frequentemente associado à distância total percorrida \cite{dantzig1954solution, applegate2011traveling}.
+
+Um caso particular clássico do VRP é o Problema do Caixeiro Viajante (\textit{Traveling Salesman Problem} — TSP), que consiste em determinar a rota de menor custo para que um viajante percorra um conjunto de cidades, visitando cada uma exatamente uma vez e retornando à cidade de origem. Nesse problema, as distâncias entre as cidades são previamente definidas, e o objetivo principal é minimizar o custo total do percurso, frequentemente associado à distância total percorrida \cite{dantzig1954solution, applegate2011traveling}. Devido à sua natureza combinatória e à elevada complexidade associada à obtenção de soluções ótimas, o TSP constitui um importante caso de estudo para o desenvolvimento de novas abordagens computacionais.
+
+Nesse contexto, a computação quântica surge como uma abordagem promissora para o tratamento de problemas combinatórios complexos \cite{albash2018adiabatic}. Enquanto os computadores clássicos representam a informação por meio de bits, nos quais valores discretos são associados fisicamente, por exemplo, à presença ou ausência de corrente elétrica em transistores, nos computadores quânticos a informação é codificada em unidades denominadas qubits, cujo comportamento segue os princípios da mecânica quântica.
+
+A teoria da computação quântica, {\red cujas bases teóricas foram propostas por} \textcite{feynman1982simulating}, fundamenta-se em princípios como superposição e entrelaçamento. A unidade fundamental de informação nesse modelo é o \textit{qubit} (\textit{quantum bit}), que, diferentemente do bit clássico — restrito aos estados 0 ou 1 — pode ser descrito como uma combinação linear desses estados, permitindo representar simultaneamente múltiplas configurações \cite{nielsen_quantum_2002}.
+
+Nesse contexto, surge a era dos dispositivos quânticos de escala intermediária e ruidosa (\textit{Noisy Intermediate-Scale Quantum} — NISQ), {\red caracterizada por sistemas que operam com múltiplos qubits}, ainda limitados tanto pela tecnologia de construção desses dispositivos quanto pela presença de ruído e pela ausência de correção completa de erros \cite{preskill2019quantum}. Esses dispositivos permitem a execução de algoritmos quânticos em pequena escala, embora com restrições quanto à profundidade dos circuitos e à precisão dos resultados \cite{bharti2022noisy, cheng2023noisy}.
+
+{\red Nesse cenário, diferentes paradigmas de computação quântica têm sido propostos e explorados, destacando-se o modelo de circuitos quânticos, baseado na aplicação sequencial de portas quânticas sobre qubits \cite{nielsen_quantum_2002}; a computação quântica adiabática, fundamentada na evolução contínua de sistemas quânticos para a obtenção de estados de menor energia \cite{albash2018adiabatic}; e a computação baseada em variáveis contínuas, na qual a informação é codificada em observáveis físicas contínuas, como posição e momento \cite{weedbrook2012gaussian}. Cada um desses paradigmas apresenta características distintas em termos de representação da informação, implementação física e estratégias algorítmicas. Cada um desses paradigmas apresenta características distintas em termos de representação da informação, implementação física e estratégias algorítmicas, distinções que se tornam especialmente relevantes no contexto das limitações impostas pelos dispositivos NISQ.
+
+A partir desse panorama, o desenvolvimento e a análise de algoritmos quânticos tornam-se elementos centrais para a exploração do potencial computacional desses dispositivos, uma vez que diferentes algoritmos apresentam distintos requisitos em termos de profundidade de circuito, tolerância a ruído e escalabilidade \cite{montanaro2016quantum}.}
+
+Entre os algoritmos fundamentais da computação quântica, destacam-se o algoritmo de Deutsch–Jozsa \cite{deutsch1991rapid}, que demonstra vantagem no modelo de consulta ao distinguir funções constantes de funções balanceadas com apenas uma única avaliação; o algoritmo de Grover \cite{grover1996fast}, que apresenta ganho quadrático em problemas de busca não estruturada, com complexidade $O(\sqrt{N})$; e o algoritmo de Shor \cite{shor1999polynomial}, que possibilita a fatoração de inteiros e o cálculo de logaritmos discretos em tempo polinomial {\red no tamanho da entrada, ao passo que os melhores algoritmos conhecidos no paradigma computacional tradicional apresentam complexidade significativamente mais elevada, tornando esses problemas computacionalmente difíceis nesse contexto} \cite{lenstra1993development}.
+
+As siglas utilizadas ao longo deste trabalho seguem a nomenclatura consagrada na literatura científica internacional, sendo apresentadas em inglês. Na Lista de Siglas são indicados o termo correspondente em português e o termo original em inglês.
+
+Durante a elaboração deste manuscrito foram utilizadas ferramentas baseadas em Modelos de Linguagem de Grande Porte (\textit{Large Language Models} - LLMs) com o objetivo de auxiliar na revisão linguística, melhoria da fluidez textual e organização de trechos do texto. Essas ferramentas não foram utilizadas para geração de resultados científicos, desenvolvimento metodológico ou análise dos experimentos apresentados nesta tese, sendo todo o conteúdo técnico e científico de responsabilidade dos autores.
+
+\section*{Objetivos}
+
+{\color{red}Primeira proposta de escrita dos objetivos, necessário determinar qual é mais interessante manter.}
+
+O objetivo central desta tese consiste no desenvolvimento de um modelo baseado em algoritmos de computação quântica de variáveis contínuas para a resolução de problemas de otimização combinatória, com ênfase em instâncias do VRP. Busca-se, nesse contexto, explorar o potencial desse paradigma computacional na modelagem e solução de problemas caracterizados por elevada complexidade e dimensionalidade.
+
+Como etapa inicial, são investigados modelos fundamentais aplicados ao TSP, de modo a avaliar o desempenho e a eficiência das abordagens propostas em um cenário controlado e bem estabelecido na literatura. Essa análise permite validar os princípios do método e estabelecer uma base comparativa para sua extensão a problemas mais gerais.
+
+Adicionalmente, propõe-se a construção de uma formulação matemática capaz de representar problemas do tipo VRP em uma estrutura compatível com a computação quântica de variáveis contínuas. Em particular, busca-se estabelecer um mapeamento sistemático dessas formulações em Hamiltonianos, possibilitando sua implementação em dispositivos quânticos que operam nesse regime. Dessa forma, pretende-se integrar aspectos de modelagem matemática e computação quântica, contribuindo para o avanço de métodos híbridos voltados à otimização de problemas complexos.
+
+
+---
+
+{\color{red}Segunda proposta de escrita dos objetivos.}
+
+Os objetivos desta tese são organizados em objetivos gerais e específicos, conforme descrito a seguir:
+
+\begin{itemize}
+    \item \textbf{Objetivo geral:}
+    \begin{itemize}
+        \item Desenvolver um modelo baseado em algoritmos de computação quântica de variáveis contínuas para a resolução de problemas de otimização combinatória, com ênfase em instâncias do VRP.
+    \end{itemize}
+
+    \item \textbf{Objetivos específicos:}
+    \begin{itemize}
+        \item Investigar modelos fundamentais aplicados ao TSP, com o intuito de avaliar o desempenho e a eficiência das abordagens propostas em um cenário controlado.
+
+        \item Propor uma formulação matemática para problemas do tipo VRP que permita sua representação em termos compatíveis com a computação quântica de variáveis contínuas.
+
+        \item Estabelecer um mapeamento dessas formulações em Hamiltonianos, viabilizando sua implementação em dispositivos quânticos de variáveis contínuas.
+    \end{itemize}
+\end{itemize}
