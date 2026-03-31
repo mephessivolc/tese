@@ -4,7 +4,7 @@
 
 A fundamentação teórica a seguir foi elaborada com o objetivo de apresentar os desenvolvimentos conceituais atuais e históricos nesta área, para que seja um ponto de partida para aqueles que estejam iniciando neste estudo. Ao fazê-lo, visamos não apenas ampliar o escopo daqueles capazes de contribuir para esta área, mas também fornecer uma base sólida sobre a qual futuras pesquisas brasileiras possam ser construídas. Esta abordagem é fundamental não só para o enriquecimento do campo, mas também para a construção de uma comunidade acadêmica mais inclusiva e diversificada.
 
-No contexto deste estudo, é fundamental distinguir entre abordagens clássicas e quânticas, assim, utilizaremos o termo ``clássico'' para se referir a sistemas baseados em máquinas tradicionais de transistores e seus algoritmos correspondentes, que operam dentro dos paradigmas convencionais da computação. Por outro lado, o termo ``quântico'' será empregado para descrever máquinas e algoritmos que exploram as propriedades da mecânica quântica, tais como superposição e emaranhamento.
+No contexto deste estudo, é fundamental distinguir entre abordagens clássicas e quânticas, assim, utilizaremos o termo ``clássico'' para se referir a sistemas baseados em máquinas tradicionais de {\red transistores} e seus algoritmos correspondentes, que operam dentro dos paradigmas convencionais da computação. Por outro lado, o termo ``quântico'' será empregado para descrever máquinas e algoritmos que exploram as propriedades da mecânica quântica, tais como superposição e emaranhamento.
 
 Inicialmente será apresentado o conceito de Otimização, depois o formulação matemática do VRP com alguns métodos clássicos de resolução, e por fim, iniciaremos os conceitos introdutórios para a Mecânica Quântica e Computação Quântica.
 
@@ -48,7 +48,7 @@ As restrições do modelo asseguram a viabilidade das rotas. A obrigatoriedade d
 \sum_{\substack{i \in V \\ i \neq j}} x_{ij} = 1, & \quad \forall\, j \in V \setminus \{0\}. \label{eq:only_city}
 \end{eqnarray}
 
-\noindent a \autoref{eq:only_client} garante que, para cada cliente \(i\), exatamente uma aresta de saída seja selecionada, ou seja, cada cliente é atendido por meio de uma única rota que parte dele. Já a \autoref{eq:only_city} assegura que, para cada cliente \(j\), exatamente uma aresta de entrada seja escolhida, garantindo que cada cliente seja visitado uma única vez por alguma rota. Em conjunto, essas restrições impõem a conservação de fluxo nos nós correspondentes aos clientes, evitando tanto visitas múltiplas quanto a omissão de clientes no conjunto de rotas. 
+\noindent {\red a \autoref{eq:only_client} garante que, para cada cliente \(i\), exatamente uma aresta de saída seja selecionada, ou seja, cada cliente é atendido por meio de uma única rota que parte dele. Já a \autoref{eq:only_city} assegura que, para cada cliente \(j\), exatamente uma aresta de entrada seja escolhida, garantindo que cada cliente seja visitado uma única vez por alguma rota. Em conjunto, essas restrições impõem a conservação de fluxo nos nós correspondentes aos clientes, evitando tanto visitas múltiplas quanto a omissão de clientes no conjunto de rotas. }
 
 A conservação de fluxo no depósito, que controla o número de veículos $K$ utilizados, é garantida por:
 
@@ -68,7 +68,7 @@ Uma abordagem clássica consiste no uso de restrições explícitas de eliminaç
 \quad \forall S \subset V,\; 2 \leq |S| \leq |V|-1,
 \end{equation}
 
-\noindent em que \(S\) representa qualquer subconjunto próprio de vértices que não inclui todos os nós do problema, podendo ser interpretado como um possível grupo de clientes que formaria uma rota isolada do restante da rede. A restrição impõe que o número de arestas selecionadas dentro desse subconjunto seja estritamente menor que o necessário para formar um ciclo fechado, impedindo assim a ocorrência de sub-rotas desconectadas do depósito. Alternativamente, podem ser empregadas formulações baseadas em fluxo, nas quais variáveis adicionais garantem que todo cliente esteja conectado ao depósito por meio de um fluxo viável ao longo das arestas selecionadas.
+\noindent {\red em que \(S\) representa qualquer subconjunto próprio de vértices que não inclui todos os nós do problema, podendo ser interpretado como um possível grupo de clientes que formaria uma rota isolada do restante da rede. A restrição impõe que o número de arestas selecionadas dentro desse subconjunto seja estritamente menor que o necessário para formar um ciclo fechado, impedindo assim a ocorrência de sub-rotas desconectadas do depósito. Alternativamente, podem ser empregadas formulações baseadas em fluxo, nas quais variáveis adicionais garantem que todo cliente esteja conectado ao depósito por meio de um fluxo viável ao longo das arestas selecionadas.}
 
 Outra estratégia amplamente utilizada consiste no uso de variáveis auxiliares, como na formulação de Miller--Tucker--Zemlin (MTZ) \cite{miller1960integer}, na qual $u_i$ representa a carga acumulada no momento da chegada ao nó $i$. Nesse contexto, a variável binária $x_{ij}$ indica se a aresta $(i,j)$ é percorrida, enquanto $d_j$ corresponde à demanda associada ao nó $j$. As restrições são dadas por:
 
@@ -92,7 +92,7 @@ O TSP pode ser interpretado como um caso particular do VRP no qual há um único
 \sum_{\substack{i \in V \\ i \neq j}} x_{ij} = 1, & \quad \forall\, j \in V. \label{eq:one_in}
 \end{eqnarray}
 
-A \autoref{eq:one_out} assegura que, após visitar cada vértice, o percurso segue para exatamente um vértice subsequente, enquanto a \autoref{eq:one_in} garante que cada vértice seja visitado exatamente uma vez. Em conjunto, essas restrições impõem a estrutura de grau unitário, prevenindo duplicações e omissões de visitas.
+{\red A \autoref{eq:one_out} assegura que, após visitar cada vértice, o percurso segue para exatamente um vértice subsequente, enquanto a \autoref{eq:one_in} garante que cada vértice seja visitado exatamente uma vez. Em conjunto, essas restrições impõem a estrutura de grau unitário, prevenindo duplicações e omissões de visitas.}
 
 Assim como no VRP, à eliminação de sub-rotas no TSP pode ser tratada por diferentes formulações, incluindo restrições de eliminação de sub-rotas, modelos baseados em fluxo ou o uso de variáveis auxiliares. Em síntese, a transição do VRP para o TSP consiste na remoção das restrições de capacidade e na fixação de um único veículo, reduzindo o problema à determinação de um ciclo hamiltoniano de custo mínimo. Essa relação estrutural evidencia que o TSP constitui um caso particular do VRP, compartilhando a mesma base de modelagem matemática, embora operando sobre um conjunto reduzido de restrições.
 
@@ -109,8 +109,7 @@ Dessa forma, em vez de introduzir separadamente os elementos de Álgebra Linear,
 
 Para compreender minimamente a teoria quântica é necessário uma revisão de conceitos de Álgebra Linear. Para isso, \textcite{Almeida2020} nos apresenta uma metodologia satisfatória para introduzir esses conceitos e outros, como \textit{kets} e \textit{bras}, tão comuns na teoria quântica, também é importante conhecer os conceitos de incerteza, superposição e emaranhamento \cite{hewitt2000fundamentos, mahon2000mecanica}. 
 
-Iniciando com espaço vetorial no corpo dos reais, um vetor de nn
-n dimensões pode ser representado, tanto de forma linear quanto matricial, por
+{\red Iniciando com espaço vetorial no corpo dos reais, um vetor de $n$ dimensões pode ser representado, tanto de forma linear quanto matricial, por}
 $$
     \vec{v} = v_1\vec{b_1}+v_2\vec{b_2}+\ldots+v_n\vec{b_n}=\left[\vec{b_1}, \vec{b_2},\cdots, \vec{b_n}\right]\left[\begin{array}{c}
          v_1\\
@@ -181,7 +180,7 @@ $ é um espaço vetorial com $n$ entradas (dimensão $n$) e $\V[m]$ é um espaç
 
 Quando a transformação linear $T:\V\rightarrow\V$ é dito que $T$ é um \textit{operador linear}. Uma transformação linear, por conveniência, pode ser representada por uma matriz, o que possibilita a utilização de conceitos de operações entre matrizes e relacioná-las às transformações lineares \cite{dettman1986introduction}.
 
-Na computação clássica, a unidade básica de memória é chamada de \textit{bit}, que pode assumir valores entre 0 e 1. Um bit é o potencial elétrico nulo (ou baixo) representado pelo 0 e o potencial elétrico alto representado pelo 1. Na computação quântica a unidade básica de memória é o \textit{qubit} que é representado por um vetor bidimensional de norma 1 e os estados\footnote{O termo estado pode sempre ser identificado como sendo um vetor de norma 1 e pode ser visto como o ``valor'' do qubit antes da medição} de um qubit correspondentes aos valores 0 e 1 são $\ket{0}$ e $\ket{1}$. A possibilidade de combinação linear desses estados, posteriormente denominada superposição, é representada matematicamente por
+Na computação clássica, a unidade básica de memória é chamada de \textit{bit}, que pode assumir valores entre 0 e 1. Um bit é o potencial elétrico nulo (ou baixo) representado pelo 0 e o potencial elétrico alto representado pelo 1. Na computação quântica a unidade básica de memória é o \textit{qubit} que é representado por um vetor bidimensional de norma 1 {}\rede os estados\footnote{O termo estado pode sempre ser identificado como sendo um vetor de norma 1 e pode ser visto como o ``valor'' do qubit antes da medição} de um qubit correspondentes aos valores 0 e 1 são $\ket{0}$ e $\ket{1}$. A possibilidade de combinação linear desses estados, posteriormente denominada superposição}, é representada matematicamente por
     \begin{equation}
         \label{eq:estados_superposicao}
         \ket{\phi}=\alpha_0\ket{0}+\alpha_1\ket{1}
@@ -191,7 +190,7 @@ Na computação clássica, a unidade básica de memória é chamada de \textit{b
         |\alpha_0|^2+|\alpha_1|^2=1
     $$
     
-Os números complexos $\alpha_0$ e $\alpha_1$ são chamados de \textit{amplitudes} do estado $\ket{\phi}$. Diferentemente dos sistemas computacionais tradicionais, nos quais um bit assume apenas um único valor discreto por vez, um sistema quântico pode estar em superposição dos estados $\ket{0}$ e $\ket{1}$. Matematicamente, essa superposição é descrita como uma combinação linear desses estados básicos, conforme apresentado na \autoref{eq:estados_superposicao} \cite[pág. 13]{nielsen_quantum_2002}.
+{\red Os números complexos $\alpha_0$ e $\alpha_1$ são chamados de \textit{amplitudes} do estado $\ket{\phi}$. Diferentemente dos sistemas computacionais tradicionais, nos quais um bit assume apenas um único valor discreto por vez, um sistema quântico pode estar em superposição dos estados $\ket{0}$ e $\ket{1}$. Matematicamente, essa superposição é descrita como uma combinação linear desses estados básicos, conforme apresentado na \autoref{eq:estados_superposicao} \cite[pág. 13]{nielsen_quantum_2002}.}
     
 É possível decompor unicamente o amplitude complexa de $\alpha$ como um produto $e^{i\theta}|\alpha|$, onde $|\alpha|$ é um numero real não-negativo correspondente a magnitude $\alpha$, e $e^{i\theta}=\frac{\alpha}{|\alpha|}$ tem norma 1, o valor $\theta$ é conhecido como \textit{fase} e podemos nos referir a $e^{i\theta}$ como um \textit{fator de fase} \cite{Rieffel2000}.
 
@@ -233,7 +232,94 @@ onde $0\leq\theta\leq\pi$ e $0\leq\varphi\leq2\pi$, o que mostra que existe uma 
 \fonte{Própria, 2024}
 \end{figure}
 
-Portas lógicas quânticas são transformações lineares \(T:\mathbb{C}^n \rightarrow \mathbb{C}^n\), representadas por operadores lineares unitários que atuam sobre o espaço de estados do sistema. No caso particular de um único qubit, cujo espaço de estados é \(\mathbb{C}^2\), essas transformações são descritas por matrizes unitárias \(2\times 2\). Algumas dessas portas são fixas, como as portas de Pauli e Hadamard, enquanto outras podem depender de parâmetros contínuos, o que permite representar rotações e transformações ajustáveis no espaço de estados. Essas portas parametrizáveis são particularmente relevantes na construção de circuitos variacionais e na modelagem de rotações na esfera de Bloch. Como exemplo de porta fixa, tem-se a porta Hadamard: 
+Antes de tratar das transformações que atuam sobre qubits, é necessário estabelecer como sistemas com múltiplos qubits são representados matematicamente. Para isso, utiliza-se o produto tensorial, que permite combinar os espaços de estados individuais em um espaço composto de maior dimensão.
+
+Na referência \textcite{Marquezino2019} encontramos que, para determinar o estado $\ket{\psi}$ de 2 qubits, se $\ket{\psi}$ for um dos estados da base computacional, então é possível identificar diretamente o estado de cada qubit. Por exemplo, considerando o estado $\ket{\psi}=\ket{10}$, pode-se fatorá-lo da seguinte forma:
+
+$$
+    \ket{10}=\ket{1}\otimes\ket{0}=\ket{1}\ket{0}
+$$
+onde $\otimes$ é chamado de \textit{produto de Kronecker} e sua operação esta descrito na \autoref{def:kronecker}.
+\begin{defi}\label{def:kronecker}
+    Seja $A$ uma matriz $m\times n$ e $B$ uma matriz $p\times q$, a operação $\otimes$ entre $A$ e $B$ é dada da seguinte forma:
+    \begin{align*}
+        A\otimes B & =\left[\begin{array}{ccc}
+            a_{11}B & \cdots & a_{1n}B \\
+            \vdots & \ddots & \vdots \\
+            a_{m1}B & \cdots & a_{mn}B
+        \end{array}\right] \\&
+        = \left[\begin{array}{ccc}
+            a_{11}\left[\begin{array}{ccc}
+            b_{11} & \cdots & b_{1q} \\
+            \vdots & \ddots & \vdots \\
+            b_{p1} & \cdots & b_{pq}
+        \end{array}\right]   & \cdots & a_{1n}\left[\begin{array}{ccc}
+            b_{11} & \cdots & b_{1q} \\
+            \vdots & \ddots & \vdots \\
+            b_{p1} & \cdots & b_{pq}
+        \end{array}\right]  \\
+            \vdots & \ddots & \vdots \\
+            a_{m1}\left[\begin{array}{ccc}
+            b_{11} & \cdots & b_{1q} \\
+            \vdots & \ddots & \vdots \\
+            b_{p1} & \cdots & b_{pq}
+        \end{array}\right]  & \cdots & a_{mn}\left[\begin{array}{ccc}
+            b_{11} & \cdots & b_{1q} \\
+            \vdots & \ddots & \vdots \\
+            b_{p1} & \cdots & b_{pq}
+        \end{array}\right] 
+        \end{array}\right] \\&
+        = \left[\begin{array}{ccccccc}
+            a_{11}b_{11} & \cdots & a_{11}b_{1q} &  & a_{1n}b_{11} & \cdots & a_{1n}b_{1q} \\
+            \vdots & \ddots & \vdots & \cdots & \vdots & \ddots & \vdots \\
+            a_{11}b_{p1} & \cdots & a_{11}b_{pq} &  & a_{1n}b_{11} & \cdots & a_{1n}b_{pq}\\
+            & \vdots &  & \ddots &  & \vdots &  \\
+            a_{m1}b_{11} & \cdots & a_{m1}b_{1q} &  & a_{mn}b_{11} & \cdots & a_{mn}b_{1q}\\
+            \vdots & \ddots & \vdots & \cdots & \vdots & \ddots & \vdots \\
+            a_{m1}b_{p1} & \cdots & a_{m1}b_{pq} &  & a_{mn}b_{11} & \cdots & a_{mn}b_{pq}\\
+        \end{array}\right].
+    \end{align*}
+\end{defi}
+\noindent observe que a matriz resultante tem dimensão $mp\times nq$. Assim com a \autoref{def:kronecker} teremos que, por exemplo, para $\ket{10}$ o vetor resultante é apresentado na \autoref{eq:produto_externo_ket_10}.
+\begin{equation}
+    \ket{10} =\ket{1}\otimes\ket{0}=\left[\begin{array}{c}
+        0 \\
+        1
+    \end{array}\right] \otimes \left[\begin{array}{c}
+        1 \\
+        0
+    \end{array}\right] = \left[\begin{array}{cc}
+        0 \left[\begin{array}{c}
+        1 \\
+        0
+    \end{array}\right]\\ \\
+        1 \left[\begin{array}{c}
+        1 \\
+        0
+    \end{array}\right]
+    \end{array}\right] = \left[\begin{array}{c}
+        0 \\
+        0 \\
+        1 \\
+        0 \\
+    \end{array}\right].
+    \label{eq:produto_externo_ket_10}
+\end{equation}
+
+Desta forma, generalizando para uma base $n$ ortonormal teremos que o estado $\ket{\psi}=\ket{\alpha_1\dots\alpha_n}$ para $\alpha_i\in \{0,1\}\ (i=1,\hdots,n)$, será da forma:
+$$
+    \ket{\psi}=\ket{\alpha_1\hdots\alpha_n}=\ket{\alpha_1}\otimes\hdots\otimes\ket{\alpha_n}.
+$$
+
+{\red
+Um sistema quântico composto pode estar em um estado onde suas partes não têm um estado definido, como por exemplo, para encontrar o estado de 1 qubit de $\ket{\psi_1}=\alpha\ket{0}+\beta\ket{1}$ e $\ket{\psi_2}=\gamma\ket{0}+\delta\ket{1}$ de tal forma que
+\begin{equation}
+    \label{eq:estado_bell}
+    \dfrac{\ket{00}+\ket{11}}{\sqrt{2}}=(\alpha\ket{0}+\beta\ket{1})\otimes(\gamma\ket{0}+\delta\ket{1})
+\end{equation}
+teremos que $\alpha\gamma = \frac{1}{\sqrt{2}},\ \alpha\delta=0,\ \beta\gamma=0$ e $\beta\delta=\frac{1}{\sqrt{2}}$, e esse sistema não admite nenhuma solução. Diz-se, portanto, que esse estado é \textbf{não-fatorável}, ou seja, não pode ser expresso como produto tensorial de estados individuais. Esse comportamento caracteriza o \textbf{emaranhamento quântico}, definido como a propriedade de um sistema composto que não pode ser fatorado pelo produto de Kronecker — diferentemente de um circuito booleano, no qual o estado de cada junção está sempre definido entre 0 e 1 \cite{Marquezino2019, lipton_quantum_2014}. Com essa representação estabelecida, é possível descrever as transformações que atuam sobre esses sistemas, denominadas portas lógicas quânticas.}
+
+{\red Portas lógicas quânticas são transformações lineares \(T:\mathbb{C}^n \rightarrow \mathbb{C}^n\), representadas por operadores lineares unitários que atuam sobre o espaço de estados do sistema. No caso particular de um único qubit, cujo espaço de estados é \(\mathbb{C}^2\), essas transformações são descritas por matrizes unitárias \(2\times 2\). Algumas dessas portas são fixas, como as portas de Pauli e Hadamard, enquanto outras podem depender de parâmetros contínuos, o que permite representar rotações e transformações ajustáveis no espaço de estados. Essas portas parametrizáveis são particularmente relevantes na construção de circuitos variacionais e na modelagem de rotações na esfera de Bloch. Como exemplo de porta fixa, tem-se a porta Hadamard: }
 
 $$
     \label{eq:hadamard}
@@ -313,8 +399,8 @@ que pode ser denotado por $\ket{-}$, isto é,
     \begin{minipage}{0.5\textwidth}
         \item Matriz de \textit{Pauli Y}
         $$
-            X=\left[\begin{array}{cc}
-                 1 & -i \\
+            Y=\left[\begin{array}{cc}
+                 0 & -i \\
                  i & 0
             \end{array}\right]
         $$
@@ -350,8 +436,8 @@ que pode ser denotado por $\ket{-}$, isto é,
         \item Porta $\pi/8$ ou Porta $T$
         $$
             T=\left[\begin{array}{cc}
-                 1 & -i \\
-                 i & e^{\frac{i\pi}{4}}
+                 1 & 0 \\
+                 0 & e^{\frac{i\pi}{4}}
             \end{array}\right]
         $$
     \end{minipage}
@@ -367,7 +453,7 @@ que pode ser denotado por $\ket{-}$, isto é,
     \end{minipage}
     \end{enumerate}
 
- No contexto de circuitos quânticos mais gerais, também se destacam as portas parametrizáveis, nas quais a transformação unitária depende de parâmetros contínuos. No caso de um qubit, destacam-se as rotações em torno dos eixos da esfera de Bloch, dadas por
+{\red No contexto de circuitos quânticos mais gerais, também se destacam as portas parametrizáveis, nas quais a transformação unitária depende de parâmetros contínuos. No caso de um qubit, destacam-se as rotações em torno dos eixos da esfera de Bloch, dadas por
 
 \begin{align}
     R_x(\theta)= &
@@ -400,7 +486,22 @@ $$
     \end{array} \right]
 $$
 
-Essa porta preserva os estados em que o qubit de controle está em $\ket{0}$ e aplica a porta $X$ ao segundo qubit quando o primeiro está em $\ket{1}$. Outra porta importante é a porta SWAP, responsável por permutar os estados de dois qubits, trocando suas posições no sistema composto. Sua representação matricial é
+Essa porta preserva os estados em que o qubit de controle está em $\ket{0}$ e aplica a porta $X$ ao segundo qubit quando o primeiro está em $\ket{1}$. }
+
+{\red A porta CNOT desempenha papel central na geração de estados emaranhados. Por exemplo, ao aplicar inicialmente uma porta Hadamard ao primeiro qubit do estado $\ket{00}$, obtém-se
+$$
+\frac{\ket{00}+\ket{10}}{\sqrt{2}}
+$$
+Em seguida, ao aplicar a porta CNOT, o sistema evolui para
+$$
+\mathrm{CNOT}\left(\frac{\ket{00}+\ket{10}}{\sqrt{2}}\right)
+=
+\frac{\ket{00}+\ket{11}}{\sqrt{2}}
+$$
+que corresponde a um dos estados de Bell, o mesmo estado em que a  não-fatorabilidade foi apresentada anteriormente na \autoref{eq:estado_bell}. Esse exemplo evidencia como a combinação entre superposição e operações controladas permite criar correlações quânticas que não podem ser descritas por produtos tensoriais simples, demonstrando como circuitos quânticos podem gerar emaranhamento de forma controlada.}
+
+
+Outra porta importante é a porta SWAP, responsável por permutar os estados de dois qubits, trocando suas posições no sistema composto. Sua representação matricial é
 $$
     \mathrm{SWAP}= \left[
     \begin{array}{cccc}
@@ -418,7 +519,7 @@ No formalismo matricial que descreve essas operações, a matriz transposta conj
         e^{\pm\frac{i\pi}{4}} = \dfrac{1\pm i}{\sqrt{2}}
     $$
     
-Interessante notar que as portas quânticas são unitárias, como por exemplo para qualquer $\ket{\phi}$ teremos:
+Interessante notar que as portas quânticas são {\red unitárias}, como por exemplo para qualquer $\ket{\phi}$ teremos:
     $$
         H\otimes H\ket{\phi} = \ket{\phi}.
     $$
@@ -464,12 +565,12 @@ Como dito no início do capítulo, quaisquer portas lógicas quânticas são mat
     
 Sendo assim, a $UU=I_n$, onde $U$ é a matriz de transformação equivalente a uma porta quântica e $I_n$ é a matriz identidade de ordem $n$.
 
-Como visto anteriormente 1 qubit é representado por um vetor bidimensional de norma 1 e os seus estados correspondem aos valores $\ket{0}$ ou $\ket{1}$, e \textcite{Amaral2011MecanicaFormacao} diz que dois qubits podem assumir quatro valores entre 00, 01, 10 e 11 que correspondem a um sistema quântico de 4 níveis e seus estados serão respectivamente $\ket{00}, \ket{01}, \ket{10}$ e $\ket{11}$, assim qualquer estado de dois qubits $\ket{\psi}$ é uma superposição escrita da forma:
+Como visto anteriormente 1 qubit é representado por um vetor bidimensional de norma 1 e os seus estados correspondem aos valores $\ket{0}$ ou $\ket{1}$, e \textcite{Amaral2011MecanicaFormacao} diz que dois qubits podem assumir quatro valores entre 00, 01, 10 e 11 que correspondem a um sistema quântico de 4 níveis e seus estados serão respectivamente $\ket{00}, \ket{01}, \ket{10}$ e $\ket{11}$, assim qualquer {\red estado de dois qubits} $\ket{\psi}$ é uma superposição escrita da forma:
     $$
-        \ket{\psi}=\alpha_{00}\ket{00}+\alpha_{01}\ket{01}\alpha_{10}\ket{10}\alpha_{11}\ket{11},
+        \ket{\psi}=\alpha_{00}\ket{00}+\alpha_{01}\ket{01}+\alpha_{10}\ket{10}+\alpha_{11}\ket{11},
     $$
 
-\noindent onde $\alpha_{00}, \alpha_{01}, \alpha_{10}, \alpha_{11}\in\C$. Nesse contexto, a medida corresponde ao processo de observação do sistema quântico, no qual o estado em superposição colapsa para um dos estados da base computacional. Esse processo é intrinsecamente probabilístico: cada possível resultado ocorre com uma probabilidade determinada pelo quadrado do módulo da amplitude associada ao respectivo estado. Dessa forma, embora não seja possível prever deterministicamente o resultado de uma medição mesmo conhecendo $\ket{\psi}$ , é possível determinar as probabilidades de cada resultado \cite{griffiths2018introduction, Marquezino2019}, que serão
+\noindent onde $\alpha_{00}, \alpha_{01}, \alpha_{10}, \alpha_{11}\in\C$. {\red Nesse contexto, a medida corresponde ao processo de observação do sistema quântico, no qual o estado em superposição colapsa para um dos estados da base computacional. Esse processo é intrinsecamente probabilístico: cada possível resultado ocorre com uma probabilidade determinada pelo quadrado do módulo da amplitude associada ao respectivo estado. Dessa forma, embora não seja possível prever deterministicamente o resultado de uma medição mesmo conhecendo $\ket{\psi}$ }, é possível determinar as probabilidades de cada resultado \cite{griffiths2018introduction, Marquezino2019}, que serão
 
     $$
         \begin{array}{lcl}
@@ -480,104 +581,7 @@ Como visto anteriormente 1 qubit é representado por um vetor bidimensional de n
         \end{array} 
     $$
 
-Com isso, apenas uma única medição não possibilita determinar $\ket{\psi}$, sendo necessário preparar o estado $\ket{\psi}$ repetidamente e realizar múltiplas medições. Ainda assim, o estado não pode ser obtido exatamente a partir de uma única realização do experimento, mas pode ser reconstruído de forma estatística por meio de técnicas conhecidas como tomografia de estado quântico \cite{james2001measurement}, nas quais diferentes medições são realizadas sobre várias cópias idênticas do sistema.
-
-Na referência \textcite{Marquezino2019} encontramos que, para determinar o estado $\ket{\psi}$ de 2 qubits, se $\ket{\psi}$ for um dos estados da base computacional, então é possível identificar diretamente o estado de cada qubit. Por exemplo, considerando o estado $\ket{\psi}=\ket{10}$, pode-se fatorá-lo da seguinte forma:
-
-$$
-    \ket{10}=\ket{1}\otimes\ket{0}=\ket{1}\ket{0}
-$$
-onde $\otimes$ é chamado de \textit{produto de Kronecker} e sua operação esta descrito na \autoref{def:kronecker}.
-\begin{defi}\label{def:kronecker}
-    Seja $A$ uma matriz $m\times n$ e $B$ uma matriz $p\times q$, a operação $\otimes$ entre $A$ e $B$ é dada da seguinte forma:
-    \begin{align*}
-        A\otimes B & =\left[\begin{array}{ccc}
-            a_{11}B & \cdots & a_{1n}B \\
-            \vdots & \ddots & \vdots \\
-            a_{m1}B & \cdots & a_{mn}B
-        \end{array}\right] \\&
-        = \left[\begin{array}{ccc}
-            a_{11}\left[\begin{array}{ccc}
-            b_{11} & \cdots & b_{1q} \\
-            \vdots & \ddots & \vdots \\
-            b_{p1} & \cdots & b_{pq}
-        \end{array}\right]   & \cdots & a_{1n}\left[\begin{array}{ccc}
-            b_{11} & \cdots & b_{1q} \\
-            \vdots & \ddots & \vdots \\
-            b_{p1} & \cdots & b_{pq}
-        \end{array}\right]  \\
-            \vdots & \ddots & \vdots \\
-            a_{m1}\left[\begin{array}{ccc}
-            b_{11} & \cdots & b_{1q} \\
-            \vdots & \ddots & \vdots \\
-            b_{p1} & \cdots & b_{pq}
-        \end{array}\right]  & \cdots & a_{mn}\left[\begin{array}{ccc}
-            b_{11} & \cdots & b_{1q} \\
-            \vdots & \ddots & \vdots \\
-            b_{p1} & \cdots & b_{pq}
-        \end{array}\right] 
-        \end{array}\right] \\&
-        = \left[\begin{array}{ccccccc}
-            a_{11}b_{11} & \cdots & a_{11}b_{1q} &  & a_{1n}b_{11} & \cdots & a_{1n}b_{1q} \\
-            \vdots & \ddots & \vdots & \cdots & \vdots & \ddots & \vdots \\
-            a_{11}b_{p1} & \cdots & a_{11}b_{pq} &  & a_{1n}b_{11} & \cdots & a_{1n}b_{pq}\\
-            & \vdots &  & \ddots &  & \vdots &  \\
-            a_{m1}b_{11} & \cdots & a_{m1}b_{1q} &  & a_{mn}b_{11} & \cdots & a_{mn}b_{1q}\\
-            \vdots & \ddots & \vdots & \cdots & \vdots & \ddots & \vdots \\
-            a_{m1}b_{p1} & \cdots & a_{m1}b_{pq} &  & a_{mn}b_{11} & \cdots & a_{mn}b_{pq}\\
-        \end{array}\right].
-    \end{align*}
-\end{defi}
-\noindent observe que a matriz resultante tem dimensão $mp\times nq$. Assim com a \autoref{def:kronecker} teremos que, por exemplo, para $\ket{10}$ o vetor resultante é apresentado na \autoref{eq:produto_externo_ket_10}.
-\begin{equation}
-    \ket{10} =\ket{1}\otimes\ket{0}=\left[\begin{array}{c}
-        0 \\
-        1
-    \end{array}\right] \otimes \left[\begin{array}{c}
-        1 \\
-        0
-    \end{array}\right] = \left[\begin{array}{cc}
-        0 \left[\begin{array}{c}
-        1 \\
-        0
-    \end{array}\right]\\ \\
-        1 \left[\begin{array}{c}
-        1 \\
-        0
-    \end{array}\right]
-    \end{array}\right] = \left[\begin{array}{c}
-        0 \\
-        0 \\
-        1 \\
-        0 \\
-    \end{array}\right].
-    \label{eq:produto_externo_ket_10}
-\end{equation}
-
-Desta forma, podemos generalizar para uma base $n$ ortonormal teremos que o estado $\ket{\psi}=\ket{\alpha_1\dots\alpha_n}$ para $\alpha_i\in \{0,1\}\ (i=1,\hdots,n)$, será da forma:
-$$
-    \ket{\psi}=\ket{\alpha_1\hdots\alpha_n}=\ket{\alpha_1}\otimes\hdots\otimes\ket{\alpha_n}.
-$$
-
-Um sistema quântico composto pode estar em um estado onde suas partes não tem um estado definido, como por exemplo, para encontrar o estado de 1 qubit de $\ket{\psi_1}=\alpha\ket{0}+\beta\ket{1}$ e $\ket{\psi_2}=\gamma\ket{0}+\delta\ket{1}$ de tal forma que
-$$
-    \dfrac{\ket{00}+\ket{11}}{\sqrt{2}}=(\alpha\ket{0}+\beta\ket{1})\otimes(\gamma\ket{0}+\delta\ket{1}),
-$$
-teremos que $\alpha\gamma = \frac{1}{\sqrt{2}}, \alpha\delta=0, \beta\gamma=0$ e $\beta\delta=\frac{1}{\sqrt{2}}$ e esse sistema não admite nenhuma solução, sendo assim o estado $\ket{\psi}$ de 2 qubits não pode ser descrito como um produto de Kronecker de 1 qubit. 
-
-Um estado emaranhado é definido por um sistema composto que não pode ser fatorado pelo produto de Kronecker, isto é, enquanto que em um circuito booleano um estado está definido entre 0 e 1 em cada junção de porta, nem sempre é verdade para um estado quântico \cite{Marquezino2019, lipton_quantum_2014}.
-
-A porta CNOT desempenha papel central na geração de estados emaranhados. Por exemplo, ao aplicar inicialmente uma porta Hadamard ao primeiro qubit do estado $\ket{00}$, obtém-se
-$$
-\frac{\ket{00}+\ket{10}}{\sqrt{2}}
-$$
-Em seguida, ao aplicar a porta CNOT, o sistema evolui para
-$$
-\mathrm{CNOT}\left(\frac{\ket{00}+\ket{10}}{\sqrt{2}}\right)
-=
-\frac{\ket{00}+\ket{11}}{\sqrt{2}}
-$$
-que corresponde a um dos estados de Bell. Esse exemplo evidencia como a combinação entre superposição e operações controladas permite criar correlações quânticas que não podem ser descritas por produtos tensoriais simples.
+Com isso, apenas uma única medição não possibilita determinar $\ket{\psi}$, sendo necessário preparar o estado $\ket{\psi}$ repetidamente e realizar múltiplas medições. {\red Ainda assim, o estado não pode ser obtido exatamente a partir de uma única realização do experimento, mas pode ser reconstruído de forma estatística por meio de técnicas conhecidas como tomografia de estado quântico \cite{james2001measurement}, nas quais diferentes medições são realizadas sobre várias cópias idênticas do sistema.}
 
 \subsection{Computação Quântica}
 
