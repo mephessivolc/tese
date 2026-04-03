@@ -6,26 +6,28 @@ A fundamentação teórica a seguir foi elaborada com o objetivo de apresentar o
 
 No contexto deste estudo, é fundamental distinguir entre abordagens clássicas e quânticas, assim, utilizaremos o termo ``clássico'' para se referir a sistemas baseados em máquinas tradicionais de transistores e seus algoritmos correspondentes, que operam dentro dos paradigmas convencionais da computação. Por outro lado, o termo ``quântico'' será empregado para descrever máquinas e algoritmos que exploram as propriedades da mecânica quântica, tais como superposição e emaranhamento.
 
-Inicialmente será apresentado o conceito de Otimização, depois o formulação matemática do VRP com alguns métodos clássicos de resolução, e por fim, iniciaremos os conceitos introdutórios para a Mecânica Quântica e Computação Quântica.
+Inicialmente será apresentado o conceito de Otimização, depois o formulação matemática do VRP com alguns métodos clássicos de resolução, e por fim, será apresentado os conceitos introdutórios para a Mecânica Quântica e Computação Quântica.
 
 \section{Problema de Roteamento de Veículos}
 
-O Problema de Roteamento de Veículos (Vehicle Routing Problem – VRP) é um dos problemas de otimização combinatória mais estudados na literatura, sendo frequentemente considerado uma generalização natural do Problema do Caixeiro Viajante (Travelling Salesman Problem – TSP) \cite{gavish1978travelling}. Enquanto o TSP busca determinar a rota mínima para um único agente visitar um conjunto de cidades, o VRP introduz múltiplos veículos e um conjunto mais amplo de restrições operacionais, tornando-o mais adequado para modelar situações reais. Entre essas restrições, destacam-se a capacidade limitada dos veículos, janelas de tempo para atendimento, múltiplos depósitos e custos associados às rotas, o que aumenta significativamente a complexidade do problema.
+O Problema de Roteamento de Veículos (\textit{Vehicle Routing Problem} — VRP) é um dos problemas de otimização combinatória mais estudados na literatura, sendo frequentemente considerado uma generalização natural do Problema do Caixeiro Viajante (\textit{Travelling Salesman Problem} — TSP) \cite{gavish1978travelling}. Enquanto o TSP busca determinar a rota mínima para um único agente visitar um conjunto de cidades, o VRP introduz múltiplos veículos e um conjunto mais amplo de restrições operacionais, tornando-o mais adequado para modelar situações reais, o que aumenta significativamente a complexidade do problema.
+
+De forma geral, o VRP pode ser descrito como o problema de determinar um conjunto de rotas para uma frota de veículos, partindo de um ou mais depósitos, de modo a atender um conjunto de clientes com demandas conhecidas, respeitando as restrições impostas e minimizando um critério de custo, usualmente associado à distância total percorrida ou ao tempo de operação. Cada cliente deve ser atendido exatamente uma vez, por exatamente um veículo, e todos os veículos devem retornar ao depósito de origem ao término de sua rota. A escolha de quais clientes serão atendidos por cada veículo, e em qual ordem, constitui o núcleo combinatório do problema, cuja formalização matemática será apresentada na seção seguinte.
 
 O problema foi introduzido inicialmente no contexto de distribuição de combustível \cite{dantzig1959truck} e que vem acompanhando o desenvolvimento de métodos computacionais e técnicas de otimização. Houve avanços importantes na formulação matemática do problema especialmente com o uso de programação inteira. Posteriormente, devido a dificuldade computacional associada à sua natureza NP-Difícil \cite{hochba1997approximation}, a área passou a focar em propostas heurística e metaheurísticas capazes de encontrar soluções com boa qualidade em tempo de execução viável, dentre essas propostas podemos destacar: busca tabu \cite{glover1989tabu, glover1990tabu}, algoritmos genéticos \cite{boldberg1989genetic}, \textit{simulated annealing} \cite{kirkpatrick1983optimization} e colônia de formigas \cite{dorigo2002ant}. 
 
 A relevância do VRP está diretamente relacionada ao seu amplo espectro de aplicações práticas. Problemas de roteamento são centrais em sistemas logísticos modernos, especialmente em contextos como distribuição urbana de mercadorias, coleta de resíduos, transporte escolar e planejamento de rotas para serviços de emergência \cite{golden2008vehicle,toth2002vehicle}. Além disso, com o avanço tecnológico, novas aplicações têm surgido, incluindo o roteamento de drones e veículos autônomos \cite{otto2018optimization}. Nessas aplicações, a eficiência das rotas impacta diretamente custos operacionais, consumo de combustível e emissões de gases poluentes \cite{lin2014survey}, tornando o VRP um problema de grande importância econômica e ambiental.
 
-Ao longo do tempo, diversas variantes do VRP foram propostas para capturar diferentes aspectos do mundo real. Entre as mais estudadas, destacam-se o Problema de Roteamento de Veículos Capacitado (Capacitated VRP – CVRP), no qual cada veículo possui uma capacidade limitada  \cite{solomon1987algorithms}; o VRP com Janelas de Tempo (VRPTW), que considera restrições temporais para atendimento \cite{christofides1979vehicle}; o VRP com Múltiplos Depósitos (MDVRP); e o VRP Estocástico, no qual parâmetros como demanda ou tempo de viagem são incertos \cite{renaud1996tabu, gendreau1996stochastic}. Essas variantes refletem a necessidade de modelos cada vez mais realistas e adaptados a cenários específicos.
+Ao longo do tempo, diversas variantes do VRP foram propostas para capturar diferentes aspectos do mundo real. Entre as mais estudadas, destacam-se o Problema de Roteamento de Veículos Capacitado (\textit{Capacitated VRP} - CVRP), no qual cada veículo possui uma capacidade limitada  \cite{solomon1987algorithms, xiao2012development}; o VRP com Janelas de Tempo (\textit{VRP with Time Window} - VRPTW), que considera restrições temporais para atendimento \cite{christofides1979vehicle, gambardella1999macs}; o VRP com Múltiplos Depósitos (\textit{Multi Depot VRP} - MDVRP) em que os veículos partem de diferentes depósitos para atender um conjunto de clientes da forma mais eficiente \cite{alinaghian2018multi}; e o VRP Estocástico, no qual parâmetros como demanda ou tempo de viagem são incertos \cite{renaud1996tabu, gendreau1996stochastic}. Essas variantes refletem a necessidade de modelos cada vez mais realistas e adaptados a cenários específicos.
 
 Mais recentemente, novas tendências têm emergido na literatura, impulsionadas pela disponibilidade de dados em tempo real e pelo avanço de tecnologias como Internet das Coisas (\textit{Internet of Things} - IoT) e sistemas de posicionamento global (GPS) \cite{ritzinger2016survey, boysen2018scheduling}. Nesse contexto, variantes dinâmicas do VRP têm ganhado destaque, permitindo a adaptação das rotas em tempo real. Além disso, há um crescente interesse em problemas de roteamento sustentáveis, como o VRP verde (Green VRP) \cite{lin2014survey} e o roteamento de veículos elétricos (Electric VRP – EVRP) \cite{schiffer2017electric}, que incorporam preocupações ambientais e restrições energéticas.
 
 Dessa forma, o VRP permanece como um campo de pesquisa ativo e desafiador, com inúmeras aplicações práticas e diversas oportunidades para avanços metodológicos. A complexidade inerente ao problema, aliada à crescente demanda por soluções eficientes e sustentáveis, reforça sua relevância tanto do ponto de vista teórico quanto aplicado \cite{braekers2016vehicle, moghdani2021green}.
 
-\subsection{Formulação Matemática do Problema do Roteamento de Veículos}
+\subsection{Uma Formulação Matemática do Problema do Roteamento de Veículos}
 
 
-Considere um grafo completo\footnote{Um \textit{grafo completo} é aquele em que todo par de vértices distintos está conectado por uma aresta.} $G = (V, E)$, onde $V = \{0, 1, \dots, n\}$ representa o conjunto de vértices, sendo $0$ o depósito e os demais nós correspondentes aos clientes. A cada aresta $(i,j) \in E$ associa-se um custo $c_{ij}$. No VRP capacitado (CVRP), cada cliente $i \in V \setminus \{0\}$ possui uma demanda $d_i$ e cada veículo dispõe de capacidade máxima $Q$ \cite{huang_solving_nodate}. Define-se a variável de decisão binária
+Considere um grafo completo\footnote{Um \textit{grafo completo} é aquele em que todo par de vértices distintos está conectado por uma aresta.} $G = (V, E)$, onde $V = \{0, 1, \dots, n\}$ representa o conjunto de vértices, sendo $0$ o depósito e os demais nós correspondentes aos clientes. A cada aresta $(i,j) \in E$ associa-se um custo $c_{ij}$. No VRP capacitado (CVRP), cada cliente $i \in V \setminus \{0\}$ possui uma demanda $d_i$ e cada veículo dispõe de capacidade máxima $Q\in\R$ \cite{huang_solving_nodate}. Define-se a variável de decisão binária
 
 \begin{equation}
     x_{ij} =
@@ -79,7 +81,7 @@ d_i \leq u_i \leq Q, & \quad \forall\, i \in V \setminus \{0\}.
 
 Quando $(i,j)$ é percorrida ($x_{ij}=1$), a restrição implica $u_j \geq u_i + d_j$, induzindo uma progressão ao longo da rota. Essa característica impede a formação de ciclos inconsistentes e contribui para a eliminação de sub-rotas, ao mesmo tempo em que assegura o respeito à capacidade $Q$.
 
-O TSP pode ser interpretado como um caso particular do VRP no qual há um único veículo ($K = 1$) \cite{toth2002vehicle} e as restrições de capacidade são suprimidas — ou, equivalentemente, $Q$ é suficientemente grande para atender todos os clientes em uma única rota \cite{balinski1964integer, eilon1974distribution}. A formulação resultante preserva a mesma função objetivo:
+O TSP pode ser interpretado como um caso particular do VRP no qual há um único veículo ($K = 1$) \cite{toth2002vehicle} e as restrições de capacidade são suprimidas, ou, equivalentemente, $Q$ é suficientemente grande para atender todos os clientes em uma única rota \cite{balinski1964integer, eilon1974distribution}. A formulação resultante preserva a mesma função objetivo:
 
 \begin{equation}
     \min \sum_{i \in V} \sum_{\substack{j \in V \\ j \neq i}} c_{ij}\, x_{ij},
@@ -94,13 +96,17 @@ O TSP pode ser interpretado como um caso particular do VRP no qual há um único
 
 A \autoref{eq:one_out} assegura que, após visitar cada vértice, o percurso segue para exatamente um vértice subsequente, enquanto a \autoref{eq:one_in} garante que cada vértice seja visitado exatamente uma vez. Em conjunto, essas restrições impõem a estrutura de grau unitário, prevenindo duplicações e omissões de visitas.
 
-Assim como no VRP, à eliminação de sub-rotas no TSP pode ser tratada por diferentes formulações, incluindo restrições de eliminação de sub-rotas, modelos baseados em fluxo ou o uso de variáveis auxiliares. Em síntese, a transição do VRP para o TSP consiste na remoção das restrições de capacidade e na fixação de um único veículo, reduzindo o problema à determinação de um ciclo hamiltoniano de custo mínimo. Essa relação estrutural evidencia que o TSP constitui um caso particular do VRP, compartilhando a mesma base de modelagem matemática, embora operando sobre um conjunto reduzido de restrições.
+Assim como no VRP, à eliminação de sub-rotas no TSP pode ser tratada por diferentes formulações, incluindo restrições de eliminação de sub-rotas, modelos baseados em fluxo ou o uso de variáveis auxiliares. Em síntese, a transição do VRP para o TSP consiste na remoção das restrições de capacidade e na fixação de um único veículo, reduzindo o problema à determinação de um ciclo hamiltoniano\footnote{Denomina-se ciclo hamiltoniano o caminho fechado que percorre todos os vértices de um grafo exatamente uma vez, retornando ao vértice inicial ao final.} de custo mínimo. Essa relação estrutural evidencia que o TSP constitui um caso particular do VRP, compartilhando a mesma base de modelagem matemática, embora operando sobre um conjunto reduzido de restrições.
 
 \section{Introdução a Mecânica Quântica e Computação Quântica}
 
-\subsection{Introdução à Álgebra Linear e Mecânica Quântica}
+Esta seção apresenta os fundamentos teóricos necessários para a compreensão dos modelos e algoritmos discutidos ao longo deste trabalho. Inicialmente na \autoref{subsec:linear_algebra_quantum_mecanichs}, introduzem-se os conceitos de Álgebra Linear e Mecânica Quântica de forma integrada, com ênfase nos elementos diretamente aplicáveis à descrição de sistemas quânticos, como espaços de Hilbert, operadores lineares, estados quânticos e o formalismo de Dirac. Em seguida, na \autoref{subsec:quantum_computation}, aborda-se a computação quântica convencional, baseada em qubits, com destaque para as portas lógicas quânticas, o emaranhamento e as principais características dos dispositivos da era NISQ. Por fim, na \autoref{subsubsec:cvqc} apresenta-se o paradigma de computação quântica de variáveis contínuas, no qual a informação é codificada em qumodes, unidades fundamentais cujo espaço de estados é de dimensão infinita, descrevendo suas operações características e as plataformas físicas que o implementam. Esse percurso progressivo fornece a base necessária para a compreensão das abordagens quânticas de otimização desenvolvidas ao longo do trabalho.
 
-A apresentação conjunta de conceitos de álgebra linear e mecânica quântica nesta seção justifica-se pela forte interdependência entre essas duas áreas. A mecânica quântica, em sua formulação moderna, é naturalmente expressa no formalismo de espaços vetoriais complexos, operadores lineares e produtos internos, sendo a álgebra linear o arcabouço matemático fundamental para a descrição de estados quânticos e de suas dinâmicas.
+
+
+\subsection{Introdução à Álgebra Linear e Mecânica Quântica}\label{subsec:linear_algebra_quantum_mecanichs}
+
+A apresentação conjunta de conceitos de Álgebra Linear e Mecânica Quântica nesta seção justifica-se pela forte interdependência entre essas duas áreas. A mecânica quântica, em sua formulação moderna, é naturalmente expressa no formalismo de espaços vetoriais complexos, operadores lineares e produtos internos, sendo a álgebra linear o arcabouço matemático fundamental para a descrição de estados quânticos e de suas dinâmicas.
 
 Dessa forma, em vez de introduzir separadamente os elementos de Álgebra Linear, opta-se por apresentá-los de maneira integrada ao contexto físico, destacando sua aplicação direta na modelagem de sistemas quânticos. Essa abordagem permite manter o foco nos conceitos essenciais à computação quântica, evitando a introdução de formalismos abstratos que não serão utilizados posteriormente, ao mesmo tempo em que fornece a base necessária para a compreensão dos modelos e algoritmos discutidos ao longo deste trabalho.
 
@@ -314,10 +320,11 @@ $$
 Um sistema quântico composto pode estar em um estado onde suas partes não têm um estado definido, como por exemplo, para encontrar o estado de 1 qubit de $\ket{\psi_1}=\alpha\ket{0}+\beta\ket{1}$ e $\ket{\psi_2}=\gamma\ket{0}+\delta\ket{1}$ de tal forma que
 \begin{equation}
     \label{eq:estado_bell}
-    \dfrac{\ket{00}+\ket{11}}{\sqrt{2}}=(\alpha\ket{0}+\beta\ket{1})\otimes(\gamma\ket{0}+\delta\ket{1})
+    \dfrac{\ket{00}+\ket{11}}{\sqrt{2}}\neq(\alpha\ket{0}+\beta\ket{1})\otimes(\gamma\ket{0}+\delta\ket{1})
 \end{equation}
 teremos que $\alpha\gamma = \frac{1}{\sqrt{2}},\ \alpha\delta=0,\ \beta\gamma=0$ e $\beta\delta=\frac{1}{\sqrt{2}}$, e esse sistema não admite nenhuma solução. Diz-se, portanto, que esse estado é \textbf{não-fatorável}, ou seja, não pode ser expresso como produto tensorial de estados individuais. Esse comportamento caracteriza o \textbf{emaranhamento quântico}, definido como a propriedade de um sistema composto que não pode ser fatorado pelo produto de Kronecker — diferentemente de um circuito booleano, no qual o estado de cada junção está sempre definido entre 0 e 1 \cite{Marquezino2019, lipton_quantum_2014}. Com essa representação estabelecida, é possível descrever as transformações que atuam sobre esses sistemas, denominadas portas lógicas quânticas.
 
+\subsubsection{Portas Lógicas Quânticas}
 Portas lógicas quânticas são transformações lineares \(T:\mathbb{C}^n \rightarrow \mathbb{C}^n\), representadas por operadores lineares unitários que atuam sobre o espaço de estados do sistema. No caso particular de um único qubit, cujo espaço de estados é \(\mathbb{C}^2\), essas transformações são descritas por matrizes unitárias \(2\times 2\). Algumas dessas portas são fixas, como as portas de Pauli e Hadamard, enquanto outras podem depender de parâmetros contínuos, o que permite representar rotações e transformações ajustáveis no espaço de estados. Essas portas parametrizáveis são particularmente relevantes na construção de circuitos variacionais e na modelagem de rotações na esfera de Bloch. Como exemplo de porta fixa, tem-se a porta Hadamard: 
 
 $$
@@ -582,7 +589,7 @@ Como visto anteriormente 1 qubit é representado por um vetor bidimensional de n
 
 Com isso, apenas uma única medição não possibilita determinar $\ket{\psi}$, sendo necessário preparar o estado $\ket{\psi}$ repetidamente e realizar múltiplas medições. Ainda assim, o estado não pode ser obtido exatamente a partir de uma única realização do experimento, mas pode ser reconstruído de forma estatística por meio de técnicas conhecidas como tomografia de estado quântico \cite{james2001measurement}, nas quais diferentes medições são realizadas sobre várias cópias idênticas do sistema.
 
-\subsection{Computação Quântica}
+\subsection{Computação Quântica}\label{subsec:quantum_computation}
 
 A computação é o processo sistemático de manipular e processar informações utilizando recursos computacionais, tais como dispositivos eletrônicos e algoritmos, com o objetivo de realizar tarefas específicas, resolver problemas ou tomar decisões. Isso envolve não apenas a manipulação de dados, mas também a execução de instruções lógicas e matemáticas, a fim de transformar esses dados em resultados úteis e significativos para os usuários.
 
@@ -609,7 +616,7 @@ Atualmente os computadores quânticos estão marcados por realizarem cálculos q
     \item \textbf{Computação sem Correção de Erro}: os computadores operam sem correção de erros quânticos completos, limitando a complexidade e precisão dos cálculos que podem realizar.
 \end{enumerate}
 
-\subsubsection{Computação Quântica de Variáveis Contínuas}
+\subsubsection{Computação Quântica de Variáveis Contínuas}\label{subsubsec:cvqc}
 
 A QC fundamenta-se nas propriedades estatísticas das partículas 
 subatômicas, classificadas em duas categorias fundamentais: férmions e bósons \cite{cohen2019quantum}. Os férmions obedecem ao Princípio de Exclusão de Pauli, que impede que duas partículas ocupem simultaneamente o mesmo estado quântico;  essa característica confere-lhes um caráter naturalmente discreto, tornando-os  a base conceitual dos computadores quânticos convencionais baseados em qubits \cite{sakurai2020modern}.
@@ -742,7 +749,7 @@ Embora ambas desempenhem papéis equivalentes nos algoritmos quânticos, diferem
 \end{figure}
 
 
-\subsubsection{Algumas Tecnologias em Computação Quântica}
+\subsection{Algumas Tecnologias em Computação Quântica}
 
 Qubits fotônicos utilizam fótons para representar estados quânticos, codificando informação em propriedades como polarização, fase ou caminho. Sua principal vantagem reside na operação em temperatura ambiente e na capacidade de propagação a longas distâncias sem decoerência, tornando-os especialmente adequados para comunicações quânticas. A implementação computacional ocorre via circuitos ópticos integrados, com fontes de fótons entrelaçados, interferômetros reconfiguráveis e detectores de fóton único. Apesar do potencial para escalabilidade modular, o controle preciso do entrelaçamento fotônico permanece um desafio técnico significativo \cite{slussarenko2019photonic}. Entre os principais atores do setor, destaca-se a Xanadu (Toronto, Canadá), cujos processadores exploram variáveis contínuas por meio de estados de luz squeezed entrelaçados em arranjos interferométricos programáveis — culminando, em 2022, no lançamento do \textit{Borealis}, com 216 qubits disponíveis em nuvem pública \cite{xanadu2026borealis}. A startup francesa Quandela, oriunda do CNRS e da Universidade Paris-Saclay, desenvolveu fontes de fóton único de alta eficiência e, em novembro de 2022, inaugurou a primeira plataforma europeia de computação quântica fotônica em nuvem \cite{quandela2022european}.
 
