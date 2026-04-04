@@ -79,10 +79,24 @@ onde $\alpha$, $\beta$, $\gamma$ e $m$ são hiperparâmetros do modelo. A soluç
 \min_{\psi \in \mathcal{H}} \bra{\psi} H \ket{\psi}.
 \end{equation}
 
-Essa formulação inicial teve como principal objetivo verificar a consistência da representação com variáveis contínuas em relação aos modelos tradicionais. Para tal, os resultados obtidos foram comparados com soluções provenientes, por um lado, de uma busca exaustiva clássica e, por outro, com implementações equivalentes em qubits. Observou-se que os estados de energia mínima encontrados no modelo com qumodes coincidem com aqueles identificados em ambas as abordagens, indicando que a modelagem proposta preserva corretamente a estrutura do problema. Ressalta-se, contudo, que tais experimentos foram restritos a instâncias de pequena dimensão, dado o elevado custo computacional associado à simulação de sistemas de variáveis contínuas em hardware clássico.
-Mais especificamente, para um sistema composto por $M$ qubits, a representação explícita do vetor de estados requer memória clássica que cresce como $O(2^M)$. Já no caso de um sistema composto por $M$ qumodes truncados na base de Fock com cut-off $d$, esse custo cresce como \(O(d^M)\).Assim, como a dimensão efetiva do espaço de Hilbert depende diretamente do valor de $d$, a simulação clássica de sistemas contínuos torna-se rapidamente proibitiva à medida que $M$ aumenta. Nesse contexto, instâncias de pequena dimensão correspondem a casos em que os valores de $M$ e do cut-off $d$ permitem armazenar e manipular numericamente os estados e operadores do sistema em memória clássica de forma viável.
+Essa formulação inicial teve como principal objetivo verificar a consistência da representação com variáveis contínuas em relação aos modelos tradicionais. Para tal, os resultados obtidos foram comparados com soluções provenientes, por um lado, de uma busca exaustiva clássica e, por outro, com implementações equivalentes em qubits. Observou-se que os estados de energia mínima encontrados no modelo com qumodes coincidem com aqueles identificados em ambas as abordagens, indicando que a modelagem proposta preserva corretamente a estrutura do problema. 
 
-Com base nos resultados obtidos, foi desenvolvida uma segunda versão do Hamiltoniano, na qual a representação da rota é realizada por meio de variáveis inteiras $n_k \in \{1,2,\dots,N\}$ associadas a cada posição $k$ do percurso, de modo que cada variável indica qual cidade é visitada naquela posição. Dessa forma, a configuração do percurso é descrita pelo vetor $(n_1, n_2, \dots, n_N)$, que codifica diretamente a ordem de visita das cidades ao longo da rota. Para exemplificar a configuração, considere um estado da forma $\ket{2413}$: o vértice $V_1$ é visitado na segunda posição, $V_2$ na quarta, $V_3$ na primeira e $V_4$ na terceira, resultando na rota $V_3\rightarrow V_1\rightarrow V_4\rightarrow V_2$.
+Ressalta-se, contudo, que tais experimentos foram restritos a instâncias de pequena dimensão, dado o elevado custo computacional associado à simulação de sistemas de variáveis contínuas em hardware clássico.
+Mais especificamente, para um sistema composto por $M$ qubits, a representação explícita do vetor de estados requer memória clássica que cresce como $O(2^M)$. Já no caso de um sistema composto por $M$ qumodes truncados na base de Fock com cut-off $d$, esse custo cresce como \(O(d^M)\). Assim, como a dimensão efetiva do espaço de Hilbert depende diretamente do valor de $d$, a simulação clássica de sistemas contínuos torna-se rapidamente proibitiva à medida que $M$ aumenta. Nesse contexto, instâncias de pequena dimensão correspondem a casos em que os valores de $M$ e do cut-off $d$ permitem armazenar e manipular numericamente os estados e operadores do sistema em memória clássica de forma viável.
+
+Com base nos resultados obtidos, foi desenvolvida uma segunda versão do 
+Hamiltoniano, na qual a representação da rota é realizada por meio de 
+variáveis inteiras $n_k \in \{1,2,\dots,N\}$, em que o índice $k$ 
+identifica o vértice $V_k$ e o valor $n_k$ indica a posição em que esse 
+vértice é visitado no percurso. Dessa forma, a configuração do percurso 
+é descrita pelo vetor $(n_1, n_2, \dots, n_N)$, cuja $k$-ésima entrada 
+corresponde ao vértice $V_k$ e cujo valor indica sua ordem de visita na 
+rota. Para exemplificar, considere um estado da forma $\ket{2413}$: o 
+vértice $V_1$ é visitado na segunda posição, $V_2$ na quarta, $V_3$ na 
+primeira e $V_4$ na terceira, resultando na rota $V_3\rightarrow 
+V_1\rightarrow V_4\rightarrow V_2$.
+
+% Com base nos resultados obtidos, foi desenvolvida uma segunda versão do Hamiltoniano, na qual a representação da rota é realizada por meio de variáveis inteiras $n_k \in \{1,2,\dots,N\}$ associadas a cada posição $k$ do percurso, de modo que cada variável indica qual cidade é visitada naquela posição. Dessa forma, a configuração do percurso é descrita pelo vetor $(n_1, n_2, \dots, n_N)$, que codifica diretamente a ordem de visita das cidades ao longo da rota. Para exemplificar a configuração, considere um estado da forma $\ket{2413}$ que representa uma rota indicando que: o vértice $V_1$ é visitado na segunda posição, $V_2$ na quarta, $V_3$ na primeira e $V_4$ na terceira, resultando na rota $V_3\rightarrow V_1\rightarrow V_4\rightarrow V_2$.
 
 Nesse contexto, o Hamiltoniano de custo associado ao percurso é dado por:
 $$
