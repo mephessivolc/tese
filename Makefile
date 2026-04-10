@@ -1,5 +1,5 @@
 # ===== Project configuration =====
-PROJECT_PATH := 69931ba0bcdd82709908e2e5
+PROJECT_PATH := EscritaTese
 PROJECT_BUILD_PATH := $(PROJECT_PATH)/build
 PROJECT_PDF_FILE := main.pdf
 

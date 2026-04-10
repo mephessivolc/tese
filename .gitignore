@@ -1,8 +1,8 @@
 ############################
 # VS Code
 ############################
-69cd83803080fb4fc880ad4b/
-69931ba0bcdd82709908e2e5/build/
+
+EscritaTese/build/
 *.pyc
 *.code-workspace
 
@@ -11,7 +11,7 @@ __pycache__/
 .venv/
 .devcontainer
 .vscode
-PPC_Matemática/
+
 
 ############################
 # LaTeX – arquivos auxiliares
