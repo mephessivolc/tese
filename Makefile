@@ -1,23 +1,46 @@
-# ===== Project configuration =====
-PROJECT_PATH := EscritaTese
-PROJECT_BUILD_PATH := $(PROJECT_PATH)/build
-PROJECT_PDF_FILE := main.pdf
+SHELL := /bin/bash
+.DEFAULT_GOAL := help
 
-# ===== Git remotes =====
-GITHUB_REMOTE   ?= origin
-OVERLEAF_REMOTE ?= overleaf
+# ===== Project paths =====
+PROJECT_PATH        ?= EscritaTese
+PROJECT_BUILD_PATH  ?= $(PROJECT_PATH)/build
+PROJECT_PDF_FILE    ?= main.pdf
+PROJECT_PDF_SRC     := $(PROJECT_BUILD_PATH)/$(PROJECT_PDF_FILE)
+PROJECT_PDF_DST     := $(PROJECT_PATH)/$(PROJECT_PDF_FILE)
+CODE_PATH           ?= code
+
+# ===== Remotes =====
+GITHUB_REMOTE       ?= origin
+OVERLEAF_REMOTE     ?= overleaf
+SERVER_REMOTE       ?= server-code
 
 # ===== Branches =====
-GIT_BRANCH      ?= main
-OVERLEAF_BRANCH ?= master
+GIT_BRANCH          ?= main
+OVERLEAF_BRANCH     ?= master
+SERVER_BRANCH       ?= main
+
+# ===== Server =====
+SERVER_SSH          ?= clovis@177.104.60.30
+SERVER_WORKTREE     ?= ~/work/tese-code
 
 .PHONY: \
-	status log remotes branch \
-	commit-update \
+	help status log remotes branch \
+	update-pdf commit-all commit-writing commit-code \
 	github-pull github-push \
 	overleaf-pull overleaf-push \
-	sync sync-github sync-overleaf \
-	publish-github publish-overleaf publish-all
+	server-pull server-push server-ssh server-worktree-status server-worktree-pull server-deploy \
+	sync-in sync-writing sync-code sync-all \
+	publish-writing publish-code publish-all
+
+help:
+	@echo "Targets principais:"
+	@echo "  make status              # status do repositório principal"
+	@echo "  make sync-in             # traz mudancas de GitHub, Overleaf e Server"
+	@echo "  make publish-writing     # commit + push para GitHub e Overleaf"
+	@echo "  make publish-code        # commit + push para GitHub e Server subtree"
+	@echo "  make publish-all         # commit + push para GitHub, Overleaf e Server subtree"
+	@echo "  make server-deploy       # atualiza a worktree de execucao no servidor"
+	@echo "  make server-worktree-status"
 
 # ===== Basic repository info =====
 status:
@@ -32,42 +55,81 @@ remotes:
 branch:
 	git branch --show-current
 
-# ===== Add + commit with automatic datetime =====
-commit-update:
-	cp $(PROJECT_BUILD_PATH)/$(PROJECT_PDF_FILE) $(PROJECT_PATH)/$(PROJECT_PDF_FILE)
-	git add -A
-	git commit -m "update $$(date '+%Y-%m-%d %H:%M:%S')" || echo "Nothing to commit"
+# ===== Helpers =====
+update-pdf:
+	@if [ -f "$(PROJECT_PDF_SRC)" ]; then \
+		cp "$(PROJECT_PDF_SRC)" "$(PROJECT_PDF_DST)"; \
+		echo "PDF atualizado em $(PROJECT_PDF_DST)"; \
+	else \
+		echo "PDF nao encontrado em $(PROJECT_PDF_SRC); Copia não disponivel."; \
+	fi
 
-# ===== GitHub operations =====
+commit-all: update-pdf
+	@git add -A
+	@git commit -m "update $$(date '+%Y-%m-%d %H:%M:%S')" || echo "Nothing to commit"
+
+commit-writing: update-pdf
+	@git add "$(PROJECT_PATH)"
+	@git commit -m "writing update $$(date '+%Y-%m-%d %H:%M:%S')" || echo "Nothing to commit"
+
+commit-code:
+	@git add "$(CODE_PATH)"
+	@git commit -m "code update $$(date '+%Y-%m-%d %H:%M:%S')" || echo "Nothing to commit"
+
+# ===== GitHub: repo principal =====
 github-pull:
 	git pull $(GITHUB_REMOTE) $(GIT_BRANCH)
 
 github-push:
 	git push $(GITHUB_REMOTE) $(GIT_BRANCH)
 
-# ===== Overleaf operations =====
+# ===== Overleaf: subtree de EscritaTese =====
 overleaf-pull:
 	git subtree pull --prefix=$(PROJECT_PATH) $(OVERLEAF_REMOTE) $(OVERLEAF_BRANCH) --squash
 
 overleaf-push:
 	git subtree push --prefix=$(PROJECT_PATH) $(OVERLEAF_REMOTE) $(OVERLEAF_BRANCH)
 
-# ===== Safer sync flow =====
-# Atualiza primeiro a branch local com GitHub e depois traz as mudanças do Overleaf.
-# Se houver conflito, o processo para antes de qualquer push.
-sync: github-pull overleaf-pull
-	@echo "Sync local concluído. Revise com 'make status' e envie com 'make sync-github' e/ou 'make sync-overleaf'."
+# ===== Server: subtree de code/ =====
+server-pull:
+	git subtree pull --prefix=$(CODE_PATH) $(SERVER_REMOTE) $(SERVER_BRANCH) --squash
 
-# Envio explícito, separado, para evitar propagar conflitos sem revisão
-sync-github:
-	git push $(GITHUB_REMOTE) $(GIT_BRANCH)
+server-push:
+	git subtree push --prefix=$(CODE_PATH) $(SERVER_REMOTE) $(SERVER_BRANCH)
 
-sync-overleaf:
-	git subtree push --prefix=$(PROJECT_PATH) $(OVERLEAF_REMOTE) $(OVERLEAF_BRANCH)
+server-ssh:
+	ssh $(SERVER_SSH)
 
-# ===== Commit + push helpers =====
-publish-github: commit-update github-push
+server-worktree-status:
+	ssh $(SERVER_SSH) "cd $(SERVER_WORKTREE) && git status -sb && echo && git log --oneline -n 5"
 
-publish-overleaf: commit-update overleaf-push
+server-worktree-pull:
+	ssh $(SERVER_SSH) "cd $(SERVER_WORKTREE) && git pull origin $(SERVER_BRANCH)"
 
-publish-all: commit-update github-push overleaf-push
+# Atualiza a copia de trabalho do servidor para executar a ultima versao enviada.
+# Mantido separado de server-push para nao sobrescrever seu fluxo se houver trabalho em andamento no servidor.
+server-deploy: server-push server-worktree-pull
+
+# ===== Entrada de mudancas externas =====
+# Ordem recomendada:
+# 1) GitHub (repo principal)
+# 2) Overleaf (subtree da escrita)
+# 3) Server (subtree do codigo)
+sync-in: github-pull overleaf-pull server-pull
+	@echo "Sync concluido. Revise com 'make status' e publique com os targets publish-* quando quiser."
+
+sync-writing: github-pull overleaf-pull
+	@echo "GitHub + Overleaf sincronizados."
+
+sync-code: github-pull server-pull
+	@echo "GitHub + Server sincronizados."
+
+sync-all: sync-in
+
+# ===== Saida / publicacao =====
+# GitHub recebe o projeto inteiro.
+publish-writing: commit-all github-push overleaf-push
+
+publish-code: commit-all github-push server-push
+
+publish-all: commit-all github-push overleaf-push server-push

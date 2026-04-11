@@ -1,9 +1,11 @@
-FROM python:3.10-bullseye
+# syntax=docker/dockerfile:1
 
-ENV DEBIAN_FRONTEND=noninteractive
-ENV PYTHONUNBUFFERED=1
-ENV LANG=C.UTF-8
-ENV LC_ALL=C.UTF-8
+FROM python:3.10-bullseye AS base
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONUNBUFFERED=1 \
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     bash \
@@ -16,6 +18,32 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     wget \
     unzip \
+ && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --upgrade pip jupyterlab
+
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt && rm -f /tmp/requirements.txt
+
+ARG USERNAME=clovis-caface
+ARG USER_UID=1000
+ARG USER_GID=1000
+
+RUN groupadd --gid ${USER_GID} ${USERNAME} \
+    && useradd -m -s /bin/bash -u ${USER_UID} -g ${USER_GID} ${USERNAME} \
+    && echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME} \
+    && chmod 0440 /etc/sudoers.d/${USERNAME} \
+    && mkdir -p /workspace \
+    && chown -R ${USERNAME}:${USERNAME} /workspace /home/${USERNAME}
+
+ENV APP_USER=${USERNAME} \
+    HOME=/home/${USERNAME}
+
+WORKDIR /workspace
+
+FROM base AS dev
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
     perl \
     biber \
     latexmk \
@@ -32,28 +60,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     lmodern \
  && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --upgrade pip
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
+RUN mkdir -p /texlive-cache/texmf-var /texlive-cache/texmf-cache \
+    && chown -R ${APP_USER}:${APP_USER} /texlive-cache
 
-ARG USERNAME=clovis-caface
-ARG USER_UID=1000
-ARG USER_GID=1000
+ENV TEXMFVAR=/texlive-cache/texmf-var \
+    TEXMFCACHE=/texlive-cache/texmf-cache
 
-RUN groupadd --gid ${USER_GID} ${USERNAME} \
-    && useradd -m -s /bin/bash -u ${USER_UID} -g ${USER_GID} ${USERNAME} \
-    && echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME} \
-    && chmod 0440 /etc/sudoers.d/${USERNAME} \
-    && mkdir -p /workspace \
-               /texlive-cache/texmf-var \
-               /texlive-cache/texmf-cache \
-    && chown -R ${USERNAME}:${USERNAME} /workspace /texlive-cache /home/${USERNAME}
+USER ${APP_USER}
+CMD ["/bin/bash"]
 
-ENV HOME=/home/clovis-caface
-ENV TEXMFVAR=/texlive-cache/texmf-var
-ENV TEXMFCACHE=/texlive-cache/texmf-cache
+FROM base AS prod
 
-WORKDIR /workspace
-USER clovis-caface
-
+USER ${APP_USER}
 CMD ["/bin/bash"]
