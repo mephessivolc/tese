@@ -19,6 +19,11 @@ GIT_BRANCH          ?= main
 OVERLEAF_BRANCH     ?= master
 SERVER_BRANCH       ?= main
 
+
+# ===== Overleaf =====
+OVERLEAF_PREFIX ?= EscritaTese
+OVERLEAF_URL ?= https://git@git.overleaf.com/69931ba0bcdd82709908e2e5
+
 # ===== Server =====
 SERVER_SSH          ?= clovis@177.104.60.30
 SERVER_WORKTREE     ?= ~/work/tese-code
@@ -84,11 +89,29 @@ github-push:
 	git push $(GITHUB_REMOTE) $(GIT_BRANCH)
 
 # ===== Overleaf: subtree de EscritaTese =====
-overleaf-pull:
-	git subtree pull --prefix=$(PROJECT_PATH) $(OVERLEAF_REMOTE) $(OVERLEAF_BRANCH) --squash
 
-overleaf-push:
-	git subtree push --prefix=$(PROJECT_PATH) $(OVERLEAF_REMOTE) $(OVERLEAF_BRANCH)
+ensure-clean:
+	@git diff --quiet || (echo "Erro: há modificações locais não commitadas."; git status --short; exit 1)
+	@git diff --cached --quiet || (echo "Erro: há arquivos staged não commitados."; git status --short; exit 1)
+
+overleaf-remote-set:
+	@git remote get-url $(OVERLEAF_REMOTE) >/dev/null 2>&1 || git remote add $(OVERLEAF_REMOTE) $(OVERLEAF_URL)
+	@git remote set-url $(OVERLEAF_REMOTE) $(OVERLEAF_URL)
+
+overleaf-fetch: overleaf-remote-set
+	git fetch $(OVERLEAF_REMOTE) $(OVERLEAF_BRANCH)
+
+overleaf-bootstrap: ensure-clean overleaf-fetch
+	git rm -r --ignore-unmatch $(OVERLEAF_PREFIX)
+	rm -rf $(OVERLEAF_PREFIX)
+	git commit -m "Remove $(OVERLEAF_PREFIX) local para reimportar do Overleaf" || true
+	git subtree add --prefix=$(OVERLEAF_PREFIX) $(OVERLEAF_REMOTE) $(OVERLEAF_BRANCH) --squash
+
+overleaf-pull: ensure-clean overleaf-fetch
+	git subtree pull --prefix=$(OVERLEAF_PREFIX) $(OVERLEAF_REMOTE) $(OVERLEAF_BRANCH) --squash
+
+overleaf-push: ensure-clean
+	git subtree push --prefix=$(OVERLEAF_PREFIX) $(OVERLEAF_REMOTE) $(OVERLEAF_BRANCH)
 
 # ===== Server: subtree de code/ =====
 server-pull:
@@ -133,3 +156,5 @@ publish-writing: commit-all github-push overleaf-push
 publish-code: commit-all github-push server-push
 
 publish-all: commit-all github-push overleaf-push server-push
+
+git remote add overleaf https://git@git.overleaf.com/69931ba0bcdd82709908e2e5 
