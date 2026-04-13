@@ -1,0 +1,19 @@
+services:
+  workspace:
+    build:
+      target: dev
+    stdin_open: true
+    tty: true
+    command: sleep infinity
+    environment:
+      TEXMFVAR: /texlive-cache/texmf-var
+      TEXMFCACHE: /texlive-cache/texmf-cache
+    volumes:
+      - ./:/workspace
+      - texlive-cache:/texlive-cache
+    ports:
+      - "127.0.0.1:${JUPYTER_PORT:-8888}:8888"
+      - "127.0.0.1:${APP_PORT:-8080}:8080"
+
+volumes:
+  texlive-cache:
