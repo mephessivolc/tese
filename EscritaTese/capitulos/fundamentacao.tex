@@ -100,7 +100,7 @@ Assim como no VRP, à eliminação de sub-rotas no TSP pode ser tratada por dife
 
 \section{Introdução a Mecânica Quântica e Computação Quântica}
 
-Esta seção apresenta os fundamentos teóricos necessários para a compreensão dos modelos e algoritmos discutidos ao longo deste trabalho. Inicialmente na \autoref{subsec:linear_algebra_quantum_mecanichs}, introduzem-se os conceitos de Álgebra Linear e Mecânica Quântica de forma integrada, com ênfase nos elementos diretamente aplicáveis à descrição de sistemas quânticos, como espaços de Hilbert, operadores lineares, estados quânticos e o formalismo de Dirac. Em seguida, na \autoref{subsec:quantum_computation}, aborda-se a computação quântica convencional, baseada em qubits, com destaque para as portas lógicas quânticas, o emaranhamento e as principais características dos dispositivos da era NISQ. Por fim, na \autoref{subsubsec:cvqc} apresenta-se o paradigma de computação quântica de variáveis contínuas, no qual a informação é codificada em qumodes, unidades fundamentais cujo espaço de estados é de dimensão infinita, descrevendo suas operações características e as plataformas físicas que o implementam. Esse percurso progressivo fornece a base necessária para a compreensão das abordagens quânticas de otimização desenvolvidas ao longo do trabalho.
+Esta seção apresenta os fundamentos teóricos necessários para a compreensão dos modelos e algoritmos discutidos ao longo deste trabalho. Inicialmente na \autoref{subsec:linear_algebra_quantum_mecanichs}, introduzem-se os conceitos de Álgebra Linear e Mecânica Quântica de forma integrada, com ênfase nos elementos diretamente aplicáveis à descrição de sistemas quânticos, como espaços de Hilbert, operadores lineares, estados quânticos e o formalismo de Dirac. Em seguida, na \autoref{subsubsec:cvqc} apresenta-se o paradigma de computação quântica de variáveis contínuas, no qual a informação é codificada em qumodes, unidades fundamentais cujo espaço de estados é de dimensão infinita, descrevendo suas operações características e as plataformas físicas que o implementam. Esse percurso progressivo fornece a base necessária para a compreensão das abordagens quânticas de otimização desenvolvidas ao longo do trabalho.
 
 \subsection{Introdução à Álgebra Linear e Mecânica Quântica}\label{subsec:linear_algebra_quantum_mecanichs}
 
@@ -746,8 +746,18 @@ Qubits supercondutores do tipo transmon constituem atualmente a abordagem mais d
 \section{Abordagens Quânticas para Otimização}
 
 As abordagens quânticas para problemas de otimização têm se consolidado como uma alternativa promissora aos métodos clássicos, especialmente diante da crescente complexidade combinatória de problemas em larga escala. Nesse contexto, a formulação matemática desempenha um papel central, pois permite traduzir problemas do mundo real em estruturas compatíveis com dispositivos quânticos. Entre essas formulações, destacam-se o modelo de Ising e o Otimização Binária Quadrática Irrestrita (\textit{Quadratic Unconstrained Binary Optimization} - QUBO), que estabelecem a base para diversas estratégias de otimização quântica, tanto no paradigma adiabático quanto no modelo de circuitos.
+ 
+Um dos modelos que nos permite escrever problemas do tipo TSP de forma mais genérica é a QUBO \cite{lewis2017quadratic}. O QUBO é uma estrutura que nos permite modelar problemas em forma quadrática sujeitos a restrições lineares de forma nativa. No entanto, com o auxílio de funções de penalidade, é possível reformular tarefas de ordem superior a dois e restrições de desigualdade para o modelo QUBO. Outra característica que torna o QUBO um ambiente de modelagem muito importante é sua estreita conexão com o modelo de Ising \cite{cipra1987introduction}. 
 
-Um dos modelos que nos permite escrever problemas do tipo TSP de forma mais genérica é a QUBO \cite{lewis2017quadratic}. O QUBO é uma estrutura que nos permite modelar problemas em forma quadrática sujeitos a restrições lineares de forma nativa. No entanto, com o auxílio de funções de penalidade, é possível reformular tarefas de ordem superior a dois e restrições de desigualdade para o modelo QUBO. Outra característica que torna o QUBO um ambiente de modelagem muito importante é sua estreita conexão com o modelo de Ising \cite{cipra1987introduction}. O modelo QUBO constitui um problema central para a computação quântica adiabática \cite{mcgeoch2013experimental}, que é resolvido por meio de um processo físico chamado recozimento quântico \cite{mcgeoch2022adiabatic, brooke1999quantum}.
+O modelo QUBO constitui um problema central para a computação quântica adiabática \cite{mcgeoch2013experimental}, que é resolvido por meio de um processo físico chamado recozimento quântico \cite{mcgeoch2022adiabatic, brooke1999quantum}. Formalmente, o QUBO é expresso como uma função custo sobre variáveis binárias 
+$x_i \in \{0,1\}$, conforme a \autoref{eq:qubo}:
+
+\begin{equation}
+    \label{eq:qubo}
+    H_{\text{QUBO}}=\sum_{i\in V}a_ix_i+\sum_{(ij)\in E}b_{ij}x_ix_j
+\end{equation}
+
+\noindent onde $a_i$ e $b_{ij}$ são coeficientes reais que representam, respectivamente, os pesos lineares dos vértices e os pesos quadráticos das arestas do grafo $G = (V, E)$. A notação $H$ é adotada por analogia ao Hamiltoniano do modelo de Ising, cuja equivalência com o QUBO é discutida a seguir.
 
 O modelo de Ising descreve sistemas físicos compostos por spins binários $s_i \in \{-1, +1\}$, cuja energia é dada por uma função Hamiltoniana semelhante a \autoref{eq:ising_hamiltonian}
 
