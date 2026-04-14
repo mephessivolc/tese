@@ -41,7 +41,7 @@ WORKDIR /workspace
 COPY requirements.txt requirements.txt
 
 RUN python -m pip install --upgrade pip setuptools wheel \
-    && if [ -s /tmp/requirements.txt ]; then pip install -r /tmp/requirements.txt; fi \
+    && if [ -s requirements.txt ]; then pip install -r requirements.txt; fi \
     && mkdir -p /tmp/matplotlib
 
 COPY . /workspace/

@@ -49,11 +49,11 @@ services:
     volumes:
       - .:/workspace
 
-    shm_size: ${SERVER_SHM_SIZE:-16g}
-    mem_limit: ${SERVER_MEM_LIMIT:-128g}
-    mem_reservation: ${SERVER_MEM_RESERVATION:-32g}
-    cpus: ${SERVER_CPUS:-16.0}
-    pids_limit: ${SERVER_PIDS_LIMIT:-4096}
+    # shm_size: ${SERVER_SHM_SIZE:-16g}
+    # mem_limit: ${SERVER_MEM_LIMIT:-128g}
+    # mem_reservation: ${SERVER_MEM_RESERVATION:-32g}
+    # cpus: ${SERVER_CPUS:-16.0}
+    # pids_limit: ${SERVER_PIDS_LIMIT:-4096}
 
     # Ative GPU só quando necessário
     # gpus: ${SERVER_GPUS:-all}
