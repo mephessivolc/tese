@@ -1,75 +1,75 @@
-# syntax=docker/dockerfile:1
+# syntax=docker/dockerfile:1.7
 
-FROM python:3.10-bullseye AS base
+FROM python:3.10-slim-bookworm AS python-base
 
-ENV DEBIAN_FRONTEND=noninteractive \
-    PYTHONUNBUFFERED=1 \
-    LANG=C.UTF-8 \
-    LC_ALL=C.UTF-8
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    bash \
-    ca-certificates \
-    curl \
-    git \
-    make \
-    sudo \
-    procps \
-    build-essential \
-    wget \
-    unzip \
- && rm -rf /var/lib/apt/lists/*
-
-RUN pip install --upgrade pip jupyterlab
-
-COPY requirements.txt /tmp/requirements.txt
-RUN pip install --no-cache-dir -r /tmp/requirements.txt && rm -f /tmp/requirements.txt
-
-ARG USERNAME=clovis-caface
+ARG USERNAME=devuser
 ARG USER_UID=1000
 ARG USER_GID=1000
 
-RUN groupadd --gid ${USER_GID} ${USERNAME} \
-    && useradd -m -s /bin/bash -u ${USER_UID} -g ${USER_GID} ${USERNAME} \
-    && echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME} \
-    && chmod 0440 /etc/sudoers.d/${USERNAME} \
-    && mkdir -p /workspace \
-    && chown -R ${USERNAME}:${USERNAME} /workspace /home/${USERNAME}
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1 \
+    MPLCONFIGDIR=/tmp/matplotlib \
+    PYTHONPATH=/workspace/python:/workspace/python/src:/workspace
 
-ENV APP_USER=${USERNAME} \
-    HOME=/home/${USERNAME}
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        bash \
+        build-essential \
+        ca-certificates \
+        curl \
+        git \
+        less \
+        openssh-client \
+        procps \
+        sudo \
+        tini \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN groupadd --gid "${USER_GID}" "${USERNAME}" \
+    && useradd --uid "${USER_UID}" --gid "${USER_GID}" -m -s /bin/bash "${USERNAME}" \
+    && usermod -aG sudo "${USERNAME}" \
+    && echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > "/etc/sudoers.d/${USERNAME}" \
+    && chmod 0440 "/etc/sudoers.d/${USERNAME}"
 
 WORKDIR /workspace
 
-FROM base AS dev
+COPY requirements.txt requirements.txt
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    perl \
-    biber \
-    latexmk \
-    texlive-base \
-    texlive-latex-base \
-    texlive-latex-recommended \
-    texlive-latex-extra \
-    texlive-pictures \
-    texlive-fonts-recommended \
-    texlive-lang-portuguese \
-    texlive-publishers \
-    texlive-bibtex-extra \
-    texlive-science \
-    lmodern \
- && rm -rf /var/lib/apt/lists/*
+RUN python -m pip install --upgrade pip setuptools wheel \
+    && if [ -s /tmp/requirements.txt ]; then pip install -r /tmp/requirements.txt; fi \
+    && mkdir -p /tmp/matplotlib
 
-RUN mkdir -p /texlive-cache/texmf-var /texlive-cache/texmf-cache \
-    && chown -R ${APP_USER}:${APP_USER} /texlive-cache
+ENTRYPOINT ["/usr/bin/tini", "--"]
+CMD ["sleep", "infinity"]
 
-ENV TEXMFVAR=/texlive-cache/texmf-var \
-    TEXMFCACHE=/texlive-cache/texmf-cache
 
-USER ${APP_USER}
-CMD ["/bin/bash"]
+FROM python-base AS local
 
-FROM base AS prod
+ARG USERNAME=devuser
 
-USER ${APP_USER}
-CMD ["/bin/bash"]
+ENV TEXMFVAR=/workspace/.texlive/texmf-var \
+    TEXMFCACHE=/workspace/.texlive/texmf-cache
+
+USER root
+
+# Ambiente local: prioriza compatibilidade do LaTeX.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        biber \
+        chktex \
+        latexmk \
+        texlive-full \
+    && rm -rf /var/lib/apt/lists/*
+
+USER ${USERNAME}
+
+
+FROM python-base AS server
+
+ARG USERNAME=devuser
+USER ${USERNAME}

@@ -1,22 +1,62 @@
+name: tese
+
 services:
-  workspace:
+  local:
     build:
       context: .
       dockerfile: Dockerfile
+      target: local
       args:
-        USERNAME: ${USERNAME:-clovis-caface}
-        USER_UID: ${USER_UID:-1000}
-        USER_GID: ${USER_GID:-1000}
+        USERNAME: ${LOCAL_USER:-devuser}
+        USER_UID: ${LOCAL_UID:-1000}
+        USER_GID: ${LOCAL_GID:-1000}
+    image: tese-local:latest
     init: true
     working_dir: /workspace
-    user: "${USERNAME:-clovis-caface}"
+    command: sleep infinity
     environment:
-      HOME: /home/${USERNAME:-clovis-caface}
+      HOME: /home/${LOCAL_USER:-devuser}
+      PYTHONDONTWRITEBYTECODE: "1"
       PYTHONUNBUFFERED: "1"
-      JUPYTER_ENABLE_LAB: "yes"
-    restart: "no"
-    logging:
-      driver: local
-      options:
-        max-size: "20m"
-        max-file: "5"
+      PIP_DISABLE_PIP_VERSION_CHECK: "1"
+      MPLCONFIGDIR: /tmp/matplotlib
+      PYTHONPATH: /workspace/python:/workspace/python/src:/workspace
+      TEXMFVAR: /workspace/.texlive/texmf-var
+      TEXMFCACHE: /workspace/.texlive/texmf-cache
+    volumes:
+      - .:/workspace
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: server
+      args:
+        USERNAME: ${LOCAL_USER:-devuser}
+        USER_UID: ${LOCAL_UID:-1000}
+        USER_GID: ${LOCAL_GID:-1000}
+    image: tese-server:latest
+    init: true
+    working_dir: /workspace
+    command: sleep infinity
+    environment:
+      HOME: /home/${LOCAL_USER:-devuser}
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONUNBUFFERED: "1"
+      PIP_DISABLE_PIP_VERSION_CHECK: "1"
+      MPLCONFIGDIR: /tmp/matplotlib
+      PYTHONPATH: /workspace/python:/workspace/python/src:/workspace
+    volumes:
+      - .:/workspace
+
+    # GPU: use em execuções pontuais, para não quebrar em máquinas sem NVIDIA.
+    # Exemplo:
+    # docker compose run --rm --gpus all server python python/src/seu_script.py
+
+    # Limites opcionais para o servidor compartilhado.
+    # Ative só quando você souber os valores adequados.
+    # mem_limit: "16g"
+    # mem_reservation: "4g"
+    # cpus: 8.0
+    # shm_size: "4g"
+    # pids_limit: 1024
