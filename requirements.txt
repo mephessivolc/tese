@@ -11,3 +11,4 @@ qutip
 pennylane>=0.19 #, <0.30
 pennylane-sf==0.29
 ipywidgets
+pandas
