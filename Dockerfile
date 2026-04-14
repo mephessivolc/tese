@@ -44,6 +44,8 @@ RUN python -m pip install --upgrade pip setuptools wheel \
     && if [ -s /tmp/requirements.txt ]; then pip install -r /tmp/requirements.txt; fi \
     && mkdir -p /tmp/matplotlib
 
+COPY . /workspace/
+
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["sleep", "infinity"]
 
