@@ -38,7 +38,18 @@ os.environ["MPLBACKEND"] = "Agg"
 try:
     import pkg_resources  # noqa: F401
 except ModuleNotFoundError:
-    sys.modules["pkg_resources"] = types.ModuleType("pkg_resources")
+    import types
+    import importlib
+
+    pkg_resources = types.ModuleType("pkg_resources")
+
+    def resource_filename(package_name, resource_name):
+        package = importlib.import_module(package_name)
+        package_dir = Path(package.__file__).resolve().parent
+        return str(package_dir / resource_name)
+
+    pkg_resources.resource_filename = resource_filename
+    sys.modules["pkg_resources"] = pkg_resources
 
 # --------------------------------------------------
 # Imports principais
@@ -63,66 +74,66 @@ OUTPUT_DIR = BASE_DIR / "figuras_wigner"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # Estado coerente de referência |alpha>
-ALPHA_R = 1.0
+ALPHA_R = 2.5
 ALPHA_PHI = np.pi / 6  # fase do deslocamento que cria o estado coerente
 
 # Parâmetros de exemplo das portas
 GATE_SPECS = [
     {
         "key": "deslocamento",
-        "title": "Deslocamento D(0.9, pi/5)",
+        "title": r"Deslocamento $D(3.0, \pi/2)$",
         "num_modes": 1,
         "plot_mode": 0,
-        "apply_gate": lambda q: Dgate(0.9, np.pi / 5) | q[0],
+        "apply_gate": lambda q: Dgate(3.0, np.pi / 2) | q[0],
     },
     {
         "key": "compressao",
-        "title": "Compressao S(0.8)",
+        "title": r"Compressao $S(1.0)$",
         "num_modes": 1,
         "plot_mode": 0,
-        "apply_gate": lambda q: Sgate(0.8, 0.0) | q[0],
+        "apply_gate": lambda q: Sgate(1.0, 0.0) | q[0],
     },
     {
         "key": "divisor_de_feixe",
-        "title": "Divisor de feixe BS(pi/4, 0)",
+        "title": r"Divisor de feixe $BS(\pi/4, 0)$",
         "num_modes": 2,
-        "plot_mode": 0,  # plota apenas um modo, como exemplo
+        "plot_mode": 0,
         "apply_gate": lambda q: BSgate(np.pi / 4, 0.0) | (q[0], q[1]),
     },
     {
         "key": "rotacao_pi_4",
-        "title": "Rotacao R(pi/4)",
+        "title": r"Rotacao $R(\pi/4)$",
         "num_modes": 1,
         "plot_mode": 0,
         "apply_gate": lambda q: Rgate(np.pi / 4) | q[0],
     },
     {
         "key": "fase_cubica",
-        "title": "Fase cubica V(0.08)",
+        "title": r"Fase cubica $V(0.18)$",
         "num_modes": 1,
         "plot_mode": 0,
-        "apply_gate": lambda q: Vgate(0.08) | q[0],
+        "apply_gate": lambda q: Vgate(0.18) | q[0],
     },
     {
         "key": "kerr",
-        "title": "Kerr K(0.06)",
+        "title": r"Kerr $K(0.25)$",
         "num_modes": 1,
         "plot_mode": 0,
-        "apply_gate": lambda q: Kgate(0.1) | q[0],
+        "apply_gate": lambda q: Kgate(0.25) | q[0],
     },
 ]
 
 # Grade da fase
-X_MIN, X_MAX = -3.0, 3.0
-P_MIN, P_MAX = -3.0, 3.0
-N_GRID = 220
+X_MIN, X_MAX = -10.0, 10.0
+P_MIN, P_MAX = -10.0, 10.0
+N_GRID = 350
 
 xvec = np.linspace(X_MIN, X_MAX, N_GRID)
 pvec = np.linspace(P_MIN, P_MAX, N_GRID)
 X, P = np.meshgrid(xvec, pvec)
 
 # Backend Fock: necessário para as não gaussianas e suficiente para todas
-CUTOFF_DIM = 30
+CUTOFF_DIM = 60
 
 # Estilo da figura
 FIGSIZE = (12.5, 5.0)
@@ -134,6 +145,10 @@ AZIM = 35
 # --------------------------------------------------
 # Funções auxiliares
 # --------------------------------------------------
+def prepare_reference_state_bs(q):
+    Dgate(2.5, 0.0) | q[0]
+    Dgate(2.5, np.pi/2) | q[1]
+    
 def prepare_reference_state(q, num_modes):
     """
     Prepara o mesmo estado coerente de referência em todos os casos.
@@ -181,10 +196,11 @@ def draw_panel(ax, W, title, global_vmin, global_vmax, zoffset):
         cmap=CMAP,
         vmin=global_vmin,
         vmax=global_vmax,
-        linewidth=0,
+        linewidth=0.1,
+        edgecolor="0.25",
         antialiased=True,
-        rstride=1,
-        cstride=1,
+        rstride=8, 
+        cstride=8
     )
 
     ax.contourf(
@@ -214,6 +230,11 @@ def draw_panel(ax, W, title, global_vmin, global_vmax, zoffset):
 
     ax.set_xlim(X_MIN, X_MAX)
     ax.set_ylim(P_MIN, P_MAX)
+
+    ax.set_xticks(np.arange(X_MIN, X_MAX + 0.1, 5.0))
+    ax.set_yticks(np.arange(P_MIN, P_MAX + 0.1, 5.0))
+    ax.set_zticks(np.arange(-0.10, 0.11, 0.05))
+
     ax.set_zlim(zoffset, global_vmax * 1.05)
     ax.view_init(elev=ELEV, azim=AZIM)
 
