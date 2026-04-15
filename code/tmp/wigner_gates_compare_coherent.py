@@ -84,6 +84,7 @@ GATE_SPECS = [
         "title": r"Deslocamento $D(3.0, \pi/2)$",
         "num_modes": 1,
         "plot_mode": 0,
+        "prepare_state": lambda q, n: prepare_reference_state(q, n),
         "apply_gate": lambda q: Dgate(3.0, np.pi / 2) | q[0],
     },
     {
@@ -91,6 +92,7 @@ GATE_SPECS = [
         "title": r"Compressao $S(1.0)$",
         "num_modes": 1,
         "plot_mode": 0,
+        "prepare_state": lambda q, n: prepare_reference_state(q, n),
         "apply_gate": lambda q: Sgate(1.0, 0.0) | q[0],
     },
     {
@@ -98,6 +100,7 @@ GATE_SPECS = [
         "title": r"Divisor de feixe $BS(\pi/4, 0)$",
         "num_modes": 2,
         "plot_mode": 0,
+        "prepare_state": lambda q, n: prepare_reference_state_bs(q),
         "apply_gate": lambda q: BSgate(np.pi / 4, 0.0) | (q[0], q[1]),
     },
     {
@@ -105,6 +108,7 @@ GATE_SPECS = [
         "title": r"Rotacao $R(\pi/4)$",
         "num_modes": 1,
         "plot_mode": 0,
+        "prepare_state": lambda q, n: prepare_reference_state(q, n),
         "apply_gate": lambda q: Rgate(np.pi / 4) | q[0],
     },
     {
@@ -112,6 +116,7 @@ GATE_SPECS = [
         "title": r"Fase cubica $V(0.18)$",
         "num_modes": 1,
         "plot_mode": 0,
+        "prepare_state": lambda q, n: prepare_reference_state(q, n),
         "apply_gate": lambda q: Vgate(0.18) | q[0],
     },
     {
@@ -119,6 +124,7 @@ GATE_SPECS = [
         "title": r"Kerr $K(0.25)$",
         "num_modes": 1,
         "plot_mode": 0,
+        "prepare_state": lambda q, n: prepare_reference_state(q, n),
         "apply_gate": lambda q: Kgate(0.25) | q[0],
     },
 ]
@@ -146,9 +152,10 @@ AZIM = 35
 # Funções auxiliares
 # --------------------------------------------------
 def prepare_reference_state_bs(q):
-    Dgate(2.5, 0.0) | q[0]
-    Dgate(2.5, np.pi/2) | q[1]
-    
+    Sgate(1.0, 0.0) | q[0]
+    Dgate(1.5, 0.0) | q[0]
+    # q[1] permanece no vácuo
+
 def prepare_reference_state(q, num_modes):
     """
     Prepara o mesmo estado coerente de referência em todos os casos.
@@ -158,14 +165,15 @@ def prepare_reference_state(q, num_modes):
     # q[1], se existir, permanece no vácuo
 
 
-def run_program_and_get_wigner(num_modes, plot_mode, apply_gate=None):
+def run_program_and_get_wigner(num_modes, plot_mode, prepare_state, apply_gate=None):
     """
     Retorna a função de Wigner antes e depois da aplicação da porta.
     """
+
     # Estado inicial
     prog_before = sf.Program(num_modes)
     with prog_before.context as q_before:
-        prepare_reference_state(q_before, num_modes)
+        prepare_state(q_before, num_modes)
 
     eng_before = sf.Engine("fock", backend_options={"cutoff_dim": CUTOFF_DIM})
     state_before = eng_before.run(prog_before).state
@@ -174,7 +182,7 @@ def run_program_and_get_wigner(num_modes, plot_mode, apply_gate=None):
     # Estado após a porta
     prog_after = sf.Program(num_modes)
     with prog_after.context as q_after:
-        prepare_reference_state(q_after, num_modes)
+        prepare_state(q_after, num_modes)
         if apply_gate is not None:
             apply_gate(q_after)
 
@@ -183,7 +191,6 @@ def run_program_and_get_wigner(num_modes, plot_mode, apply_gate=None):
     W_after = state_after.wigner(mode=plot_mode, xvec=xvec, pvec=pvec)
 
     return W_before, W_after
-
 
 def draw_panel(ax, W, title, global_vmin, global_vmax, zoffset):
     """
@@ -273,6 +280,7 @@ def main():
         W_before, W_after = run_program_and_get_wigner(
             num_modes=spec["num_modes"],
             plot_mode=spec["plot_mode"],
+            prepare_state=spec["prepare_state"],
             apply_gate=spec["apply_gate"],
         )
 
