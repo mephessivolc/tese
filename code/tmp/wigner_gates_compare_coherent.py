@@ -99,7 +99,7 @@ GATE_SPECS = [
         "key": "divisor_de_feixe",
         "title": r"Divisor de feixe $BS(\pi/4, 0)$",
         "num_modes": 2,
-        "plot_mode": 0,
+        "plot_mode": 1,
         "prepare_state": lambda q, n: prepare_reference_state_bs(q),
         "apply_gate": lambda q: BSgate(np.pi / 4, 0.0) | (q[0], q[1]),
     },
@@ -132,7 +132,7 @@ GATE_SPECS = [
 # Grade da fase
 X_MIN, X_MAX = -10.0, 10.0
 P_MIN, P_MAX = -10.0, 10.0
-N_GRID = 350
+N_GRID = 450
 
 xvec = np.linspace(X_MIN, X_MAX, N_GRID)
 pvec = np.linspace(P_MIN, P_MAX, N_GRID)
@@ -152,8 +152,8 @@ AZIM = 35
 # Funções auxiliares
 # --------------------------------------------------
 def prepare_reference_state_bs(q):
-    Sgate(1.0, 0.0) | q[0]
-    Dgate(1.5, 0.0) | q[0]
+    Dgate(1.0, 0.0) | q[0]
+    Dgate(2.5, np.pi / 2) | q[1]
     # q[1] permanece no vácuo
 
 def prepare_reference_state(q, num_modes):
