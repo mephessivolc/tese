@@ -11,15 +11,38 @@
 \partapendices
 
 % ----------------------------------------------------------
-\chapter{Primeiro Apêncice}
-% ----------------------------------------------------------
+\chapter{Algoritmos Utilizados} \label{sec:algorithm_append}
 
-\lipsum[50] % Texto qualquer. REMOVER!!
+\section{Algoritmo de Força Bruta}
 
-% ----------------------------------------------------------
-\chapter{Segundo apêndice com título tão grande quanto se queira porque ele já faz a quebra de linha da coisa toda}
-% ----------------------------------------------------------
-\lipsum[51-53] % Texto qualquer. REMOVER!!
+O algoritmo de Força Bruta apresentado no \autoref{alg:brute_force} é utilizado ao longo de todo o projeto referente a algoritmo classico de força bruta.
+
+
+\begin{algorithm}
+\caption{Algoritmo de Força Bruta}
+    \label{alg:brute_force}
+    \begin{algorithmic}[1]
+    \Require matriz de distâncias \texttt{dist}
+    \Ensure melhor custo e melhor caminho
+    \State $n \gets \text{len}(\texttt{dist})$
+    \State \texttt{vertices $\gets$ [1, \dots, n-1]}
+    \State \texttt{best\_cost $\gets$ inf}
+    \State \texttt{best\_path $\gets$ None}
+    \ForAll{\texttt{perm} em \texttt{permutations(vertices)}}
+        \State \texttt{path $\gets$ (0,) + perm + (0,)}
+        \State \texttt{cost $\gets$ 0}
+        \For{$i \gets 0$ até $\text{len(path)} - 2$}
+            \State \texttt{cost $\gets$ cost + dist[path[i]][path[i+1]]}
+        \EndFor
+        \If{\texttt{cost < best\_cost}}
+            \State \texttt{best\_cost $\gets$ cost}
+            \State \texttt{best\_path $\gets$ path}
+        \EndIf
+    \EndFor
+    
+    \State \Return \texttt{best\_cost, best\_path}
+    \end{algorithmic}
+\end{algorithm}
 
 \end{apendicesenv}
 % ---

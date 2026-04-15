@@ -1,5 +1,6 @@
 \chapter{Metodologia} \label{cap:proposta}
 
+% aquiComeca
 A metodologia adotada nesta tese estrutura-se de forma progressiva, articulando modelagem matemática, implementação computacional e análise de desempenho com vistas ao refinamento do formalismo proposto. Essa progressão organiza-se em duas etapas: uma primeira fase de verificação de viabilidade, já concluída e com resultados preliminares obtidos, dedicada à construção e validação dos Hamiltonianos propostos; e uma segunda fase, em desenvolvimento, voltada à implementação de algoritmos de otimização quântica variacional sobre os formalismos estabelecidos.
 
 Inicialmente, o trabalho concentrou-se na construção de Hamiltonianos capazes de representar problemas de otimização combinatória em um contexto de computação quântica de variáveis contínuas. Essa etapa teve como propósito estabelecer uma correspondência entre a estrutura do problema e sua codificação em operadores compatíveis com sistemas quânticos de variáveis contínuas.
@@ -79,22 +80,13 @@ onde $\alpha$, $\beta$, $\gamma$ e $m$ são hiperparâmetros do modelo. A soluç
 \min_{\psi \in \mathcal{H}} \bra{\psi} H \ket{\psi}.
 \end{equation}
 
-Essa formulação inicial teve como principal objetivo verificar a consistência da representação com variáveis contínuas em relação aos modelos tradicionais. Para tal, os resultados obtidos foram comparados com soluções provenientes, por um lado, de uma busca exaustiva clássica e, por outro, com implementações equivalentes em qubits. Observou-se que os estados de energia mínima encontrados no modelo com qumodes coincidem com aqueles identificados em ambas as abordagens, indicando que a modelagem proposta preserva corretamente a estrutura do problema. 
+Essa formulação inicial teve como principal objetivo verificar a consistência da representação com variáveis contínuas em relação aos modelos tradicionais. Para isso, os resultados obtidos foram comparados tanto com soluções provenientes de uma busca exaustiva clássica quanto com implementações do Hamiltoniano equivalente em qubits, formulação da qual o modelo de qumodes deriva diretamente, por substituição das variáveis binárias por operadores de posição com comportamento binário imposto energeticamente. Em ambos os casos, os estados de energia mínima encontrados no modelo com qumodes coincidiram com os das abordagens de referência, indicando que a modelagem proposta preserva corretamente a estrutura do problema.
 
-Ressalta-se, contudo, que tais experimentos foram restritos a instâncias de pequena dimensão, dado o elevado custo computacional associado à simulação de sistemas de variáveis contínuas em hardware clássico.
-Mais especificamente, para um sistema composto por $M$ qubits, a representação explícita do vetor de estados requer memória clássica que cresce como $O(2^M)$. Já no caso de um sistema composto por $M$ qumodes truncados na base de Fock com cut-off $d$, esse custo cresce como \(O(d^M)\). Assim, como a dimensão efetiva do espaço de Hilbert depende diretamente do valor de $d$, a simulação clássica de sistemas contínuos torna-se rapidamente proibitiva à medida que $M$ aumenta. Nesse contexto, instâncias de pequena dimensão correspondem a casos em que os valores de $M$ e do cut-off $d$ permitem armazenar e manipular numericamente os estados e operadores do sistema em memória clássica de forma viável.
+Os testes parciais foram conduzidos para $N \in \{3, 4\}$, onde $N$ denota a quantidade de vértices. Para $N = 3$, o algoritmo de força bruta identificou o circuito hamiltoniano de menor custo como $V_0 \rightarrow V_1 \rightarrow V_2 \rightarrow V_0$, resultado compatível com o obtido pelo algoritmo quântico, que produziu o caminho $V_0 \rightarrow V_2 \rightarrow V_1 \rightarrow V_0$ —, sendo ambos equivalentes a menos de ordem e com custos mínimos iguais. Analogamente, para $N = 4$, o algoritmo de força bruta retornou o caminho $V_0 \rightarrow V_1 \rightarrow V_2 \rightarrow V_3 \rightarrow V_0$, ao passo que o algoritmo quântico produziu $V_0 \rightarrow V_3 \rightarrow V_2 \rightarrow V_1 \rightarrow V_0$, novamente com custos mínimos idênticos. Os algoritmos utilizados ao longo deste projeto estão apresentados no \autoref{sec:algorithm_append}.
 
-Com base nos resultados obtidos, foi desenvolvida uma segunda versão do 
-Hamiltoniano, na qual a representação da rota é realizada por meio de 
-variáveis inteiras $n_k \in \{1,2,\dots,N\}$, em que o índice $k$ 
-identifica o vértice $V_k$ e o valor $n_k$ indica a posição em que esse 
-vértice é visitado no percurso. Dessa forma, a configuração do percurso 
-é descrita pelo vetor $(n_1, n_2, \dots, n_N)$, cuja $k$-ésima entrada 
-corresponde ao vértice $V_k$ e cujo valor indica sua ordem de visita na 
-rota. Para exemplificar, considere um estado da forma $\ket{2413}$: o 
-vértice $V_1$ é visitado na segunda posição, $V_2$ na quarta, $V_3$ na 
-primeira e $V_4$ na terceira, resultando na rota $V_3\rightarrow 
-V_1\rightarrow V_4\rightarrow V_2$.
+Cabe ressaltar, contudo, que tais experimentos foram restritos a instâncias de pequena dimensão, em razão do elevado custo computacional associado à simulação de sistemas de variáveis contínuas em hardware clássico. Para um sistema composto por $M$ qubits, a representação explícita do vetor de estados requer memória que cresce como $O(2^M)$; já no caso de $M$ qumodes truncados na base de Fock com corte $d$, esse custo escala como $O(d^M)$. Como a dimensão efetiva do espaço de Hilbert depende diretamente de $d$, a simulação clássica de sistemas contínuos torna-se rapidamente proibitiva à medida que $M$ cresce. Nesse contexto, por instâncias de pequena dimensão entendem-se aquelas em que os valores de $M$ e de $d$ permitem armazenar e manipular numericamente os estados e operadores do sistema de forma computacionalmente viável.
+
+Como sequência da proposta, foi desenvolvida uma segunda versão do Hamiltoniano, na qual a representação da rota é realizada por meio de variáveis inteiras $n_k \in \{1,2,\dots,N\}$, em que o índice $k$ identifica o vértice $V_k$ e o valor $n_k$ indica a posição em que esse vértice é visitado no percurso. Dessa forma, a configuração do percurso é descrita pelo vetor $(n_1, n_2, \dots, n_N)$, cuja $k$-ésima entrada corresponde ao vértice $V_k$ e cujo valor indica sua ordem de visita na rota. Para exemplificar, considere um estado da forma $\ket{2413}$: o vértice $V_1$ é visitado na segunda posição, $V_2$ na quarta, $V_3$ na primeira e $V_4$ na terceira, resultando na rota $V_3\rightarrow V_1\rightarrow V_4\rightarrow V_2$.
 
 % Com base nos resultados obtidos, foi desenvolvida uma segunda versão do Hamiltoniano, na qual a representação da rota é realizada por meio de variáveis inteiras $n_k \in \{1,2,\dots,N\}$ associadas a cada posição $k$ do percurso, de modo que cada variável indica qual cidade é visitada naquela posição. Dessa forma, a configuração do percurso é descrita pelo vetor $(n_1, n_2, \dots, n_N)$, que codifica diretamente a ordem de visita das cidades ao longo da rota. Para exemplificar a configuração, considere um estado da forma $\ket{2413}$ que representa uma rota indicando que: o vértice $V_1$ é visitado na segunda posição, $V_2$ na quarta, $V_3$ na primeira e $V_4$ na terceira, resultando na rota $V_3\rightarrow V_1\rightarrow V_4\rightarrow V_2$.
 
@@ -127,6 +119,8 @@ $$
 $$
 H_{\text{penalty}} = \sum_{a=1}^N \left(\hat{N}_a - 1 \right)^2.
 $$
+
+{\color{red} Alterar o parágrafo abaixo, inserindo a tabela de resultados}
 
 Os resultados preliminares obtidos com essa modelagem foram comparados com os resultados provenientes do mesmo algoritmo de força bruta clássico utilizado na primeira versão do Hamiltoniano, o qual permite enumerar todas as rotas possíveis. Devido ao elevado custo computacional associado à simulação de sistemas com múltiplos qumodes, essa análise foi restrita a instâncias de pequena dimensão. Observou-se que as rotas de menor custo identificadas pelo modelo coincidem com aquelas obtidas pela abordagem clássica, indicando a consistência da formulação proposta.
 
