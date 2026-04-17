@@ -12,7 +12,15 @@ Inicialmente será apresentado o conceito de Otimização, depois o formulação
 
 O Problema de Roteamento de Veículos (\textit{Vehicle Routing Problem} — VRP) é um dos problemas de otimização combinatória mais estudados na literatura, sendo frequentemente considerado uma generalização natural do Problema do Caixeiro Viajante (\textit{Travelling Salesman Problem} — TSP) \cite{gavish1978travelling}. Enquanto o TSP busca determinar a rota mínima para um único agente visitar um conjunto de cidades, o VRP introduz múltiplos veículos e um conjunto mais amplo de restrições operacionais, tornando-o mais adequado para modelar situações reais, o que aumenta significativamente a complexidade do problema.
 
-De forma geral, o VRP pode ser descrito como o problema de determinar um conjunto de rotas para uma frota de veículos, partindo de um ou mais depósitos, de modo a atender um conjunto de clientes com demandas conhecidas, respeitando as restrições impostas e minimizando um critério de custo, usualmente associado à distância total percorrida ou ao tempo de operação. Cada cliente deve ser atendido exatamente uma vez, por exatamente um veículo, e todos os veículos devem retornar ao depósito de origem ao término de sua rota. A escolha de quais clientes serão atendidos por cada veículo, e em qual ordem, constitui o núcleo combinatório do problema, cuja formalização matemática será apresentada na seção seguinte.
+De forma geral, o VRP pode ser descrito como o problema de determinar um conjunto de rotas para uma frota de veículos, partindo de um ou mais depósitos, de modo a atender um conjunto de clientes com demandas conhecidas, respeitando as restrições impostas e minimizando um critério de custo, usualmente associado à distância total percorrida ou ao tempo de operação. Cada cliente deve ser atendido exatamente uma vez, por exatamente um veículo, e todos os veículos devem retornar ao depósito de origem ao término de sua rota. A escolha de quais clientes serão atendidos por cada veículo, e em qual ordem, constitui o núcleo combinatório do problema, cuja formalização matemática será apresentada na seção seguinte. Uma ilustração do problema é apresentada na \autoref{fig:vrp}.
+
+\begin{figure}[!htb]
+    \centering
+    \caption{Exemplo ilustrativo do VRP, no qual os clientes são distribuídos em rotas distintas, associadas a cinco diferentes veículos, com partida e retorno ao depósito central.}
+    \includegraphics[width=.7\textwidth]{figs/vrp.png}
+    \fonte{Própria, 2026.}
+    \label{fig:vrp}
+\end{figure}
 
 O problema foi introduzido inicialmente no contexto de distribuição de combustível \cite{dantzig1959truck} e que vem acompanhando o desenvolvimento de métodos computacionais e técnicas de otimização. Houve avanços importantes na formulação matemática do problema especialmente com o uso de programação inteira. Posteriormente, devido a dificuldade computacional associada à sua natureza NP-Difícil \cite{hochba1997approximation}, a área passou a focar em propostas heurística e metaheurísticas capazes de encontrar soluções com boa qualidade em tempo de execução viável, dentre essas propostas podemos destacar: busca tabu \cite{glover1989tabu, glover1990tabu}, algoritmos genéticos \cite{boldberg1989genetic}, \textit{simulated annealing} \cite{kirkpatrick1983optimization} e colônia de formigas \cite{dorigo2002ant}. 
 
@@ -20,7 +28,7 @@ A relevância do VRP está diretamente relacionada ao seu amplo espectro de apli
 
 Ao longo do tempo, diversas variantes do VRP foram propostas para capturar diferentes aspectos do mundo real. Entre as mais estudadas, destacam-se o Problema de Roteamento de Veículos Capacitado (\textit{Capacitated VRP} - CVRP), no qual cada veículo possui uma capacidade limitada  \cite{solomon1987algorithms, xiao2012development}; o VRP com Janelas de Tempo (\textit{VRP with Time Window} - VRPTW), que considera restrições temporais para atendimento \cite{christofides1979vehicle, gambardella1999macs}; o VRP com Múltiplos Depósitos (\textit{Multi Depot VRP} - MDVRP) em que os veículos partem de diferentes depósitos para atender um conjunto de clientes da forma mais eficiente \cite{alinaghian2018multi}; e o VRP Estocástico, no qual parâmetros como demanda ou tempo de viagem são incertos \cite{renaud1996tabu, gendreau1996stochastic}. Essas variantes refletem a necessidade de modelos cada vez mais realistas e adaptados a cenários específicos.
 
-Mais recentemente, novas tendências têm emergido na literatura, impulsionadas pela disponibilidade de dados em tempo real e pelo avanço de tecnologias como Internet das Coisas (\textit{Internet of Things} - IoT) e sistemas de posicionamento global (GPS) \cite{ritzinger2016survey, boysen2018scheduling}. Nesse contexto, variantes dinâmicas do VRP têm ganhado destaque, permitindo a adaptação das rotas em tempo real. Além disso, há um crescente interesse em problemas de roteamento sustentáveis, como o VRP verde (Green VRP) \cite{lin2014survey} e o roteamento de veículos elétricos (Electric VRP – EVRP) \cite{schiffer2017electric}, que incorporam preocupações ambientais e restrições energéticas.
+Mais recentemente, novas tendências têm emergido na literatura, impulsionadas pela disponibilidade de dados em tempo real e pelo avanço de tecnologias como Internet das Coisas (\textit{Internet of Things} --- IoT) e sistemas de posicionamento global (\textit{Global Positioning System} --- GPS) \cite{ritzinger2016survey, boysen2018scheduling}. Nesse contexto, variantes dinâmicas do VRP têm ganhado destaque, permitindo a adaptação das rotas em tempo real. Além disso, há um crescente interesse em problemas de roteamento sustentáveis, como o VRP verde (Green VRP) \cite{lin2014survey} e o roteamento de veículos elétricos (\textit{Electric VRP} --- EVRP) \cite{schiffer2017electric}, que incorporam preocupações ambientais e restrições energéticas.
 
 Dessa forma, o VRP permanece como um campo de pesquisa ativo e desafiador, com inúmeras aplicações práticas e diversas oportunidades para avanços metodológicos. A complexidade inerente ao problema, aliada à crescente demanda por soluções eficientes e sustentáveis, reforça sua relevância tanto do ponto de vista teórico quanto aplicado \cite{braekers2016vehicle, moghdani2021green}.
 
@@ -636,24 +644,38 @@ um qumode é descrito por uma superposição contínua,
 \end{equation*}
 Para um único modo quântico, a descrição no espaço de fase envolve duas variáveis reais $(x, p) \in \mathbb{R}^{2}$; no caso de $N$ modos, o espaço de fase possui $2N$ variáveis reais $(x_i, p_i) \in \mathbb{R}^{N}$. Os estados dos modos admitem ainda uma representação em termos de vetores de estado ou matrizes de densidade no espaço de Hilbert, expressos na base de estados de Fock $\{\ket{n}\}$, com $n = 0, 1, \ldots, \infty$, que constituem os autoestados do operador de número $\displaystyle\hat{n} = \frac{(\hat{x}^2 + \hat{p}^2 - 1)}{2}$.
 
-As portas lógicas em Variáveis Contínuas (CV) são classificadas em dois grupos distintos: gaussianas e não gaussianas. As portas gaussianas compreendem o deslocamento, a compressão, a rotação e o divisor de feixe, ao passo que as portas não gaussianas incluem a porta de fase cúbica e a porta de Kerr \cite{fukui2022building, sharma2020characterizing, weedbrook2012gaussian, serafini_quantum_2023}. A seguir, cada uma dessas operações é apresentada por meio de sua ação sobre estados quânticos, com o auxílio do espaço de fase para a visualização geométrica das transformações. A fundamentação matemática para as operações quânticas descritas a seguir, incluindo os operadores gausseanos e não gausseanos, foi estabelecida conforme as obras de \textcite{de_lima_redes_nodate}, \textcite{serafini_quantum_2023} e \textcite{killoran_strawberry_2019}.
+As portas lógicas em Variáveis Contínuas (CV) são classificadas em dois grupos distintos: gaussianas e não gaussianas. As portas gaussianas compreendem o deslocamento, a compressão, a rotação e o divisor de feixe, ao passo que as portas não gaussianas incluem a porta de fase cúbica e a porta de Kerr \cite{fukui2022building, sharma2020characterizing, weedbrook2012gaussian, serafini_quantum_2023}. A seguir, cada uma dessas operações é apresentada por meio de sua ação sobre estados quânticos, com o auxílio do espaço de fase para a visualização geométrica das transformações. A fundamentação matemática para as operações quânticas descritas a seguir, incluindo os operadores gausseanos e não gausseanos, foi estabelecida conforme as obras de \textcite{de_lima_redes_nodate}, \textcite{serafini_quantum_2023} e a biblioteca Strawberry Fields apresentada por \textcite{killoran_strawberry_2019}.
 
 \paragraph{Portas Gaussianas}
 
 \paragraph*{\textbf{Deslocamento}:}
-O operador de deslocamento coerente é uma das operações fundamentais da óptica quântica e pode ser expresso na forma em \autoref{eq:displacement_continuous_variables}:
+
+O operador de deslocamento coerente é um elemento fundamental da óptica quântica de variáveis contínuas e admite duas representações equivalentes que conectam o espaço de Hilbert ao espaço de fases. No formalismo de operadores de criação e aniquilação, é definido como apresentado na \autoref{eq:displacement_creation_anihilation}:
 
 \begin{equation}
-    \label{eq:displacement_continuous_variables}
-    D(\alpha)=\exp\!\left(\alpha\hat{a}^\dagger-\alpha^*\hat{a}\right)
+\label{eq:displacement_creation_anihilation}
+\hat{D}(\alpha) = \exp(\alpha\hat{a}^\dagger - \alpha^*\hat{a})
 \end{equation}
-onde $\alpha = re^{i\theta}$, com magnitude $r \geq 0$ e fase $\theta \in [0, 2\pi)$ e $\alpha^*$ é o complexo conjungado de $\alpha$. No contexto da CVQC, essa operação desempenha papel central tanto na codificação de informação quanto como sub-rotina de algoritmos quânticos. Quando aplicada ao estado de vácuo $\ket{0}$, provoca um deslocamento rígido no espaço de fase, transformando-o no estado coerente $\ket{\alpha}$, isto é, $\hat{D}(\alpha)\ket{0} = \ket{\alpha}$.
+
+Para uma descrição explícita no espaço de fases real, esse operador corresponde ao operador de Weyl, expresso em termos do vetor de operadores de quadratura $\hat{\mathbf{r}}=(\hat{x},\hat{p})^T$ e do vetor de deslocamento real $\mathbf{r}=(x,p)^T$ como definido na \autoref{eq:displacement_weyl}:
+
+\begin{equation}
+\label{eq:displacement_weyl}
+\hat{D}_{\mathbf{r}} = \exp(i\mathbf{r}^T \Omega \hat{\mathbf{r}})
+\end{equation}
+
+\noindent onde $\Omega = \displaystyle\left(\begin{array}{cc} 0 & 1 \\ -1 & 0 \end{array}\right)$ é a forma simplética, que codifica as relações de comutação canônica, e a amplitude complexa $\alpha$ relaciona-se com as coordenadas do espaço de fases por $\alpha =\displaystyle\frac{(x+ip)}{\sqrt{2}}$.
+
+Do ponto de vista físico, essa operação realiza uma translação rígida no espaço de fases: o vetor de primeiros momentos de um estado é mapeado como $\overline{\mathbf{r}} \mapsto \overline{\mathbf{r}} + \mathbf{r}$, sem alteração da matriz de covariância. Em particular, quando aplicada ao estado de vácuo $\ket{0}$, gera o estado coerente $\ket{\alpha}$, ou $\ket{r}$, satisfazendo $\hat{D}_{\mathbf{r}}\ket{0} = \ket{r}$, o que corresponde visualmente a deslocar a distribuição de Wigner do estado original para uma nova posição centralizada em $\mathbf{r}$ no plano $xp$.
+
+Na implementação computacional via Strawberry Fields, a porta de deslocamento é fornecida como \texttt{Dgate}$(r, \phi)$, com $\alpha = re^{i\theta}$, em que o primeiro parâmetro representa a magnitude do deslocamento no espaço de fases e o segundo representa sua fase. O efeito dessa operação é ilustrado na \autoref{fig:Displacement}, que compara a função de Wigner antes e após a aplicação da porta.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.25\linewidth]{figs/em_construcao.png}
-  \caption{Deslocamento coerente representado no espaço de fase.}
-  \label{fig:Displacimente}
+  \caption{Comparação entre a função de Wigner do estado inicial e do estado resultante após a aplicação da porta de deslocamento $D(3.0,\pi/2)$, exibida em superfície tridimensional com projeção de curvas de nível}
+  \includegraphics[width=\linewidth, keepaspectratio]{figs/wigner_deslocamento.png}
+  \fonte{elaboração própria, com auxílio da biblioteca Strawberry Fields, 2026}
+  \label{fig:Displacement}
 \end{figure}
 
 \paragraph*{\textbf{Compressão}:}
@@ -668,8 +690,9 @@ com magnitude $r \geq 0$ e fase $\phi \in [0, 2\pi)$. No âmbito da CVQC, a apli
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.25\linewidth]{figs/em_construcao.png}
-  \caption{Estado de vácuo comprimido representado no espaço de fase.}
+  \caption{Comparação entre a função de Wigner do estado inicial e do estado resultante após a aplicação da porta de compressão $S(1.0)$, exibida em superfície tridimensional com projeção de curvas de nível}
+  \includegraphics[width=\linewidth]{figs/wigner_compressao.png}
+  \fonte{elaboração própria, com auxílio da biblioteca Strawberry Fields, 2026}
   \label{fig:squeze}
 \end{figure}
 
@@ -695,8 +718,9 @@ Quando aplicada ao estado de vácuo, essa operação não produz efeito, uma vez
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.25\linewidth]{figs/em_construcao.png}
-  \caption{Rotação no espaço de fase.}
+  \caption{Comparação entre a função de Wigner do estado inicial e do estado resultante após a aplicação da porta de rotação $R(\pi/4)$, exibida em superfície tridimensional com projeção de curvas de nível}
+  \includegraphics[width=\linewidth]{figs/wigner_rotacao_pi_4.png}
+  \fonte{elaboração própria, com auxílio da biblioteca Strawberry Fields, 2026}
   \label{fig:rotacao}
 \end{figure}
 
@@ -715,26 +739,21 @@ As portas não gaussianas, também denominadas portas não lineares, introduzem 
 
 Embora ambas desempenhem papéis equivalentes nos algoritmos quânticos, diferem nos mecanismos físicos subjacentes às não linearidades geradas. Em particular, a porta de fase cúbica apresenta uma limitação prática significativa: sua aplicação induz a geração de múltiplos fótons mesmo em regimes de curta evolução temporal, o que eleva consideravelmente o número médio de fótons do estado resultante. Isso acarreta tanto alto custo computacional nas simulações quanto sérias dificuldades experimentais. Estratégias alternativas para a introdução de não linearidade no sistema incluem o uso de pós-seleção de medição e medições repetidas em modos auxiliares \cite{Bangar:22,PhysRevA.91.032321}. O efeito dessas operações da porta de Kerr e porta de fase Cúbica no espaço de fase é ilustrado nas \autoref{fig:kerr_gate} e \autoref{fig:cubic_gate}, respectivamente, onde se observa a distorção característica introduzida por cada uma das portas.
 
-\begin{figure}[h]
+\begin{figure}[!htb]
     \centering
-    \caption{Portas não gaussianas aplicadas no espaço de faze.}
-    \begin{subfigure}[b]{0.3\textwidth}
-        \centering
-        \caption{Porta Kerr no espaço de fase.}
-        \includegraphics[width=\linewidth]{figs/em_construcao.png}
-        \label{fig:kerr_gate}
-    \end{subfigure}
-    \hspace{4em}
-    \begin{subfigure}[b]{0.3\textwidth}
-        \centering
-        \caption{Porta Cubica no espaço de fase.}
-        \includegraphics[width=\linewidth]{figs/em_construcao.png}
-        \label{fig:cubic_gate}
-    \end{subfigure}
-    \fonte{Aplicação de Portas Não Gaussianas} 
-    \label{fig:three graphs}
+    \caption{Comparação entre a função de Wigner do estado inicial e do estado resultante após a aplicação da porta de fase cúbica $V(0.18)$, exibida em superfície tridimensional com projeção de curvas de nível..}
+    \includegraphics[width=\linewidth]{figs/wigner_fase_cubica.png}
+    \fonte{elaboração própria, com auxílio da biblioteca Strawberry Fields, 2026}
+    \label{fig:cubic_gate}
 \end{figure}
 
+\begin{figure}[!htb]
+    \centering
+    \caption{Comparação entre a função de Wigner do estado inicial e do estado resultante após a aplicação da porta de fase Kerr $K(0.25)$, exibida em superfície tridimensional com projeção de curvas de nível.}
+    \includegraphics[width=\linewidth]{figs/wigner_kerr.png}
+    \fonte{elaboração própria, com auxílio da biblioteca Strawberry Fields, 2026}
+    \label{fig:kerr_gate}
+\end{figure}
 
 \subsection{Algumas Tecnologias em Computação Quântica}
 

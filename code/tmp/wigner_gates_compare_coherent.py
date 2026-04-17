@@ -204,7 +204,7 @@ def draw_panel(ax, W, title, global_vmin, global_vmax, zoffset):
         vmin=global_vmin,
         vmax=global_vmax,
         linewidth=0.1,
-        edgecolor="0.25",
+        edgecolor=none,
         antialiased=True,
         rstride=7, 
         cstride=7

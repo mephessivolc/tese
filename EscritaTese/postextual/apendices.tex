@@ -13,6 +13,8 @@
 % ----------------------------------------------------------
 \chapter{Algoritmos Utilizados} \label{sec:algorithm_append}
 
+Os algoritmos aqui apresentados podem ser encontrados em uma versão Python disponível no GitHub (\url{https://github.com/mephessivolc/tese})
+
 \section{Algoritmo de Força Bruta}
 
 O algoritmo de Força Bruta apresentado no \autoref{alg:brute_force} é utilizado ao longo de todo o projeto referente a algoritmo classico de força bruta.
@@ -43,6 +45,138 @@ O algoritmo de Força Bruta apresentado no \autoref{alg:brute_force} é utilizad
     \State \Return \texttt{best\_cost, best\_path}
     \end{algorithmic}
 \end{algorithm}
+
+
+\section{Algoritmo Quântico}
+
+\subsection{Equivalencia Qubits com Qumodes}
+Teste 
+
+\subsection{Estados de Fock truncado na posição de vizita de cada cidade}
+\begin{algorithm}[htbp]
+\caption{Construção do projetor local}
+\label{alg:projector_k_a}
+\begin{algorithmic}[1]
+\Require posição $k$, nível $a$, número de registradores $N$, dimensão local $\mathrm{dim}$
+\Ensure operador projetor $P_{k,a}$
+
+\State $\mathrm{ops} \gets [\ ]$
+\For{$m \gets 0$ até $N-1$}
+    \If{$m = k$}
+        \State adicionar $|a\rangle\langle a|$ em $\mathrm{ops}$
+    \Else
+        \State adicionar $\mathbb{I}_{\mathrm{dim}}$ em $\mathrm{ops}$
+    \EndIf
+\EndFor
+\State \Return produto tensorial dos elementos de $\mathrm{ops}$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[htbp]
+\caption{Construção do Hamiltoniano do TSP em qudits}
+\label{alg:hamiltoniano_tsp_qudit}
+\begin{algorithmic}[1]
+\Require matriz de distâncias $d_{ij}$, penalização $\lambda$, dimensão local $\mathrm{dim}$
+\Ensure Hamiltoniano $H$
+
+\State $N \gets$ número de linhas de $d_{ij}$
+
+\If{$\mathrm{dim}$ não informado}
+    \State $\mathrm{dim} \gets N$
+\EndIf
+
+\If{$\mathrm{dim} < N$}
+    \State lançar erro
+\EndIf
+
+\For{$k \gets 0$ até $N-1$}
+    \For{$a \gets 0$ até $N-1$}
+        \State $P_{k,a} \gets \Call{ProjetorLocal}{k,a,N,\mathrm{dim}}$
+    \EndFor
+\EndFor
+
+\State $H_{\mathrm{dist}} \gets 0$
+\For{$k \gets 0$ até $N-1$}
+    \State $k' \gets (k+1)\bmod N$
+    \For{$a \gets 0$ até $N-1$}
+        \For{$b \gets 0$ até $N-1$}
+            \State $H_{\mathrm{dist}} \gets H_{\mathrm{dist}} + d_{ij}[a,b]\,P_{k,a}P_{k',b}$
+        \EndFor
+    \EndFor
+\EndFor
+
+\State $H_{\mathrm{pen}} \gets 0$
+\For{$k \gets 0$ até $N-1$}
+    \For{$l \gets k+1$ até $N-1$}
+        \For{$a \gets 0$ até $N-1$}
+            \State $H_{\mathrm{pen}} \gets H_{\mathrm{pen}} + P_{k,a}P_{l,a}$
+        \EndFor
+    \EndFor
+\EndFor
+
+\State \Return $H_{\mathrm{dist}} + \lambda H_{\mathrm{pen}}$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[htbp]
+\caption{Validação e conversão de índices em caminho}
+\label{alg:validacao_caminho}
+\begin{algorithmic}[1]
+\Require sequência $\mathrm{indices}$, número de cidades $N$
+\Ensure caminho válido ou valor nulo
+
+\If{$|\mathrm{indices}| \neq N$}
+    \State \Return falso
+\EndIf
+
+\If{$\mathrm{sorted}(\mathrm{indices}) \neq [0,1,\dots,N-1]$}
+    \State \Return falso
+\EndIf
+
+\State \Return tupla $(\mathrm{indices}[0], \ldots, \mathrm{indices}[N-1], \mathrm{indices}[0])$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[htbp]
+\caption{Análise dos estados da base computacional}
+\label{alg:analisar_estados_base}
+\begin{algorithmic}[1]
+\Require Hamiltoniano $H$, matriz de distâncias $\mathrm{dist}$, número de cidades $N$, dimensão local $\mathrm{dim}$
+\Ensure melhor energia, melhor caminho e lista de resultados válidos
+
+\If{$\mathrm{dim}$ não informado}
+    \State $\mathrm{dim} \gets N$
+\EndIf
+
+\State $\mathrm{melhor\_energia} \gets +\infty$
+\State $\mathrm{melhor\_indices} \gets \emptyset$
+\State $\mathrm{melhor\_path} \gets \emptyset$
+\State $\mathrm{resultados\_validos} \gets [\ ]$
+
+\ForAll{$\mathrm{indices} \in \{0,\dots,\mathrm{dim}-1\}^N$}
+    \If{$\mathrm{indices}$ não formam uma permutação válida de $\{0,\dots,N-1\}$}
+        \State \textbf{continue}
+    \EndIf
+
+    \State construir o estado tensorial correspondente
+    \State calcular a energia esperada de $H$
+    \State converter $\mathrm{indices}$ em caminho fechado
+    \State calcular o custo do caminho
+    \State armazenar resultado em $\mathrm{resultados\_validos}$
+
+    \If{$\mathrm{energia} < \mathrm{melhor\_energia}$}
+        \State atualizar melhor energia
+        \State atualizar melhores índices
+        \State atualizar melhor caminho
+    \EndIf
+\EndFor
+
+\State \Return melhores resultados
+\end{algorithmic}
+\end{algorithm}
+
+
+
 
 \end{apendicesenv}
 % ---
