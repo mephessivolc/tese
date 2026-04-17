@@ -206,8 +206,8 @@ def draw_panel(ax, W, title, global_vmin, global_vmax, zoffset):
         linewidth=0.1,
         edgecolor="0.25",
         antialiased=True,
-        rstride=8, 
-        cstride=8
+        rstride=7, 
+        cstride=7
     )
 
     ax.contourf(
