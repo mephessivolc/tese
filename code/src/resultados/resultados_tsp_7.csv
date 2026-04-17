@@ -1,0 +1,2 @@
+Numero de cidades,Custo classico,Caminho classico,Energia quantica,Caminho quantico,Solucao equivalente,tempo de execucao
+7,8,0 -> 1 -> 2 -> 4 -> 3 -> 5 -> 6 -> 0,8.0,0 -> 1 -> 2 -> 4 -> 3 -> 5 -> 6 -> 0,Sim,64.30476008076221
