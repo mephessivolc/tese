@@ -1,0 +1,468 @@
+\chapter{Metodologia} \label{cap:proposta}
+
+    A metodologia adotada nesta tese estrutura-se de forma progressiva, articulando modelagem matemática, implementação computacional e análise de desempenho com vistas ao refinamento do formalismo proposto. Essa progressão organiza-se em duas etapas: uma primeira fase de verificação de viabilidade, já concluída e com resultados preliminares obtidos, dedicada à construção e validação dos Hamiltonianos propostos; e uma segunda fase, em desenvolvimento, voltada à implementação de algoritmos de otimização quântica variacional sobre os formalismos estabelecidos.
+
+    Inicialmente, o trabalho concentrou-se na construção de Hamiltonianos capazes de representar problemas de otimização combinatória em um contexto de computação quântica de variáveis contínuas. Essa etapa teve como propósito estabelecer uma correspondência entre a estrutura do problema e sua codificação em operadores compatíveis com sistemas quânticos de variáveis contínuas.
+
+    O TSP foi adotado, nesse contexto, como problema base para validação, por constituir uma instância clássica de otimização combinatória com estrutura suficientemente rica para testar o método, mas com complexidade ainda tratável do ponto de vista analítico e computacional. Como ponto de partida, foi considerada uma primeira abordagem baseada em uma correspondência direta entre a modelagem discreta usual e o formalismo de variáveis contínuas. Nesse contexto, cada qubit, originalmente associado a uma variável binária no modelo clássico, foi mapeado para um qumode, de modo a reproduzir o comportamento discreto esperado.
+
+    Para isso, foi construído um Hamiltoniano análogo ao utilizado em formulações do tipo QUBO em qubits. Considera-se um conjunto de $N$ cidades em um grafo, com $d_{ij}$ representando a distância entre as cidades $i$ e $j$, e define-se a variável binária
+
+    $$
+    x_{i,k} =
+    \begin{cases}
+    1, & \text{se a cidade $i$ é visitada na posição $k$},\\
+    0, & \text{caso contrário}.
+    \end{cases}
+    $$
+
+    A função objetivo do TSP pode então ser escrita como:
+
+    $$
+        \label{eq:objective_function_hamiltonian}
+        H = \sum_{k=1}^N \sum_{i=1}^N \sum_{j=1}^N d_{ij}\, x_{i,k} x_{j,k+1}
+    $$
+
+    Sujeito às restrições:
+
+    \begin{enumerate}
+        \item Cada posição deve conter exatamente uma cidade:
+        $$
+            \sum_{i=1}^N x_{i,k} = 1, \qquad \forall k
+        $$
+
+        \item Cada cidade deve ser visitada exatamente uma vez:
+        $$
+            \sum_{k=1}^N x_{i,k} = 1, \qquad \forall i
+        $$
+    \end{enumerate}
+
+    No contexto de variáveis contínuas, as variáveis discretas $x_{i,k}$ são substituídas por operadores $\hat{x}_{i,k}$ associados aos qumodes. Introduzem-se, adicionalmente, os operadores canônicos de posição $\hat{x}_{i,k}$ e momento $\hat{p}_{i,k}$, satisfazendo as relações de comutação
+
+    $$
+    [\hat{x}_{i,k}, \hat{p}_{j,l}] = i\hbar\,\delta_{ij}\delta_{kl}.
+    $$
+    \noindent adota-se, para simplificação algébrica, a convenção $\hbar=1$. Uma vez que o operador posição possui espectro contínuo, impõe-se um comportamento efetivamente binário por meio da transformação
+
+
+    $$
+    \hat{x}_{i,k} = \frac{1 + \hat{x}'_{i,k}}{2},
+    $$
+
+    \noindent de modo que $\hat{x}'_{i,k} \approx \pm 1$ corresponde a $\hat{x}_{i,k} \in \{0,1\}$. Essa restrição é imposta energeticamente através de um potencial de poço duplo:
+
+    $$
+    H_{\text{bin}} = \sum_{i,k} \left( (\hat{x}'_{i,k})^2 - 1 \right)^2.
+    $$
+
+    Além disso, considera-se um termo cinético dado por:
+
+    $$
+    \sum_{i,k} \frac{\hat{p}_{i,k}^2}{2m}.
+    $$
+
+    Dessa forma, o Hamiltoniano completo do sistema é definido como:
+
+    \begin{equation}
+    \begin{aligned}
+    H &= \sum_{k=1}^N \sum_{i=1}^N \sum_{j=1}^N d_{ij}\, \hat{x}_{i,k}\hat{x}_{j,k+1}
+        + \alpha \sum_{i,k} \left( (\hat{x}'_{i,k})^2 - 1 \right)^2 \\
+        &\quad + \beta \sum_{i=1}^N \left(\sum_{k=1}^N \hat{x}_{i,k} - 1 \right)^2
+        + \gamma \sum_{k=1}^N \left(\sum_{i=1}^N \hat{x}_{i,k} - 1 \right)^2
+        + \sum_{i,k} \frac{\hat{p}_{i,k}^2}{2m},
+    \end{aligned}
+    \end{equation}
+
+    onde $\alpha$, $\beta$, $\gamma$ e $m$ são hiperparâmetros do modelo. A solução do problema é obtida pela minimização do valor esperado do Hamiltoniano:
+
+    \begin{equation}
+    \min_{\psi \in \mathcal{H}} \bra{\psi} H \ket{\psi}.
+    \end{equation}
+
+    Essa formulação inicial teve como principal objetivo verificar a consistência da representação com variáveis contínuas em relação aos modelos tradicionais. Para isso, os resultados obtidos foram comparados tanto com soluções provenientes de uma busca exaustiva clássica quanto com implementações do Hamiltoniano equivalente em qubits, formulação da qual o modelo de qumodes deriva diretamente, por substituição das variáveis binárias por operadores de posição com comportamento binário imposto energeticamente. Em ambos os casos, os estados de energia mínima encontrados no modelo com qumodes coincidiram com os das abordagens de referência, indicando que a modelagem proposta preserva corretamente a estrutura do problema.
+
+    Os algoritmos utilizados nessa primeira modelagem são descritos a seguir. O \autoref{alg:hamiltoniano_qumode_binario} apresenta a construção do Hamiltoniano qumode-binário para o TSP, definindo os operadores de número associados a cada aresta dirigida e os termos de penalização que impõem as restrições combinatórias do problema. O \autoref{alg:indice_aresta} descreve o mapeamento entre arestas dirigidas e índices de qumodes. Após a obtenção de um estado candidato, o \autoref{alg:indices_para_matriz} converte as ocupações dos modos em uma matriz binária de arestas, enquanto o \autoref{alg:matriz_para_caminho} verifica se essa matriz representa um ciclo Hamiltoniano válido.
+
+    \begin{algorithm}[htbp]
+    \caption{Construção do Hamiltoniano qumode-binário para o TSP}
+    \label{alg:hamiltoniano_qumode_binario}
+    \begin{algorithmic}[1]
+    \Require Matriz de distâncias $d_{ij}$, penalidades $\alpha,\beta,\gamma$, dimensão local $\mathrm{dim}$, parâmetro $\mathrm{incluir\_p}$
+    \Ensure Hamiltoniano final $H_{\mathrm{final}}$
+
+    \State $N \gets$ número de cidades
+    \State $M \gets N(N-1)$ \Comment{um qumode para cada aresta dirigida $i \to j$, com $i \neq j$}
+
+    \For{$k \gets 0$ até $M-1$}
+        \State construir o operador de destruição $a_k$
+        \State $n_k \gets a_k^\dagger a_k$
+    \EndFor
+
+    \State $C \gets 0$
+    \For{$i \gets 0$ até $N-1$}
+        \For{$j \gets 0$ até $N-1$}
+            \If{$i \neq j$}
+                \State $k \gets \Call{IndiceAresta}{i,j,N}$
+                \State $C \gets C + d_{ij}n_k$
+            \EndIf
+        \EndFor
+    \EndFor
+
+    \State $H_1 \gets 0$
+    \For{$k \gets 0$ até $M-1$}
+        \State $H_1 \gets H_1 + \alpha\left[n_k(n_k-1)\right]^2$
+    \EndFor
+
+    \State $H_2 \gets 0$
+    \For{$i \gets 0$ até $N-1$}
+        \State $S_{\mathrm{saida}} \gets \sum_{j \neq i} n_{\mathrm{idx}(i,j)}$
+        \State $H_2 \gets H_2 + \beta(S_{\mathrm{saida}}-1)^2$
+    \EndFor
+
+    \State $H_3 \gets 0$
+    \For{$j \gets 0$ até $N-1$}
+        \State $S_{\mathrm{entrada}} \gets \sum_{i \neq j} n_{\mathrm{idx}(i,j)}$
+        \State $H_3 \gets H_3 + \gamma(S_{\mathrm{entrada}}-1)^2$
+    \EndFor
+
+    \State $H_{\mathrm{final}} \gets C + H_1 + H_2 + H_3$
+
+    \If{$\mathrm{incluir\_p}$}
+        \State construir o termo cinético $P$
+        \State $H_{\mathrm{final}} \gets H_{\mathrm{final}} + P$
+    \EndIf
+
+    \State \Return $H_{\mathrm{final}}$
+    \end{algorithmic}
+    \end{algorithm}
+
+    \begin{algorithm}[htbp]
+    \caption{Mapeamento de uma aresta dirigida para o índice do qumode}
+    \label{alg:indice_aresta}
+    \begin{algorithmic}[1]
+    \Require Cidades $i,j$ e número de cidades $N$
+    \Ensure Índice $k$ associado à aresta $i \to j$
+
+    \If{$i=j$}
+        \State lançar erro
+    \EndIf
+
+    \State $k \gets 0$
+    \For{$u \gets 0$ até $N-1$}
+        \For{$v \gets 0$ até $N-1$}
+            \If{$u \neq v$}
+                \If{$u=i$ e $v=j$}
+                    \State \Return $k$
+                \EndIf
+                \State $k \gets k+1$
+            \EndIf
+        \EndFor
+    \EndFor
+    \end{algorithmic}
+    \end{algorithm}
+
+
+    \begin{algorithm}[htbp]
+        \caption{Conversão dos índices de ocupação em matriz binária de arestas}
+        \label{alg:indices_para_matriz}
+        \begin{algorithmic}[1]
+        \Require Tupla de ocupações $\mathrm{indices}$ e número de cidades $N$
+        \Ensure Matriz binária $X$ ou $\emptyset$
+
+        \State criar matriz $X \in \{0,1\}^{N \times N}$ inicialmente nula
+        \State $k \gets 0$
+
+        \For{$i \gets 0$ até $N-1$}
+            \For{$j \gets 0$ até $N-1$}
+                \If{$i \neq j$}
+                    \State $\mathrm{occ} \gets \mathrm{indices}[k]$
+
+                        \If{$\mathrm{occ} \notin \{0,1\}$}
+                            \State \Return $\emptyset$
+                        \EndIf
+
+                        \State $X_{ij} \gets \mathrm{occ}$
+                        \State $k \gets k+1$
+                    \EndIf
+                \EndFor
+            \EndFor
+
+        \State \Return $X$
+        \end{algorithmic}
+    \end{algorithm}
+
+
+    \begin{algorithm}[htbp]
+    \caption{Validação da matriz binária como ciclo Hamiltoniano}
+    \label{alg:matriz_para_caminho}
+    \begin{algorithmic}[1]
+    \Require Matriz binária de arestas $X$
+    \Ensure Caminho fechado válido ou $\emptyset$
+
+    \State $N \gets$ dimensão de $X$
+
+    \If{alguma linha de $X$ não soma $1$}
+        \State \Return $\emptyset$
+    \EndIf
+
+    \If{alguma coluna de $X$ não soma $1$}
+        \State \Return $\emptyset$
+    \EndIf
+
+    \State $\mathrm{caminho} \gets [0]$
+    \State $\mathrm{atual} \gets 0$
+    \State $\mathrm{visitados} \gets \{0\}$
+
+    \For{$t \gets 1$ até $N-1$}
+        \State encontrar $\mathrm{prox}$ tal que $X_{\mathrm{atual},\mathrm{prox}}=1$
+
+        \If{$\mathrm{prox}$ não existe ou não é único}
+            \State \Return $\emptyset$
+        \EndIf
+
+        \If{$\mathrm{prox} \in \mathrm{visitados}$}
+            \State \Return $\emptyset$
+        \EndIf
+
+        \State adicionar $\mathrm{prox}$ ao caminho
+        \State adicionar $\mathrm{prox}$ a $\mathrm{visitados}$
+        \State $\mathrm{atual} \gets \mathrm{prox}$
+    \EndFor
+
+    \State encontrar $\mathrm{prox}$ tal que $X_{\mathrm{atual},\mathrm{prox}}=1$
+
+    \If{$\mathrm{prox} \neq 0$}
+        \State \Return $\emptyset$
+    \EndIf
+
+    \State adicionar $0$ ao final de $\mathrm{caminho}$
+
+    \If{$|\mathrm{visitados}| \neq N$}
+        \State \Return $\emptyset$
+    \EndIf
+
+    \State \Return $\mathrm{caminho}$
+    \end{algorithmic}
+    \end{algorithm}
+
+
+
+
+    O algoritmo clássico de força bruta, descrito no \autoref{alg:brute_force}, foi utilizado como referência para validação em ambas as modelagens. Esse algoritmo percorre exaustivamente todas as permutações possíveis das cidades, calcula o custo total de cada rota e retorna o caminho de menor custo. Embora computacionalmente inviável para instâncias de grande porte, sua exatidão o torna ideal para validação em instâncias pequenas, como as utilizadas nos experimentos desenvolvidos.
+
+    
+    \begin{algorithm}
+        \caption{Algoritmo de Força Bruta}
+        \label{alg:brute_force}
+        \begin{algorithmic}[1]
+        \Require matriz de distâncias \texttt{dist}
+        \Ensure melhor custo e melhor caminho
+        \State $n \gets \text{len}(\texttt{dist})$
+        \State \texttt{vertices $\gets$ [1, \dots, n-1]}
+        \State \texttt{best\_cost $\gets$ inf}
+        \State \texttt{best\_path $\gets$ None}
+        \ForAll{\texttt{perm} em \texttt{permutations(vertices)}}
+            \State \texttt{path $\gets$ (0,) + perm + (0,)}
+            \State \texttt{cost $\gets$ 0}
+            \For{$i \gets 0$ até $\text{len(path)} - 2$}
+                \State \texttt{cost $\gets$ cost + dist[path[i]][path[i+1]]}
+            \EndFor
+            \If{\texttt{cost < best\_cost}}
+                \State \texttt{best\_cost $\gets$ cost}
+                \State \texttt{best\_path $\gets$ path}
+            \EndIf
+        \EndFor
+        \State \Return \texttt{best\_cost, best\_path}
+        \end{algorithmic}
+    \end{algorithm}
+
+    Os testes parciais foram conduzidos para $N \in \{3, 4\}$, onde $N$ denota a quantidade de vértices. Para $N = 3$, o algoritmo de força bruta identificou o circuito hamiltoniano de menor custo como $V_0 \rightarrow V_1 \rightarrow V_2 \rightarrow V_0$, resultado compatível com o obtido pelo algoritmo quântico, que produziu o caminho $V_0 \rightarrow V_2 \rightarrow V_1 \rightarrow V_0$, sendo ambos equivalentes a menos de ordem e com custos mínimos iguais. Analogamente, para $N = 4$, o algoritmo de força bruta retornou o caminho $V_0 \rightarrow V_1 \rightarrow V_2 \rightarrow V_3 \rightarrow V_0$, ao passo que o algoritmo quântico produziu $V_0 \rightarrow V_3 \rightarrow V_2 \rightarrow V_1 \rightarrow V_0$, novamente com custos mínimos idênticos. 
+
+    Cabe ressaltar, contudo, que tais experimentos foram restritos a instâncias de pequena dimensão, em razão do elevado custo computacional associado à simulação de sistemas de variáveis contínuas em hardware clássico. Para um sistema composto por $M$ qubits, a representação explícita do vetor de estados requer memória que cresce como $O(2^M)$; já no caso de $M$ qumodes truncados na base de Fock com corte $d$, esse custo escala como $O(d^M)$. Como a dimensão efetiva do espaço de Hilbert depende diretamente de $d$, a simulação clássica de sistemas contínuos torna-se rapidamente proibitiva à medida que $M$ cresce. Nesse contexto, por instâncias de pequena dimensão entendem-se aquelas em que os valores de $M$ e de $d$ permitem armazenar e manipular numericamente os estados e operadores do sistema de forma computacionalmente viável.
+
+    Como sequência da proposta, foi desenvolvida uma segunda versão do Hamiltoniano, na qual a representação da rota é realizada por meio de variáveis inteiras $n_k \in \{1,2,\dots,N\}$, em que o índice $k$ identifica o vértice $V_k$ e o valor $n_k$ indica a posição em que esse vértice é visitado no percurso. Dessa forma, a configuração do percurso é descrita pelo vetor $(n_1, n_2, \dots, n_N)$, cuja $k$-ésima entrada corresponde ao vértice $V_k$ e cujo valor indica sua ordem de visita na rota. Para exemplificar, considere um estado da forma $\ket{2413}$: o vértice $V_1$ é visitado na segunda posição, $V_2$ na quarta, $V_3$ na primeira e $V_4$ na terceira, resultando na rota $V_3\rightarrow V_1\rightarrow V_4\rightarrow V_2$.
+
+    Nesse contexto, o Hamiltoniano de custo associado ao percurso é dado por:
+    $$
+    H = \sum_{k=1}^N d_{n_k, n_{k+1}}.
+    $$
+
+    Seja $\hat{n}_k$ o operador de número do modo $k$, definido por:
+    $$
+    \hat{n}_k\ket{a} = a\ket{a},
+    $$
+
+    \noindent pode-se escrever o Hamiltoniano correspondente à função objetivo na forma:
+    $$
+    H = \sum_{k=1}^N \sum_{a=1}^N \sum_{b=1}^N d_{ab}\, \ket{a}\bra{a}_k \otimes \ket{b}\bra{b}_{k+1}.
+    $$
+
+    Para impedir a ocorrência de cidades repetidas na rota, introduz-se um termo de penalização definido por:
+    $$
+    H_{\text{penalty}} = \sum_{k<l} \sum_{a=1}^N \ket{a}\bra{a}_k \otimes \ket{a}\bra{a}_l.
+    $$
+
+    Esse termo atribui energia positiva a configurações nas quais uma mesma cidade ocupa múltiplas posições na rota, enquanto estados que correspondem a permutações válidas não são penalizados. Alternativamente, essa penalização pode ser reescrita por meio do operador:
+    $$
+    \hat{N}_a = \sum_{k=1}^N \ket{a}\bra{a}_k,
+    $$
+
+    \noindent resultando na forma equivalente:
+    $$
+    H_{\text{penalty}} = \sum_{a=1}^N \left(\hat{N}_a - 1 \right)^2.
+    $$
+
+    Os resultados preliminares obtidos com essa modelagem estão sintetizados na \autoref{tab:resultados_segunda_formulacao}, que apresenta, para cada instância testada, o custo mínimo identificado pelo algoritmo de força bruta clássico, a energia mínima obtida pelo algoritmo quântico, o caminho correspondente e o tempo de execução da simulação.
+
+    \begin{table}[!htb]
+    \centering
+    \caption{Comparação entre os resultados de custo clássicos e energias quânticas para cada quantidade $N$ de cidades, seus percursos ilustrativo de menor custo e tempo de execução, referente à segunda modelagem do hamiltoniano.}
+    \label{tab:resultados_segunda_formulacao}
+    \begin{tabular}{|c|c|c|r|}
+    \hline
+    \textbf{N} & \textbf{Custo} & \textbf{Energia} & \multicolumn{1}{c|}{\textbf{Tempo}} \\ \hline
+    3 & 19 & 19,0 & 6 ms \\ \hline
+    4 & 23 & 23,0 & 16 ms \\ \hline
+    5 & 12 & 12,0 & 86 ms \\ \hline
+    6 & 19 & 19,0 & 1 s 229 ms \\ \hline
+    7 & 41 & 41,0 & 1 min 7 s \\ \hline
+    8 & 26 & 26,0 & 2 h 53 min \\ \hline
+    \end{tabular}
+    \fonte{Autoria própria (2026)}
+    \end{table}
+
+    Em todas as instâncias avaliadas, o caminho de menor custo identificado pelo algoritmo clássico de força bruta coincidiu com o caminho de menor energia obtido pelo algoritmo quântico proposto, confirmando a consistência da formulação. Em cada simulação, a dimensão dos qumodes foi definida como igual ao número de vértices do grafo, adotando corte $d = N$, escolha que assegura expressividade suficiente para representar todas as permutações válidas da rota, embora valores maiores de $d$ possibilitem representação mais fiel ao custo de maior demanda computacional.
+
+    % {\red Senão finalizar até sexta}
+
+    Essa demanda pode ser verificada pelos tempos de execução observados: para $N = 7$ o tempo foi de aproximadamente um minuto, ao passo que para $N = 8$ ultrapassou duas horas e cinquenta minutos, evidenciando o crescimento expressivo característico da simulação clássica de sistemas quânticos de variáveis contínuas. Apesar dessa limitação, a formulação apresenta uma vantagem estrutural relevante em relação às abordagens baseadas em qubits: um grafo de $N$ vértices pode ser representado com apenas $N$ qumodes, enquanto formulações baseadas em qubits, como QUBO ou Ising, requerem um número de qubits que, independentemente da codificação adotada, cresce com o tamanho da instância superando a quantidade $N$ de qumodes necessários.
+
+    Os algoritmos utilizados nessa segunda modelagem são descritos a seguir. O \autoref{alg:projector_k_a} define os projetores locais $P_{k,a}$, que identificam a ocupação do nível $a$ no registrador associado à posição $k$ do caminho. Esses projetores são empregados no \autoref{alg:hamiltoniano_tsp_qudit} para construir o Hamiltoniano do problema, composto por um termo de distância $H_{dist}$, responsável por codificar o custo do percurso, e por um termo de penalização $H_{pen}$, que evita a repetição de cidades. Em seguida, o \autoref{alg:validacao_caminho} verifica se uma sequência de índices constitui uma permutação válida das cidades e a converte em um ciclo fechado. Finalmente, o \autoref{alg:analisar_estados_base} percorre os estados da base computacional, calcula suas energias esperadas e identifica a configuração válida de menor energia.
+
+        
+\begin{algorithm}[htbp]
+\caption{Construção do projetor local}
+\label{alg:projector_k_a}
+\begin{algorithmic}[1]
+\Require posição $k$, nível $a$, número de registradores $N$, dimensão local $\mathrm{dim}$
+\Ensure operador projetor $P_{k,a}$
+
+\State $\mathrm{ops} \gets [\ ]$
+\For{$m \gets 0$ até $N-1$}
+    \If{$m = k$}
+        \State adicionar $|a\rangle\langle a|$ em $\mathrm{ops}$
+    \Else
+        \State adicionar $\mathbb{I}_{\mathrm{dim}}$ em $\mathrm{ops}$
+    \EndIf
+\EndFor
+\State \Return produto tensorial dos elementos de $\mathrm{ops}$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[htbp]
+\caption{Construção do Hamiltoniano do TSP em qumodes}
+\label{alg:hamiltoniano_tsp_qudit}
+\begin{algorithmic}[1]
+\Require matriz de distâncias $d_{ij}$, penalização $\lambda$, dimensão local $\mathrm{dim}$
+\Ensure Hamiltoniano $H$
+
+\State $N \gets$ número de linhas de $d_{ij}$
+
+\If{$\mathrm{dim}$ não informado}
+    \State $\mathrm{dim} \gets N$
+\EndIf
+
+\If{$\mathrm{dim} < N$}
+    \State lançar erro
+\EndIf
+
+\For{$k \gets 0$ até $N-1$}
+    \For{$a \gets 0$ até $N-1$}
+        \State $P_{k,a} \gets \Call{ProjetorLocal}{k,a,N,\mathrm{dim}}$
+    \EndFor
+\EndFor
+
+\State $H_{\mathrm{dist}} \gets 0$
+\For{$k \gets 0$ até $N-1$}
+    \State $k' \gets (k+1)\bmod N$
+    \For{$a \gets 0$ até $N-1$}
+        \For{$b \gets 0$ até $N-1$}
+            \State $H_{\mathrm{dist}} \gets H_{\mathrm{dist}} + d_{ij}[a,b]\,P_{k,a}P_{k',b}$
+        \EndFor
+    \EndFor
+\EndFor
+
+\State $H_{\mathrm{pen}} \gets 0$
+\For{$k \gets 0$ até $N-1$}
+    \For{$l \gets k+1$ até $N-1$}
+        \For{$a \gets 0$ até $N-1$}
+            \State $H_{\mathrm{pen}} \gets H_{\mathrm{pen}} + P_{k,a}P_{l,a}$
+        \EndFor
+    \EndFor
+\EndFor
+
+\State \Return $H_{\mathrm{dist}} + \lambda H_{\mathrm{pen}}$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[htbp]
+\caption{Validação e conversão de índices em caminho}
+\label{alg:validacao_caminho}
+\begin{algorithmic}[1]
+\Require sequência $\mathrm{indices}$, número de cidades $N$
+\Ensure caminho válido ou valor nulo
+
+\If{$|\mathrm{indices}| \neq N$}
+    \State \Return falso
+\EndIf
+
+\If{$\mathrm{sorted}(\mathrm{indices}) \neq [0,1,\dots,N-1]$}
+    \State \Return falso
+\EndIf
+
+\State \Return tupla $(\mathrm{indices}[0], \ldots, \mathrm{indices}[N-1], \mathrm{indices}[0])$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[htbp]
+\caption{Análise dos estados da base computacional}
+\label{alg:analisar_estados_base}
+\begin{algorithmic}[1]
+\Require Hamiltoniano $H$, matriz de distâncias $\mathrm{dist}$, número de cidades $N$, dimensão local $\mathrm{dim}$
+\Ensure melhor energia, melhor caminho e lista de resultados válidos
+
+\If{$\mathrm{dim}$ não informado}
+    \State $\mathrm{dim} \gets N$
+\EndIf
+
+\State $\mathrm{melhor\_energia} \gets +\infty$
+\State $\mathrm{melhor\_indices} \gets \emptyset$
+\State $\mathrm{melhor\_path} \gets \emptyset$
+\State $\mathrm{resultados\_validos} \gets [\ ]$
+
+\ForAll{$\mathrm{indices} \in \{0,\dots,\mathrm{dim}-1\}^N$}
+    \If{$\mathrm{indices}$ não formam uma permutação válida de $\{0,\dots,N-1\}$}
+        \State \textbf{continue}
+    \EndIf
+
+    \State construir o estado tensorial correspondente
+    \State calcular a energia esperada de $H$
+    \State converter $\mathrm{indices}$ em caminho fechado
+    \State calcular o custo do caminho
+    \State armazenar resultado em $\mathrm{resultados\_validos}$
+
+    \If{$\mathrm{energia} < \mathrm{melhor\_energia}$}
+        \State atualizar melhor energia
+        \State atualizar melhores índices
+        \State atualizar melhor caminho
+    \EndIf
+\EndFor
+
+\State \Return melhores resultados
+\end{algorithmic}
+\end{algorithm}
+
+
+    Todas as simulações descritas foram executadas em um servidor, denominado Beluga, equipado com processador AMD EPYC 7453 de 56 núcleos e 112 threads, 1 TB de memória RAM e duas GPUs NVIDIA RTX A5500 de 24 GB cada, sob o sistema operacional Ubuntu 24.04.3 LTS. A implementação dos Hamiltonianos e a simulação dos sistemas quânticos foram realizadas com o auxílio da biblioteca QuTiP (\textit{Quantum Toolbox in Python}) \cite{qutip5}, que fornece estruturas para a representação e manipulação de operadores e estados quânticos em espaços de Hilbert de dimensão finita. 
+
+    

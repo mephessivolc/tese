@@ -1,2 +1,254 @@
-\chapter*{Conclusões e Trabalhos Futuros}\label{cap:conclusao}
-\addcontentsline{toc}{chapter}{Conclusão e Trabalhos Futuros}
+% \chapter*{Conclusões e Trabalhos Futuros}\label{cap:conclusao}
+\chapter{Conclusões e Próximos Passos}\label{cap:conclusao}
+% \addcontentsline{toc}{chapter}{Conclusão e Trabalhos Futuros}
+
+\section{Conclusão}
+
+Este trabalho apresentou o desenvolvimento inicial de uma abordagem baseada em computação quântica de variáveis contínuas para a resolução de problemas de otimização combinatória, com ênfase no Problema do Caixeiro Viajante como caso de estudo. Duas formulações Hamiltonianas foram propostas e implementadas: a primeira baseada em um mapeamento direto entre variáveis binárias e operadores de posição com comportamento binário imposto energeticamente, e a segunda fundamentada em variáveis inteiras representadas por estados de Fock truncados, na qual cada vértice do grafo é associado a um qumode cujo nível de ocupação codifica sua posição na rota.
+
+Os resultados obtidos demonstram a consistência das formulações propostas. Em todas as instâncias avaliadas, com $N \in \{3, 4, 5, 6, 7, 8\}$ cidades, os estados de menor energia identificados pelo algoritmo quântico coincidiram com os caminhos de menor custo encontrados pelo algoritmo clássico de força bruta, validando a correção do formalismo desenvolvido. Adicionalmente, a segunda formulação revelou uma vantagem estrutural relevante: um grafo de $N$ vértices pode ser representado com apenas $N$ qumodes, enquanto formulações baseadas em qubits, como QUBO ou Ising, requerem um número de qubits que cresce com o tamanho da instância superando essa quantidade.
+
+Embora os experimentos estejam restritos a instâncias de pequena dimensão em razão do elevado custo computacional associado à simulação clássica de sistemas de variáveis contínuas, os resultados preliminares obtidos estabelecem uma base sólida para as etapas seguintes do trabalho, descritas na seção a seguir.
+
+\section{Próximos Passos}
+
+% Como extensão imediata do formalismo para o caso de múltiplos veículos, propõe-se associar a cada vértice $V_k$ não apenas a variável inteira $n_k \in \{1,2,\dots,N\}$, que indica sua posição de visita, mas também uma variável discreta $v_k \in \{1,2,\dots,M\}$, que identifica o veículo responsável por seu atendimento, sendo $M$ o número total de veículos disponíveis. Desse modo, cada configuração passa a ser descrita pelo estado:
+%     $$
+%     \ket{(n_1,v_1),(n_2,v_2),\dots,(n_N,v_N)},
+%     $$
+
+%     \noindent em que o par $(n_k,v_k)$ informa, simultaneamente, a ordem de visita do vértice $V_k$ e o veículo ao qual ele foi atribuído. Nessa representação, é conveniente introduzir o projetor:
+
+%     $$
+%     \Pi_k^{(a,\mu)}=\ket{a}\bra{a}_k^{(n)}\otimes \ket{\mu}\bra{\mu}_k^{(v)}
+%     $$
+
+%     \noindent que seleciona os estados nos quais o vértice $V_k$ ocupa a posição $a$ na rota do veículo $\mu$.
+
+%     Com essa nova codificação, o Hamiltoniano de custo pode ser generalizado de modo a contabilizar apenas deslocamentos entre vértices consecutivos atendidos pelo mesmo veículo. Em uma primeira formulação, esse termo pode ser escrito como:
+
+%     $$
+%         H_{\mathrm{cost}}^{(M)}
+%         =
+%         \sum_{\mu=1}^{M}
+%         \sum_{a=1}^{N-1}
+%         \sum_{i=1}^{N}
+%         \sum_{j=1}^{N}
+%         d_{ij}\,
+%         \left(\ket{a}\bra{a}_k^{(n)}\otimes \ket{\mu}\bra{\mu}_k^{(v)}\right)
+%         \left(\ket{a}\bra{a+1}_j^{(n)}\otimes \ket{\mu}\bra{\mu}_j^{(v)}\right)
+%     $$
+
+%     \noindent onde $d_{ij}$ representa o custo de deslocamento entre os vértices $V_i$ e $V_j$. Assim, o Hamiltoniano soma as distâncias entre clientes que ocupam posições consecutivas na rota de um mesmo veículo.
+
+%     Para assegurar a consistência combinatória da solução, é necessário impedir que dois clientes ocupem simultaneamente a mesma posição na rota de um mesmo veículo e, adicionalmente, evitar lacunas internas nas rotas construídas. Para isso, define-se o operador de ocupação
+%     $$
+%     \hat{N}_{a,\mu}=\sum_{k=1}^{N}\Pi_k^{(a,\mu)},
+%     $$
+
+%     \noindent a partir do qual se pode introduzir o termo de penalização
+%     $$
+%     H_{\mathrm{occ}}
+%     =
+%     \sum_{\mu=1}^{M}\sum_{a=1}^{N}
+%     \hat{N}_{a,\mu}\bigl(\hat{N}_{a,\mu}-1\bigr),
+%     $$
+
+%     \noindent que penaliza configurações em que mais de um cliente é associado à mesma posição $a$ do veículo $\mu$. Para desencorajar rotas com posições vazias intercaladas entre posições ocupadas, pode-se ainda acrescentar
+%     $$
+%     H_{\mathrm{gap}}
+%     =
+%     \sum_{\mu=1}^{M}\sum_{a=1}^{N-1}
+%     \bigl(1-\hat{N}_{a,\mu}\bigr)\hat{N}_{a+1,\mu},
+%     $$
+%     \noindent de modo que o Hamiltoniano total assuma a forma
+%     $$
+%     H_{\mathrm{VRP}}
+%     =
+%     H_{\mathrm{cost}}^{(M)}
+%     +\lambda_{1}H_{\mathrm{occ}}
+%     +\lambda_{2}H_{\mathrm{gap}},
+%     $$
+
+%     \noindent com $\lambda_1,\lambda_2>0$ parâmetros de penalização. Essa construção visa uma primeira generalização do modelo para o VRP de múltiplos veículos, preservando a estrutura em termos de projetores e abrindo caminho para a inclusão posterior de restrições adicionais, como capacidade e janelas de tempo.
+
+%     Como etapa posterior, pode-se incorporar ao formalismo uma restrição de capacidade por meio da introdução de uma variável de atribuição de veículo e de um operador de carga total associado a cada rota. Se $q_k$ denota a demanda do cliente $V_k$ e $Q_\mu$ a capacidade do veículo $\mu$, define-se inicialmente o operador
+%     $$
+%     \hat{y}_{k,\mu}=\sum_{a=1}^{N}\Pi_k^{(a,\mu)},
+%     $$
+%     o qual projeta sobre os estados em que o cliente $V_k$ é atendido pelo veículo $\mu$, independentemente de sua posição na rota. A carga total associada ao veículo $\mu$ pode então ser escrita como
+%     $$
+%     \hat{Q}_{\mu}=\sum_{k=1}^{N} q_k\,\hat{y}_{k,\mu}.
+%     $$
+
+%     Com isso, um possível Hamiltoniano de penalização para a restrição de capacidade é dado por
+
+%     $$
+%     H_{\mathrm{cap}}
+%     =
+%     \sum_{\mu=1}^{M}
+%     \Theta\!\left(\hat{Q}_{\mu}-Q_\mu\right)
+%     \left(\hat{Q}_{\mu}-Q_\mu\right)^2,
+%     $$
+
+%     \noindent em que $\Theta(\cdot)$ representa a função de Heaviside. Esse termo atribui energia positiva apenas às configurações em que a demanda total dos clientes atribuídos ao veículo $\mu$ excede sua capacidade máxima, preservando sem penalização os estados compatíveis com a restrição logística imposta.
+
+%     De modo análogo, a inclusão de janelas de tempo pode ser proposta mediante a introdução de operadores de tempo de chegada ao longo de cada rota. Se $[A_i,B_i]$ representa a janela de atendimento do cliente $V_i$, define-se $\hat{T}_{a,\mu}$ como o operador associado ao instante de chegada do veículo $\mu$ ao cliente visitado na posição $a$. A consistência temporal da rota pode ser imposta por meio do termo
+
+%     $$
+%     H_{\mathrm{temp}}
+%     =
+%     \sum_{\mu=1}^{M}\sum_{a=1}^{N-1}
+%     \left(
+%     \hat{T}_{a+1,\mu}
+%     -
+%     \hat{T}_{a,\mu}
+%     -
+%     \sum_{i=1}^{N}\sum_{j=1}^{N}
+%     (\tau_{ij}+s_i)\,
+%     \Pi_i^{(a,\mu)}\Pi_j^{(a+1,\mu)}
+%     \right)^2,
+%     $$
+
+%     \noindent em que $\tau_{ij}$ denota o tempo de deslocamento entre os clientes $V_i$ e $V_j$, e $s_i$ o tempo de serviço em $V_i$. A penalização associada às janelas de tempo pode então ser escrita como
+
+%     $$
+%     H_{\mathrm{jt}}
+%     =
+%     \sum_{\mu=1}^{M}\sum_{a=1}^{N}\sum_{i=1}^{N}
+%     \Pi_i^{(a,\mu)}
+%     \left[
+%     \Theta\!\left(A_i-\hat{T}_{a,\mu}\right)\left(A_i-\hat{T}_{a,\mu}\right)^2
+%     +
+%     \Theta\!\left(\hat{T}_{a,\mu}-B_i\right)\left(\hat{T}_{a,\mu}-B_i\right)^2
+%     \right].
+%     $$
+
+%     Nessa formulação, a energia do sistema cresce sempre que o atendimento ocorre antes da abertura ou após o fechamento da janela admissível, fornecendo, assim, uma proposta natural de extensão do Hamiltoniano para variantes do VRP com restrições temporais.
+
+%     Na etapa seguinte, os Hamiltonianos construídos serão empregados como funções de custo em modelos de otimização quântica variacional, com destaque para abordagens como o \textit{Variational Quantum Eigensolver} (VQE) e o \textit{Quantum Approximate Optimization Algorithm} (QAOA), adaptadas ao contexto dos Hamiltonianos formulados. Nessas abordagens, estados parametrizados serão preparados por circuitos variacionais compostos por portas gaussianas e, quando necessário, operações não gaussianas, sendo então avaliados iterativamente. Os parâmetros variacionais serão ajustados por rotinas de otimização clássica baseadas em gradiente ou métodos livres de derivadas, a depender da estrutura do Hamiltoniano e do comportamento numérico observado.
+
+%     A avaliação de desempenho não se restringirá aos modelos quânticos. Para fins de comparação, serão empregados métodos clássicos de referência, algoritmos exatos em instâncias de pequena dimensão. Essa abordagem permitirá analisar, de forma sistemática, a qualidade das soluções encontradas, o custo computacional envolvido, a estabilidade dos métodos frente à escolha de hiperparâmetros e o comportamento relativo entre abordagens clássicas e quânticas. Essa etapa constitui, portanto, não apenas uma validação prática do formalismo desenvolvido, mas também um estudo comparativo sobre o potencial e as limitações de diferentes estratégias de otimização aplicadas aos Hamiltonianos construídos.
+
+%     O cronograma de desenvolvimento do doutorado, posterior à etapa de qualificação, foi organizado de modo a articular o aprofundamento do referencial teórico, o refinamento do modelo hamiltoniano proposto, sua implementação computacional, a implementação de algoritmos de otimização quântica, as validações necessárias e a redação progressiva da tese. Esse desenvolvimento está sintetizado na \autoref{tab:cronograma}, em que o sombreamento das células indica os meses de execução de cada etapa, sem distinção semântica entre as cores utilizadas. Busca-se, com isso, assegurar que a consolidação conceitual e a obtenção dos resultados numéricos avancem conjuntamente.
+
+A partir dos resultados obtidos, o desenvolvimento do trabalho 
+estrutura-se em duas frentes complementares: a aplicação de algoritmos de otimização quântica variacional sobre os Hamiltonianos já construídos, e a generalização do formalismo proposto para variantes mais complexas do problema de roteamento de veículos.
+
+Os Hamiltonianos construídos serão empregados como funções de custo em modelos de otimização quântica variacional, com destaque para o VQE e o QAOA, apresentados na \autoref{sec:quantum_approach} e aqui adaptados ao contexto dos Hamiltonianos formulados em variáveis contínuas. Nessas abordagens, estados parametrizados serão preparados por circuitos variacionais compostos por portas gaussianas e, quando necessário, operações não gaussianas, sendo então avaliados iterativamente. Os parâmetros variacionais serão ajustados por rotinas de otimização clássica baseadas em gradiente ou métodos livres de derivadas, a depender da estrutura do Hamiltoniano e do comportamento numérico observado.
+
+A avaliação de desempenho não se restringirá aos modelos quânticos. Para fins de comparação, serão empregados métodos clássicos de referência, incluindo algoritmos exatos em instâncias de pequena dimensão. Essa abordagem permitirá analisar, de forma sistemática, a qualidade das soluções encontradas e o custo computacional envolvido, bem como investigar a estabilidade dos métodos frente à escolha de hiperparâmetros. Os resultados obtidos servirão de base para uma análise comparativa entre as abordagens clássicas e quânticas, permitindo avaliar o potencial e as limitações de cada estratégia aplicada aos Hamiltonianos construídos.
+
+Como extensão imediata do formalismo para o caso de múltiplos veículos, propõe-se associar a cada vértice $V_k$ não apenas a variável inteira $n_k \in \{1, 2, \ldots, N\}$, que indica sua posição de visita, mas também uma variável discreta $v_k \in \{1, 2, \ldots, M\}$, que identifica o veículo responsável por seu atendimento, sendo $M$ o número total de veículos disponíveis. Desse modo, cada configuração passa a ser descrita pelo estado:
+
+\begin{equation}
+\ket{(n_1, v_1),(n_2, v_2), \ldots,(n_N, v_N)},
+\end{equation}
+
+\noindent em que o par $(n_k, v_k)$ informa, simultaneamente, a ordem de visita do vértice $V_k$ e o veículo ao qual ele foi atribuído. Nessa representação, é conveniente introduzir o projetor:
+
+\begin{equation}
+    \Pi^{(a,\mu)}_k = \ketbra{a}{a}_k^{(n)}\otimes \ketbra{\mu}{\mu}_k^{(v)},
+\end{equation}
+
+\noindent que seleciona os estados nos quais o vértice $V_k$ ocupa a posição $a$ na rota do veículo $\mu$. Com essa nova codificação, o Hamiltoniano de custo pode ser generalizado de modo a contabilizar apenas deslocamentos entre vértices consecutivos atendidos pelo mesmo veículo:
+
+\begin{equation}
+H^{(M)}_{cost} = \sum_{\mu=1}^{M} \sum_{a=1}^{N-1} \sum_{i=1}^{N} 
+\sum_{j=1}^{N} d_{ij} \left(|a\rangle \langle a|^{(n)}_k \otimes 
+|\mu\rangle \langle \mu|^{(v)}_k\right) \left(|a\rangle \langle 
+a+1|^{(n)}_j \otimes |\mu\rangle \langle \mu|^{(v)}_j\right),
+\end{equation}
+
+onde $d_{ij}$ representa o custo de deslocamento entre os vértices $V_i$ e $V_j$. Para assegurar a consistência combinatória da solução, define-se o operador de ocupação
+
+\begin{equation}
+\hat{N}_{a,\mu} = \sum_{k=1}^{N} \Pi^{(a,\mu)}_k,
+\end{equation}
+
+\noindent a partir do qual se introduz o termo de penalização
+
+\begin{equation}
+H_{occ} = \sum_{\mu=1}^{M} \sum_{a=1}^{N} \hat{N}_{a,\mu} 
+\left(\hat{N}_{a,\mu} - 1\right),
+\end{equation}
+
+\noindent que penaliza configurações em que mais de um cliente é associado à mesma posição $a$ do veículo $\mu$. Para desencorajar rotas com posições vazias intercaladas entre posições ocupadas, acrescenta-se
+
+\begin{equation}
+H_{gap} = \sum_{\mu=1}^{M} \sum_{a=1}^{N-1} \left(1 - 
+\hat{N}_{a,\mu}\right)\hat{N}_{a+1,\mu},
+\end{equation}
+
+\noindent de modo que o Hamiltoniano total assuma a forma
+
+\begin{equation}
+H_{VRP} = H^{(M)}_{cost} + \lambda_1 H_{occ} + \lambda_2 H_{gap},
+\end{equation}
+
+\noindent com $\lambda_1, \lambda_2 > 0$ parâmetros de penalização.
+
+Como etapa posterior, pode-se incorporar ao formalismo uma restrição de capacidade. Se $q_k$ denota a demanda do cliente $V_k$ e $Q_\mu$ a capacidade do veículo $\mu$, define-se o operador
+
+\begin{equation}
+\hat{y}_{k,\mu} = \sum_{a=1}^{N} \Pi^{(a,\mu)}_k,
+\end{equation}
+
+\noindent que projeta sobre os estados em que o cliente $V_k$ é atendido pelo veículo $\mu$, independentemente de sua posição na rota. A carga total associada ao veículo $\mu$ pode então ser escrita como
+
+\begin{equation}
+\hat{Q}_\mu = \sum_{k=1}^{N} q_k \hat{y}_{k,\mu}.
+\end{equation}
+
+Com isso, um possível Hamiltoniano de penalização para a restrição de capacidade é dado por
+
+\begin{equation}
+H_{cap} = \sum_{\mu=1}^{M} \Theta\left(\hat{Q}_\mu - Q_\mu\right) 
+\left(\hat{Q}_\mu - Q_\mu\right)^2,
+\end{equation}
+
+em que $\Theta(\cdot)$ representa a função de Heaviside, atribuindo energia positiva apenas às configurações em que a demanda total dos clientes atribuídos ao veículo $\mu$ excede sua capacidade máxima.
+
+De modo análogo, a inclusão de janelas de tempo pode ser proposta mediante a introdução de operadores de tempo de chegada ao longo de cada rota. Se $[A_i, B_i]$ representa a janela de atendimento do cliente $V_i$, define-se $\hat{T}_{a,\mu}$ como o operador associado ao instante de chegada do veículo $\mu$ ao cliente visitado na posição $a$. A consistência temporal da rota pode ser imposta por meio do termo
+
+\begin{equation}
+H_{temp} = \sum_{\mu=1}^{M} \sum_{a=1}^{N-1} \left(\hat{T}_{a+1,\mu} 
+- \hat{T}_{a,\mu} - \sum_{i=1}^{N}\sum_{j=1}^{N}(\tau_{ij} + s_i) 
+\Pi^{(a,\mu)}_i \Pi^{(a+1,\mu)}_j\right)^2,
+\end{equation}
+
+\noindent em que $\tau_{ij}$ denota o tempo de deslocamento entre os clientes $V_i$ e $V_j$, e $s_i$ o tempo de serviço em $V_i$. A penalização associada às janelas de tempo pode então ser escrita como
+
+\begin{equation}
+H_{jt} = \sum_{\mu=1}^{M} \sum_{a=1}^{N} \sum_{i=1}^{N} 
+\Pi^{(a,\mu)}_i \left[\Theta\left(A_i - \hat{T}_{a,\mu}\right) 
+\left(A_i - \hat{T}_{a,\mu}\right)^2 + \Theta\left(\hat{T}_{a,\mu} 
+- B_i\right)\left(\hat{T}_{a,\mu} - B_i\right)^2\right],
+\end{equation}
+
+em que a energia do sistema cresce sempre que o atendimento ocorre antes da abertura ou após o fechamento da janela admissível.
+
+O cronograma de desenvolvimento previsto para o período posterior à qualificação, organizado ao longo do segundo semestre de 2026, está sintetizado na Tabela~\ref{tab:cronograma}.
+
+    \begin{table}[!htb]
+    \centering
+    \caption{Cronograma de execução das atividades}
+    \label{tab:cronograma}
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{|p{6.2cm}|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+    \hline
+
+    \textbf{Etapa} & \textbf{Jun} & \textbf{Jul} & \textbf{Ago} & \textbf{Set} & \textbf{Out} & \textbf{Nov} & \textbf{Dez} \\  \hline \hline
+    Revisão bibliográfica e ampliação do referencial teórico &  \cellcolor{blue}  &  \cellcolor{blue}  &  \cellcolor{blue}  &     &     &     & \\  \hline
+    Desenvolvimento e extensão do Hamiltoniano               &  \cellcolor{green}  &  \cellcolor{green}  &  \cellcolor{green}  &  \cellcolor{green}  &     &     & \\  \hline
+    Implementação computacional  & &  \cellcolor{yellow}  &  \cellcolor{yellow}  &  \cellcolor{yellow}  &  \cellcolor{yellow}  &         & \\  \hline
+    Implementação computacional do algoritmo de otimização quântica & &  \cellcolor{blue}  &  \cellcolor{blue}  &  \cellcolor{blue}  &  \cellcolor{blue}  &         & \\  \hline
+    Simulações, análise de resultados e validação            &     &     &  \cellcolor{green}  &  \cellcolor{green}  &  \cellcolor{green}  &     & \\  \hline
+    Redação e consolidação da tese &  \cellcolor{yellow}  &  \cellcolor{yellow}  &  \cellcolor{yellow}  &  \cellcolor{yellow}  &  \cellcolor{yellow}  &  \cellcolor{yellow}  & \\  \hline
+    Defesa da Tese &    &    &    &     &     &      & \cellcolor{blue}  \\  \hline
+    \end{tabular}
+    }
+    \fonte{Autoria Própria (2026)}
+    \end{table}
+
+    

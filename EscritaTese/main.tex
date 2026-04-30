@@ -40,6 +40,8 @@
 % ---------------------
 \usepackage{lipsum}						% Geração de dummy text
 \usepackage{amsmath,amssymb,mathrsfs}	% Comandos matemáticos avançados 
+
+\allowdisplaybreaks
 \usepackage{setspace}  					% Para permitir espaçamento simples, 1 1/2 e duplo
 \usepackage{verbatim}					% Para poder usar o ambiente "comment"
 \usepackage{tabularx} 					% Para poder ter tabelas com colunas de largura auto-ajustável
@@ -228,18 +230,20 @@
 % PARTE - Define a divisão do documento em partes (Não é obrigatório)
 % \hiddenpart{Preparação da pesquisa}
 
-\include{capitulos/fundamentacao}
-% \include{capitulos/estadodaarte}
+% \include{capitulos/fundamentacao}
+\include{capitulos/vehicle_routing_problem}
+\include{capitulos/quantum_mechanics}
+\include{capitulos/optimization}
 % \include{capitulos/ferramentas}
 
 % PARTE
-\hiddenpart{Proposta}
-\include{capitulos/proposta}
+\hiddenpart{Metodologia}
+\include{capitulos/metodologia}
 
 % PARTE
 % \hiddenpart{Parte Final}
 % \include{capitulos/resultados}
-% \include{capitulos/conclusao}
+\include{capitulos/conclusao}
 
 % ----------------------------------------------------------
 % ELEMENTOS POS-TEXTUAIS (Referencias, Glossario, Apendices)
@@ -251,7 +255,7 @@
 %\glossary
 
 % Apêndices
-\include{postextual/apendices}
+% \include{postextual/apendices}
 
 % Anexos
 % \include{postextual/anexos}

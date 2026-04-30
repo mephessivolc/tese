@@ -13,7 +13,7 @@
 % ----------------------------------------------------------
 \chapter{Algoritmos Utilizados} \label{sec:algorithm_append}
 
-Os algoritmos aqui apresentados podem ser encontrados em uma versão Python disponível no GitHub (\url{https://github.com/mephessivolc/tese})
+Os algoritmos aqui apresentados estão disponíveis em uma versão Python 3.10 no GitHub (\url{https://github.com/mephessivolc/tese})
 
 \section{Algoritmo de Força Bruta}
 
@@ -50,9 +50,173 @@ O algoritmo de Força Bruta apresentado no \autoref{alg:brute_force} é utilizad
 \section{Algoritmo Quântico}
 
 \subsection{Equivalencia Qubits com Qumodes}
-Teste 
 
-\subsection{Estados de Fock truncado na posição de vizita de cada cidade}
+O \autoref{alg:hamiltoniano_qumode_binario} apresenta a construção do Hamiltoniano utilizado para codificar o TSP em qmodes. O mapeamento entre arestas dirigidas e modos bosônicos é definido no \autoref{alg:indice_aresta}. Após a obtenção de um estado candidato, o \autoref{alg:indices_para_matriz} converte as ocupações dos modos em uma matriz binária de arestas, enquanto o \autoref{alg:matriz_para_caminho} verifica se essa matriz representa um ciclo Hamiltoniano válido.
+
+\begin{algorithm}[htbp]
+\caption{Construção do Hamiltoniano qumode-binário para o TSP}
+\label{alg:hamiltoniano_qumode_binario}
+\begin{algorithmic}[1]
+\Require Matriz de distâncias $d_{ij}$, penalidades $\alpha,\beta,\gamma$, dimensão local $\mathrm{dim}$, parâmetro $\mathrm{incluir\_p}$
+\Ensure Hamiltoniano final $H_{\mathrm{final}}$
+
+\State $N \gets$ número de cidades
+\State $M \gets N(N-1)$ \Comment{um qumode para cada aresta dirigida $i \to j$, com $i \neq j$}
+
+\For{$k \gets 0$ até $M-1$}
+    \State construir o operador de destruição $a_k$
+    \State $n_k \gets a_k^\dagger a_k$
+\EndFor
+
+\State $C \gets 0$
+\For{$i \gets 0$ até $N-1$}
+    \For{$j \gets 0$ até $N-1$}
+        \If{$i \neq j$}
+            \State $k \gets \Call{IndiceAresta}{i,j,N}$
+            \State $C \gets C + d_{ij}n_k$
+        \EndIf
+    \EndFor
+\EndFor
+
+\State $H_1 \gets 0$
+\For{$k \gets 0$ até $M-1$}
+    \State $H_1 \gets H_1 + \alpha\left[n_k(n_k-1)\right]^2$
+\EndFor
+
+\State $H_2 \gets 0$
+\For{$i \gets 0$ até $N-1$}
+    \State $S_{\mathrm{saida}} \gets \sum_{j \neq i} n_{\mathrm{idx}(i,j)}$
+    \State $H_2 \gets H_2 + \beta(S_{\mathrm{saida}}-1)^2$
+\EndFor
+
+\State $H_3 \gets 0$
+\For{$j \gets 0$ até $N-1$}
+    \State $S_{\mathrm{entrada}} \gets \sum_{i \neq j} n_{\mathrm{idx}(i,j)}$
+    \State $H_3 \gets H_3 + \gamma(S_{\mathrm{entrada}}-1)^2$
+\EndFor
+
+\State $H_{\mathrm{final}} \gets C + H_1 + H_2 + H_3$
+
+\If{$\mathrm{incluir\_p}$}
+    \State construir o termo cinético $P$
+    \State $H_{\mathrm{final}} \gets H_{\mathrm{final}} + P$
+\EndIf
+
+\State \Return $H_{\mathrm{final}}$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[htbp]
+\caption{Mapeamento de uma aresta dirigida para o índice do qumode}
+\label{alg:indice_aresta}
+\begin{algorithmic}[1]
+\Require Cidades $i,j$ e número de cidades $N$
+\Ensure Índice $k$ associado à aresta $i \to j$
+
+\If{$i=j$}
+    \State lançar erro
+\EndIf
+
+\State $k \gets 0$
+\For{$u \gets 0$ até $N-1$}
+    \For{$v \gets 0$ até $N-1$}
+        \If{$u \neq v$}
+            \If{$u=i$ e $v=j$}
+                \State \Return $k$
+            \EndIf
+            \State $k \gets k+1$
+        \EndIf
+    \EndFor
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[htbp]
+\caption{Conversão dos índices de ocupação em matriz binária de arestas}
+\label{alg:indices_para_matriz}
+\begin{algorithmic}[1]
+\Require Tupla de ocupações $\mathrm{indices}$ e número de cidades $N$
+\Ensure Matriz binária $X$ ou $\emptyset$
+
+\State criar matriz $X \in \{0,1\}^{N \times N}$ inicialmente nula
+\State $k \gets 0$
+
+\For{$i \gets 0$ até $N-1$}
+    \For{$j \gets 0$ até $N-1$}
+        \If{$i \neq j$}
+            \State $\mathrm{occ} \gets \mathrm{indices}[k]$
+
+            \If{$\mathrm{occ} \notin \{0,1\}$}
+                \State \Return $\emptyset$
+            \EndIf
+
+            \State $X_{ij} \gets \mathrm{occ}$
+            \State $k \gets k+1$
+        \EndIf
+    \EndFor
+\EndFor
+
+\State \Return $X$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[htbp]
+\caption{Validação da matriz binária como ciclo Hamiltoniano}
+\label{alg:matriz_para_caminho}
+\begin{algorithmic}[1]
+\Require Matriz binária de arestas $X$
+\Ensure Caminho fechado válido ou $\emptyset$
+
+\State $N \gets$ dimensão de $X$
+
+\If{alguma linha de $X$ não soma $1$}
+    \State \Return $\emptyset$
+\EndIf
+
+\If{alguma coluna de $X$ não soma $1$}
+    \State \Return $\emptyset$
+\EndIf
+
+\State $\mathrm{caminho} \gets [0]$
+\State $\mathrm{atual} \gets 0$
+\State $\mathrm{visitados} \gets \{0\}$
+
+\For{$t \gets 1$ até $N-1$}
+    \State encontrar $\mathrm{prox}$ tal que $X_{\mathrm{atual},\mathrm{prox}}=1$
+
+    \If{$\mathrm{prox}$ não existe ou não é único}
+        \State \Return $\emptyset$
+    \EndIf
+
+    \If{$\mathrm{prox} \in \mathrm{visitados}$}
+        \State \Return $\emptyset$
+    \EndIf
+
+    \State adicionar $\mathrm{prox}$ ao caminho
+    \State adicionar $\mathrm{prox}$ a $\mathrm{visitados}$
+    \State $\mathrm{atual} \gets \mathrm{prox}$
+\EndFor
+
+\State encontrar $\mathrm{prox}$ tal que $X_{\mathrm{atual},\mathrm{prox}}=1$
+
+\If{$\mathrm{prox} \neq 0$}
+    \State \Return $\emptyset$
+\EndIf
+
+\State adicionar $0$ ao final de $\mathrm{caminho}$
+
+\If{$|\mathrm{visitados}| \neq N$}
+    \State \Return $\emptyset$
+\EndIf
+
+\State \Return $\mathrm{caminho}$
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Estados de Fock truncado na posição de visita de cada cidade}
+
+Os \autoref{alg:projector_k_a}---\autoref{alg:analisar_estados_base} descrevem a construção e a análise da formulação do TSP em qumodes truncados. O \autoref{alg:projector_k_a} define os projetores locais $P_{k,a}$, que identificam a ocupação do nível $a$ no registrador associado à posição $k$ do caminho. Esses projetores são empregados no \autoref{alg:hamiltoniano_tsp_qudit} para construir o Hamiltoniano do problema, composto por um termo de distância, $H_{\mathrm{dist}}$, responsável por codificar o custo do percurso, e por um termo de penalização, $H_{\mathrm{pen}}$, que evita a repetição de cidades. Em seguida, o \autoref{alg:validacao_caminho} verifica se uma sequência de índices constitui uma permutação válida das cidades e a converte em um ciclo fechado. Finalmente, o \autoref{alg:analisar_estados_base} percorre os estados da base computacional, calcula suas energias esperadas e identifica a configuração válida de menor energia.
+
 \begin{algorithm}[htbp]
 \caption{Construção do projetor local}
 \label{alg:projector_k_a}
@@ -73,7 +237,7 @@ Teste
 \end{algorithm}
 
 \begin{algorithm}[htbp]
-\caption{Construção do Hamiltoniano do TSP em qudits}
+\caption{Construção do Hamiltoniano do TSP em qumodes}
 \label{alg:hamiltoniano_tsp_qudit}
 \begin{algorithmic}[1]
 \Require matriz de distâncias $d_{ij}$, penalização $\lambda$, dimensão local $\mathrm{dim}$

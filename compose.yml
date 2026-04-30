@@ -1,59 +1,51 @@
 name: tese
 
+x-common-build: &common-build
+  context: .
+  dockerfile: Dockerfile
+  args:
+    USERNAME: ${LOCAL_USER:-clovis-caface}
+    USER_UID: ${LOCAL_UID:-1000}
+    USER_GID: ${LOCAL_GID:-1000}
+
+x-common-env: &common-env
+  HOME: /home/${LOCAL_USER:-clovis-caface}
+  PYTHONDONTWRITEBYTECODE: "1"
+  PYTHONUNBUFFERED: "1"
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  VIRTUAL_ENV: /opt/venv
+  PATH: /opt/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  MPLCONFIGDIR: /home/${LOCAL_USER:-clovis-caface}/.cache/matplotlib
+  PYTHONPATH: /workspace:/workspace/code:/workspace/code/src
+  
 services:
   local:
     build:
-      context: .
-      dockerfile: Dockerfile
+      <<: *common-build
       target: local
-      args:
-        USERNAME: ${LOCAL_USER:-devuser}
-        USER_UID: ${LOCAL_UID:-1000}
-        USER_GID: ${LOCAL_GID:-1000}
     image: tese-local:latest
     init: true
     working_dir: /workspace
-    command: sleep infinity
+    command: ["sleep", "infinity"]
     environment:
-      HOME: /home/${LOCAL_USER:-devuser}
-      PYTHONDONTWRITEBYTECODE: "1"
-      PYTHONUNBUFFERED: "1"
-      PIP_DISABLE_PIP_VERSION_CHECK: "1"
-      MPLCONFIGDIR: /tmp/matplotlib
-      PYTHONPATH: /workspace/code:/workspace/code/src:/workspace
+      <<: *common-env
       TEXMFVAR: /workspace/.texlive/texmf-var
       TEXMFCACHE: /workspace/.texlive/texmf-cache
     volumes:
       - .:/workspace
+    stdin_open: true
+    tty: true
 
   server:
     build:
-      context: .
-      dockerfile: Dockerfile
+      <<: *common-build
       target: server
-      args:
-        USERNAME: ${LOCAL_USER:-devuser}
-        USER_UID: ${LOCAL_UID:-1000}
-        USER_GID: ${LOCAL_GID:-1000}
     image: tese-server:latest
     init: true
     working_dir: /workspace
-    command: sleep infinity
+    command: ["python", "/workspace/code/src/teste.py"]
+    restart: unless-stopped
     environment:
-      HOME: /home/${LOCAL_USER:-devuser}
-      PYTHONDONTWRITEBYTECODE: "1"
-      PYTHONUNBUFFERED: "1"
-      PIP_DISABLE_PIP_VERSION_CHECK: "1"
-      MPLCONFIGDIR: /tmp/matplotlib
-      PYTHONPATH: /workspace/code:/workspace/code/src:/workspace
+      <<: *common-env
     volumes:
       - .:/workspace
-
-    # shm_size: ${SERVER_SHM_SIZE:-16g}
-    # mem_limit: ${SERVER_MEM_LIMIT:-128g}
-    # mem_reservation: ${SERVER_MEM_RESERVATION:-32g}
-    # cpus: ${SERVER_CPUS:-16.0}
-    # pids_limit: ${SERVER_PIDS_LIMIT:-4096}
-
-    # Ative GPU só quando necessário
-    # gpus: ${SERVER_GPUS:-all}

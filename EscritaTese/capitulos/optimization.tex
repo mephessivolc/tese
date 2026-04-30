@@ -1,0 +1,147 @@
+
+\chapter{Modelos de Otimização para Problemas de Rotas de Veículos}
+
+\section{Abordagens Clássicas}
+
+As abordagens clássicas para o VRP e o TSP podem ser organizadas em duas categorias principais: métodos exatos, que garantem a otimalidade da solução encontrada, e métodos aproximados, que buscam soluções de boa qualidade em tempo computacional viável. Entre os métodos exatos, destaca-se o branch-and-bound, apresentado a seguir. Entre os métodos aproximados, são discutidas quatro metaheurísticas amplamente utilizadas na literatura: busca tabu, algoritmo genético, simulated annealing e colônia de formigas.
+
+\subsection{Branch-and-bound}
+
+O método ramificação e poda (\textit{branch-and-bound} --- B\&B) é uma estratégia exata baseada na decomposição sistemática do espaço de soluções. A ideia central consiste em dividir o problema original em subproblemas menores, processo conhecido como \textit{branching}, e calcular limites inferiores ou superiores para cada subproblema, processo conhecido como \textit{bounding}. Subproblemas que não podem conduzir a uma solução melhor do que a melhor solução já encontrada são descartados, reduzindo a quantidade de soluções que precisam ser exploradas explicitamente.
+
+No VRP, o B\&B pode ser aplicado sobre uma formulação de programação inteira. A cada nó da árvore de busca, algumas variáveis binárias são fixadas, por exemplo impondo que determinado arco seja usado ou proibido. Em seguida, resolve-se uma relaxação\footnote{Uma relaxação é uma versão menos restritiva do problema original, obtida pela remoção ou suavização de algumas restrições.} do problema, frequentemente a relaxação linear, na qual as variáveis binárias são permitidas assumir valores contínuos no intervalo $[0,1]$. Se o valor da relaxação for pior que a melhor solução inteira conhecida, o ramo é podado. Caso contrário, o algoritmo continua ramificando até encontrar soluções inteiras viáveis ou provar que nenhuma solução melhor existe.
+
+A formulação associada pode ser entendida como:
+\begin{equation*}
+    z^* = \min \{cx : Ax \leq b, \; x \in \{0,1\}^m\},    
+\end{equation*}
+
+\noindent em que $x$ representa as decisões de roteamento, $c$ os custos dos arcos e $Ax \leq b$ o conjunto de restrições de atendimento, capacidade, fluxo e eliminação de subciclos. A relaxação linear substitui $x \in \{0,1\}^m$ por $0 \leq x \leq 1$, fornecendo limites usados para decidir quais ramos da árvore devem ser explorados.
+
+Em aplicações ao TSP e ao VRP, B\&B é eficiente quando combinado com boas estratégias de poda, geração de cortes e heurísticas para 
+obtenção rápida de boas soluções viáveis. Entretanto, em instâncias grandes, a árvore de busca pode crescer exponencialmente, tornando o método computacionalmente inviável. Por essa razão, B\&B é frequentemente integrado a técnicas mais sofisticadas, como ramificação e corte (\textit{branch-and-cut} --- B\&C) e ramificação e geração de coluna (\textit{branch-and-price} --- B\&P), ou utilizado como referência para resolver instâncias menores e comparar a qualidade de soluções obtidas por metaheurísticas.
+
+\subsection{Busca tabu}
+
+A busca tabu é uma metaheurística baseada em busca local que procura evitar ciclos e mínimos locais por meio do uso de uma memória adaptativa. A partir de uma solução inicial, o método explora uma vizinhança de soluções obtidas por pequenas modificações, como troca de clientes entre rotas, inversão de segmentos ou realocação de um cliente. Diferentemente de uma busca local simples, a busca tabu permite movimentos que pioram temporariamente a função objetivo, desde que esses movimentos ajudem a explorar regiões ainda não visitadas do espaço de soluções.
+
+Matematicamente, considere uma solução $s \in S$, em que $S$ representa o conjunto de soluções viáveis ou parcialmente viáveis do VRP. A cada iteração, escolhe-se uma solução vizinha $s' \in N(s)$, em que $N(s)$ é a vizinhança de $s$, buscando minimizar uma função objetivo $f(s)$. A escolha pode ser representada por:
+\[
+s_{t+1} = \arg\min_{s' \in N(s_t), \; m(s_t,s') \notin T} f(s'),
+\]
+em que $T$ é a lista tabu, responsável por armazenar movimentos recentemente executados e impedir que sejam imediatamente revertidos. Em alguns casos, um critério de aspiração permite aceitar um movimento tabu caso ele produza uma solução melhor do que a melhor solução conhecida.
+
+No VRP, a busca tabu é particularmente adequada porque muitas estruturas de vizinhança podem ser definidas de forma natural. Exemplos incluem movimentos \textit{swap}, que trocam clientes entre rotas, e \textit{relocate}, que move um cliente de uma posição para outra. Além desses, os movimentos \textit{2-opt} e \textit{3-opt} reordenam segmentos dentro de uma mesma rota: o \textit{2-opt} consiste em remover duas arestas da rota e reconectar os segmentos resultantes de forma alternativa, frequentemente invertendo parte do percurso com o objetivo de reduzir o custo total; o \textit{3-opt} generaliza essa ideia ao remover três arestas e considerar diferentes formas de reconectar os três segmentos resultantes, explorando uma vizinhança maior, embora com maior custo computacional. Tais movimentos também são comuns no TSP, especialmente o \textit{2-opt}, amplamente utilizado para reduzir progressivamente o comprimento total do percurso.
+
+A principal vantagem da busca tabu está em sua capacidade de explorar o espaço de soluções de forma mais ampla do que heurísticas puramente gulosas. Ela pode escapar de ótimos locais e produzir soluções de alta qualidade para instâncias grandes de VRP. No entanto, seu desempenho depende da escolha adequada da vizinhança, do tamanho da lista tabu, dos critérios de aspiração e das estratégias de intensificação e diversificação.
+
+\subsection{Algoritmo genético}
+
+Algoritmos genéticos são metaheurísticas inspiradas em processos evolutivos naturais. Nessa abordagem, uma população de soluções candidatas evolui ao longo de gerações por meio de operadores como seleção, cruzamento e mutação. Soluções com melhor valor de aptidão, ou \textit{fitness}, têm maior probabilidade de transmitir suas características para as próximas gerações, favorecendo a exploração de regiões promissoras do espaço de busca.
+
+No contexto do VRP, cada indivíduo pode representar um conjunto de rotas. Uma codificação comum consiste em representar a sequência de clientes em um cromossomo e, posteriormente, particionar essa sequência em rotas viáveis de acordo com restrições de capacidade ou distância. A função de aptidão pode ser definida como o inverso do custo total ou como uma penalização da função objetivo:
+\[
+F(s) = \frac{1}{1 + f(s) + \lambda P(s)},
+\]
+em que $f(s)$ é o custo total das rotas, $P(s)$ representa penalidades por violações de restrições e $\lambda$ é um parâmetro de penalização. Dessa forma, soluções inviáveis podem ser mantidas temporariamente na população, desde que sejam penalizadas adequadamente.
+
+Os operadores genéticos precisam ser adaptados à estrutura do VRP e do TSP. No TSP, cruzamentos como \textit{Order Crossover} (OX), \textit{Partially Mapped Crossover} (PMX) e \textit{Cycle Crossover} (CX) são utilizados para combinar sequências de cidades sem repetir ou omitir nós. No VRP, além de preservar a permutação dos clientes, é necessário respeitar a divisão em rotas e as restrições operacionais. Operadores de mutação podem incluir troca de clientes, inversão de segmentos ou realocação de clientes entre veículos.
+
+A aplicação de algoritmos genéticos ao VRP é atrativa por sua capacidade de explorar simultaneamente múltiplas regiões do espaço de busca. Essa característica reduz a probabilidade de convergência prematura para ótimos locais, especialmente quando há diversidade populacional suficiente. Entretanto, o desempenho do método depende fortemente da codificação das soluções, da escolha dos operadores genéticos e do equilíbrio entre exploração global e refinamento local. Por isso, é comum combinar algoritmos genéticos com heurísticas de busca local, formando abordagens híbridas conhecidas como algoritmos meméticos.
+
+\subsection{Simulated annealing}
+
+O simulated annealing é uma metaheurística inspirada no processo físico de recozimento de materiais. A ideia consiste em iniciar a busca com uma temperatura elevada, permitindo aceitar soluções piores com maior probabilidade, e reduzir gradualmente essa temperatura ao longo das iterações. Esse mecanismo permite que o algoritmo escape de ótimos locais no início da busca e se torne progressivamente mais seletivo à medida que a temperatura diminui.
+
+Dada uma solução atual $s$ e uma solução vizinha $s' \in N(s)$, calcula-se a variação da função objetivo:
+\[
+\Delta = f(s') - f(s).
+\]
+Se $\Delta \leq 0$, a nova solução é aceita, pois melhora ou mantém o valor da função objetivo. Caso contrário, a solução pior é aceita com probabilidade:
+\[
+p = e^{-\Delta/T},
+\]
+em que $T$ é a temperatura atual. À medida que $T$ diminui, a probabilidade de aceitar soluções piores também diminui, tornando o processo mais próximo de uma busca local.
+
+No VRP, o simulated annealing pode utilizar estruturas de vizinhança semelhantes às da busca tabu, como troca, realocação, inversão de segmentos e movimentos 2-opt. A diferença central está no critério probabilístico de aceitação, que dispensa o uso explícito de uma lista tabu. No TSP, o método é frequentemente aplicado com vizinhanças baseadas em inversão de segmentos do ciclo, permitindo reduzir progressivamente o comprimento total da rota.
+
+A qualidade do simulated annealing depende de parâmetros como temperatura inicial, taxa de resfriamento, número de iterações por temperatura e critério de parada. Um resfriamento muito rápido pode levar à convergência prematura, enquanto um resfriamento muito lento aumenta o custo computacional. Apesar dessa sensibilidade, o método é simples, flexível e aplicável a diversas variantes do VRP, especialmente quando combinado com boas heurísticas para gerar soluções iniciais.
+
+\subsection{Colônia de formigas}
+
+A otimização por Colônia de Formigas, (\textit{Ant Colony Optimization} --- ACO), é uma metaheurística inspirada no comportamento coletivo de formigas na busca por alimento. No modelo computacional, formigas artificiais constroem soluções incrementalmente, escolhendo os próximos nós com base em informações heurísticas e em trilhas de feromônio. As trilhas associadas a boas soluções são reforçadas, aumentando a probabilidade de serem utilizadas em iterações futuras.
+
+No TSP, a probabilidade de uma formiga localizada no nó $i$ escolher o nó $j$ pode ser expressa por:
+\[
+p_{ij}^{k} =
+\frac{\tau_{ij}^{\alpha}\eta_{ij}^{\beta}}
+{\sum_{l \in N_i^k} \tau_{il}^{\alpha}\eta_{il}^{\beta}},
+\]
+em que $\tau_{ij}$ representa a quantidade de feromônio na aresta $(i,j)$, $\eta_{ij}=1/c_{ij}$ é a informação heurística associada ao custo da aresta, $\alpha$ controla a influência do feromônio, $\beta$ controla a influência da heurística e $N_i^k$ é o conjunto de nós ainda disponíveis para a formiga $k$. Após a construção das soluções, os feromônios são atualizados segundo uma regra geral:
+\[
+\tau_{ij} \leftarrow (1-\rho)\tau_{ij} + \Delta \tau_{ij},
+\]
+em que $\rho$ é a taxa de evaporação e $\Delta \tau_{ij}$ representa o reforço associado às melhores soluções.
+
+Para o VRP, a construção das soluções precisa considerar não apenas a escolha do próximo cliente, mas também as restrições de capacidade, retorno ao depósito e eventual abertura de novas rotas. Assim, uma formiga artificial constrói uma ou mais rotas até que todos os clientes sejam atendidos. Quando a inclusão de um novo cliente viola a capacidade do veículo, a rota atual é encerrada e uma nova rota é iniciada a partir do depósito.
+
+A colônia de formigas é particularmente adequada para problemas de roteamento porque sua dinâmica explora diretamente a estrutura de caminhos em grafos. A combinação entre exploração probabilística e reforço de boas arestas permite encontrar soluções competitivas para o TSP e para várias versões do VRP. Contudo, o método exige calibração cuidadosa dos parâmetros $\alpha$, $\beta$, $\rho$ e do número de formigas, pois excesso de reforço pode causar convergência prematura, enquanto evaporação excessiva pode dificultar a consolidação de boas soluções.
+
+Embora as abordagens apresentadas produzam soluções de boa qualidade para diversas instâncias do VRP e do TSP, sua eficiência diminui progressivamente à medida que o tamanho do problema cresce, em razão da natureza NP-difícil do problema. Essa limitação motiva a investigação de paradigmas computacionais alternativos, como a computação quântica, cujas abordagens de otimização são discutidas na seção seguinte.
+
+\section{Abordagens Quânticas}\label{sec:quantum_approach}
+
+\subsection{Representação Quântica de Problemas Combinatórios}
+
+As abordagens quânticas para problemas de otimização têm se consolidado como uma alternativa promissora aos métodos clássicos, especialmente diante da crescente complexidade combinatória de problemas em larga escala. Nesse contexto, a formulação matemática desempenha um papel central, pois permite traduzir problemas do mundo real em estruturas compatíveis com dispositivos quânticos. Entre essas formulações, destacam-se o modelo de Ising e o Otimização Binária Quadrática Irrestrita (\textit{Quadratic Unconstrained Binary Optimization} - QUBO), que estabelecem a base para diversas estratégias de otimização quântica, tanto no paradigma adiabático quanto no modelo de circuitos.
+ 
+Um dos modelos que nos permite escrever problemas do tipo TSP de forma mais genérica é a QUBO \cite{lewis2017quadratic}. O QUBO é uma estrutura que nos permite modelar problemas em forma quadrática sujeitos a restrições lineares de forma nativa. No entanto, com o auxílio de funções de penalidade, é possível reformular tarefas de ordem superior a dois e restrições de desigualdade para o modelo QUBO. Outra característica que torna o QUBO um ambiente de modelagem muito importante é sua estreita conexão com o modelo de Ising \cite{cipra1987introduction}. 
+
+O modelo QUBO constitui um problema central para a computação quântica adiabática \cite{mcgeoch2013experimental}, que é resolvido por meio de um processo físico chamado recozimento quântico \cite{mcgeoch2022adiabatic, brooke1999quantum}. Formalmente, o QUBO é expresso como uma função custo sobre variáveis binárias 
+$x_i \in \{0,1\}$, conforme a \autoref{eq:qubo}:
+
+\begin{equation}
+    \label{eq:qubo}
+    H_{\text{QUBO}}=\sum_{i\in V}a_ix_i+\sum_{(ij)\in E}b_{ij}x_ix_j
+\end{equation}
+
+\noindent onde $a_i$ e $b_{ij}$ são coeficientes reais que representam, respectivamente, os pesos lineares dos vértices e os pesos quadráticos das arestas do grafo $G = (V, E)$. A notação $H$ é adotada por analogia ao Hamiltoniano do modelo de Ising, cuja equivalência com o QUBO é discutida a seguir.
+
+O modelo de Ising descreve sistemas físicos compostos por spins binários $s_i \in \{-1, +1\}$, cuja energia é dada por uma função Hamiltoniana semelhante a \autoref{eq:ising_hamiltonian}
+
+\begin{equation}
+    \label{eq:ising_hamiltonian}
+    H(s) = \sum_i h_i s_i + \sum_{i<j} J_{ij} s_i s_j,
+\end{equation}
+onde $h_i$ representa campos locais e $J_{ij}$ os acoplamentos entre spins. A solução de um problema de otimização é obtida pela configuração de spins que minimiza essa energia. A equivalência entre o modelo de Ising e o QUBO permite mapear variáveis binárias $x_i \in \{0,1\}$ em spins por meio de uma transformação linear, como apresentada na \autoref{eq:ising_to_qubo}, preservando a estrutura do problema, o que viabiliza sua implementação em diferentes arquiteturas quânticas.
+
+\begin{equation}
+    \label{eq:ising_to_qubo}
+    x_i=\frac{1+s_i}{2}
+\end{equation}
+
+\subsection{Algoritmo Variacional de Autovalor Mínimo}
+
+No paradigma de circuitos quânticos, algoritmos híbridos variacionais têm se destacado como candidatos viáveis para dispositivos quânticos NISQ. O Algoritmo Variacional de Autovalor Mínimo (\textit{Variational Quantum Eigensolver} - VQE) baseia-se no princípio variacional da mecânica quântica \cite{cerezo2021variational,peruzzo2014variational}, no qual um estado parametrizado $\ket{\theta}$ é preparado e otimizado para minimizar o valor esperado de um Hamiltoniano de custo como em \autoref{eq:energy_hamiltonian}:
+
+\begin{equation}
+    \label{eq:energy_hamiltonian}
+    E(\theta) = \bra{\psi(\theta)} H \ket{\psi(\theta)}.
+\end{equation}
+
+A otimização dos parâmetros $\theta$ é realizada por um algoritmo clássico, caracterizando uma abordagem híbrida. O VQE tem sido amplamente utilizado em química quântica \cite{cao2019quantum} e também pode ser adaptado para problemas de otimização \cite{moll2018quantum} ao empregar Hamiltonianos derivados de formulações QUBO ou de Ising.
+
+\subsection{Algoritmo de Otimização Aproximada Quântica}
+
+Outro algoritmo de destaque é o Algoritmo de Otimização Aproximada Quântica (QAOA) \cite{farhi_quantum_2014}, que combina operadores associados ao Hamiltoniano de custo e a um Hamiltoniano misturador. O estado quântico é construído por uma sequência de camadas parametrizadas:
+
+\begin{equation}
+    \ket{\gamma, \beta} = \prod_{l=1}^{p} e^{-i \beta_l H_M} e^{-i \gamma_l H_C} \ket{+}^{\otimes n},
+\end{equation}
+onde $H_C$ representa o Hamiltoniano do problema e $H_M$ promove a exploração do espaço de soluções. Assim como no VQE, os parâmetros $(\gamma, \beta)$ são otimizados classicamente. O QAOA estabelece uma conexão entre algoritmos digitais \cite{farhi_quantum_2014} e técnicas inspiradas no recozimento quântico \cite{zhou2020quantum}, oferecendo garantias de aproximação para classes específicas de problemas.
+
+\subsection{Recozimento Quântico}
+
+Em conjunto, essas abordagens evidenciam que a modelagem matemática, especialmente por meio dos formalismos de Ising e QUBO, é essencial para a aplicação de algoritmos quânticos em otimização. A escolha entre recozimento quântico, VQE ou QAOA depende tanto da natureza do problema quanto das limitações do hardware disponível, sendo a integração entre formulação teórica e implementação prática um dos principais desafios contemporâneos da área.
+
+% Em conjunto, essas abordagens evidenciam que a modelagem matemática, especialmente por meio dos formalismos de Ising e QUBO, é essencial para a aplicação de algoritmos quânticos em problemas de otimização. As metaheurísticas clássicas, embora produzam soluções de boa qualidade, não garantem otimalidade e enfrentam limitações crescentes à medida que o tamanho do problema aumenta — característica inerente à natureza NP-difícil do VRP. Os métodos exatos, por sua vez, tornam-se computacionalmente inviáveis para instâncias de grande porte devido ao crescimento exponencial do espaço de busca. Nesse cenário, a computação quântica surge como um paradigma promissor: ao explorar princípios fundamentais como superposição, emaranhamento e interferência, algoritmos variacionais híbridos como o VQE e o QAOA propõem-se a navegar o espaço de soluções de forma estruturalmente distinta dos métodos clássicos. Ainda que o foco contemporâneo resida na obtenção de soluções aproximadas de alta fidelidade, em consonância com as restrições do estágio atual da computação quântica, a integração entre a formulação teórica e a implementação prática desses algoritmos constitui um dos principais desafios e motivações do presente trabalho.

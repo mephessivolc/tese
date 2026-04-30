@@ -17,14 +17,60 @@ Saída:
 - 6 arquivos PNG na pasta "figuras_wigner"
 """
 
+# import os
+# import sys
+# import types
+# from pathlib import Path
+
+# # --------------------------------------------------
+# # Ambiente robusto para Matplotlib em servidor/headless
+# # --------------------------------------------------
+# BASE_DIR = Path(__file__).resolve().parent
+# MPL_DIR = BASE_DIR / ".mplconfig"
+# MPL_DIR.mkdir(parents=True, exist_ok=True)
+
+# os.environ["MPLCONFIGDIR"] = str(MPL_DIR)
+# os.environ["MPLBACKEND"] = "Agg"
+
+# # --------------------------------------------------
+# # Compatibilidade opcional para ambientes com problema em pkg_resources
+# # --------------------------------------------------
+# try:
+#     import pkg_resources  # noqa: F401
+# except ModuleNotFoundError:
+#     import types
+#     import importlib
+
+#     pkg_resources = types.ModuleType("pkg_resources")
+
+#     def resource_filename(package_name, resource_name):
+#         package = importlib.import_module(package_name)
+#         package_dir = Path(package.__file__).resolve().parent
+#         return str(package_dir / resource_name)
+
+#     pkg_resources.resource_filename = resource_filename
+#     sys.modules["pkg_resources"] = pkg_resources
+
+# # --------------------------------------------------
+# # Imports principais
+# # --------------------------------------------------
+# import numpy as np
+# import matplotlib
+# matplotlib.use("Agg", force=True)
+# import matplotlib.pyplot as plt
+# import scipy.integrate
+
+# # Compatibilidade em alguns ambientes
+# if not hasattr(scipy.integrate, "simps") and hasattr(scipy.integrate, "simpson"):
+#     scipy.integrate.simps = scipy.integrate.simpson
+
+# import strawberryfields as sf
+# from strawberryfields.ops import Dgate, Sgate, BSgate, Rgate, Vgate, Kgate
+
 import os
 import sys
-import types
 from pathlib import Path
 
-# --------------------------------------------------
-# Ambiente robusto para Matplotlib em servidor/headless
-# --------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent
 MPL_DIR = BASE_DIR / ".mplconfig"
 MPL_DIR.mkdir(parents=True, exist_ok=True)
@@ -32,9 +78,11 @@ MPL_DIR.mkdir(parents=True, exist_ok=True)
 os.environ["MPLCONFIGDIR"] = str(MPL_DIR)
 os.environ["MPLBACKEND"] = "Agg"
 
-# --------------------------------------------------
-# Compatibilidade opcional para ambientes com problema em pkg_resources
-# --------------------------------------------------
+# força cache do Numba para um diretório gravável
+NUMBA_DIR = Path("/tmp/numba_cache")
+NUMBA_DIR.mkdir(parents=True, exist_ok=True)
+os.environ["NUMBA_CACHE_DIR"] = str(NUMBA_DIR)
+
 try:
     import pkg_resources  # noqa: F401
 except ModuleNotFoundError:
@@ -51,21 +99,17 @@ except ModuleNotFoundError:
     pkg_resources.resource_filename = resource_filename
     sys.modules["pkg_resources"] = pkg_resources
 
-# --------------------------------------------------
-# Imports principais
-# --------------------------------------------------
 import numpy as np
 import matplotlib
 matplotlib.use("Agg", force=True)
 import matplotlib.pyplot as plt
 import scipy.integrate
 
-# Compatibilidade em alguns ambientes
 if not hasattr(scipy.integrate, "simps") and hasattr(scipy.integrate, "simpson"):
     scipy.integrate.simps = scipy.integrate.simpson
 
 import strawberryfields as sf
-from strawberryfields.ops import Dgate, Sgate, BSgate, Rgate, Vgate, Kgate
+from strawberryfields.ops import Dgate, Sgate, BSgate, Rgate, Vgate, Kgate, Fock
 
 # --------------------------------------------------
 # Configurações globais
@@ -95,21 +139,29 @@ GATE_SPECS = [
         "prepare_state": lambda q, n: prepare_reference_state(q, n),
         "apply_gate": lambda q: Sgate(1.0, 0.0) | q[0],
     },
+    # {
+    #     "key": "divisor_de_feixe",
+    #     "title": r"Divisor de feixe $BS(\pi/4, 0)$",
+    #     "num_modes": 2,
+    #     "plot_mode": 1,
+    #     "prepare_state": lambda q, n: prepare_reference_state_bs(q),
+    #     "apply_gate": lambda q: BSgate(np.pi / 4, 0.0) | (q[0], q[1]),
+    # },
     {
-        "key": "divisor_de_feixe",
-        "title": r"Divisor de feixe $BS(\pi/4, 0)$",
+        "key": "divisor_de_feixe_fock10",
+        "title": r"Divisor de feixe em $|1,0\rangle$",
         "num_modes": 2,
-        "plot_mode": 1,
-        "prepare_state": lambda q, n: prepare_reference_state_bs(q),
+        "plot_mode": 1,  # ou 1
+        "prepare_state": lambda q, n: prepare_fock10(q, n),
         "apply_gate": lambda q: BSgate(np.pi / 4, 0.0) | (q[0], q[1]),
     },
     {
         "key": "rotacao_pi_4",
-        "title": r"Rotacao $R(\pi/4)$",
+        "title": r"Rotacao $R(\pi/2)$",
         "num_modes": 1,
         "plot_mode": 0,
         "prepare_state": lambda q, n: prepare_reference_state(q, n),
-        "apply_gate": lambda q: Rgate(np.pi / 4) | q[0],
+        "apply_gate": lambda q: Rgate(np.pi / 2) | q[0],
     },
     {
         "key": "fase_cubica",
@@ -151,10 +203,10 @@ AZIM = 35
 # --------------------------------------------------
 # Funções auxiliares
 # --------------------------------------------------
-def prepare_reference_state_bs(q):
-    Dgate(1.0, 0.0) | q[0]
-    Dgate(2.5, np.pi / 2) | q[1]
-    # q[1] permanece no vácuo
+
+def prepare_fock10(q, n):
+    Fock(1) | q[0]
+    # q[1] fica no vácuo
 
 def prepare_reference_state(q, num_modes):
     """
@@ -163,7 +215,6 @@ def prepare_reference_state(q, num_modes):
     """
     Dgate(ALPHA_R, ALPHA_PHI) | q[0]
     # q[1], se existir, permanece no vácuo
-
 
 def run_program_and_get_wigner(num_modes, plot_mode, prepare_state, apply_gate=None):
     """
@@ -204,10 +255,10 @@ def draw_panel(ax, W, title, global_vmin, global_vmax, zoffset):
         vmin=global_vmin,
         vmax=global_vmax,
         linewidth=0.1,
-        edgecolor=none,
+        edgecolor="#00A8A8",
         antialiased=True,
-        rstride=7, 
-        cstride=7
+        rstride=10, 
+        cstride=10
     )
 
     ax.contourf(
@@ -244,6 +295,7 @@ def draw_panel(ax, W, title, global_vmin, global_vmax, zoffset):
 
     ax.set_zlim(zoffset, global_vmax * 1.05)
     ax.view_init(elev=ELEV, azim=AZIM)
+    ax.grid(True)
 
 
 def plot_gate_pair(W_before, W_after, gate_title, filename, global_vmin, global_vmax):
@@ -260,14 +312,13 @@ def plot_gate_pair(W_before, W_after, gate_title, filename, global_vmin, global_
     ax2 = fig.add_subplot(1, 2, 2, projection="3d")
 
     draw_panel(ax1, W_before, "Estado inicial", global_vmin, global_vmax, zoffset)
-    draw_panel(ax2, W_after, "Apos aplicar a porta", global_vmin, global_vmax, zoffset)
+    draw_panel(ax2, W_after, "Estado resultante", global_vmin, global_vmax, zoffset)
 
     fig.suptitle(gate_title, fontsize=14, y=0.97)
 
     plt.tight_layout()
     plt.savefig(filename, dpi=DPI, bbox_inches="tight")
     plt.close(fig)
-
 
 # --------------------------------------------------
 # Programa principal

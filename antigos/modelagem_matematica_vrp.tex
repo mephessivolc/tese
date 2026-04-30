@@ -1,0 +1,144 @@
+
+A programação inteira é uma das formulações exatas mais tradicionais para problemas de roteamento, sendo a base sobre a qual se constroem tanto os métodos de solução exata quanto as referências de qualidade para abordagens heurísticas \cite{toth2002vehicle}. No contexto do VRP, o problema é modelado por meio de variáveis binárias que indicam se determinado arco entre dois nós é utilizado por algum veículo.
+% Considere um grafo completo\footnote{Um \textit{grafo completo} é aquele em que todo par de vértices distintos está conectado por uma aresta.} $G = (V, E)$, onde $V = \{0, 1, \dots, n\}$ representa o conjunto de vértices, sendo $0$ o depósito e os demais nós correspondentes aos clientes. A cada aresta $(i,j) \in E$ associa-se um custo $c_{ij}$. No VRP capacitado (CVRP), cada cliente $i \in V \setminus \{0\}$ possui uma demanda $d_i$ e cada veículo dispõe de capacidade máxima $Q\in\R$ \cite{huang_solving_nodate}. Define-se a variável de decisão binária
+
+Considere um grafo completo\footnote{Um \textit{grafo completo} é aquele em que todo par de vértices distintos está conectado por uma aresta.} $G = (V, E)$, onde $V = \{0, 1, \ldots, n\}$ representa o conjunto de vértices, sendo $0$ o depósito e os demais nós correspondentes aos clientes, e $E$ o conjunto de arcos possíveis. A cada arco $(i,j) \in E$ associa-se um custo $c_{ij}$. No VRP capacitado (CVRP), cada cliente $i \in V \setminus \{0\}$ possui uma demanda $d_i$, cada veículo $k \in K$ dispõe de capacidade máxima $Q \in \mathbb{R}$ \cite{huang_solving_nodate}, e define-se a variável de decisão binária
+
+% \begin{equation}
+%     x_{ij} =
+%     \begin{cases}
+%         1, & \text{se a aresta } (i,j) \text{ é percorrida,} \\
+%         0, & \text{caso contrário,}
+%     \end{cases}
+% \end{equation}
+\begin{equation}
+    x_{ijk} =
+    \begin{cases}
+        1, & \text{se o veículo } k \text{ percorre o arco } (i,j), \\
+        0, & \text{caso contrário,}
+    \end{cases}
+    \label{eq:var_decisao}
+\end{equation}
+
+\noindent cuja função objetivo consiste em minimizar o custo total das rotas:
+
+% \begin{equation}
+%     \min \sum_{i \in V} \sum_{\substack{j \in V \\ j \neq i}} c_{ij}\, x_{ij}.
+% \end{equation}
+
+\begin{equation}
+    \min \sum_{k \in K} \sum_{i \in V} \sum_{\substack{j \in V \\ j \neq i}} 
+    c_{ij}\, x_{ijk}.
+    \label{eq:fo_vrp}
+\end{equation}
+
+As restrições do modelo asseguram a viabilidade das rotas. A obrigatoriedade de visita a cada cliente exatamente uma vez é imposta por:
+
+% \begin{eqnarray}
+% \sum_{\substack{j \in V \\ j \neq i}} x_{ij} = 1, & \quad \forall\, i \in V \setminus \{0\}, \label{eq:only_client}\\[4pt]
+% \sum_{\substack{i \in V \\ i \neq j}} x_{ij} = 1, & \quad \forall\, j \in V \setminus \{0\}. \label{eq:only_city}
+% \end{eqnarray}
+
+\begin{equation}
+    \sum_{k \in K} \sum_{\substack{j \in V \\ j \neq i}} x_{ijk} = 1, 
+    \quad \forall\, i \in V \setminus \{0\},
+    \label{eq:visita_saida}
+\end{equation}
+
+\begin{equation}
+    \sum_{k \in K} \sum_{\substack{i \in V \\ i \neq j}} x_{ijk} = 1, 
+    \quad \forall\, j \in V \setminus \{0\}.
+    \label{eq:visita_entrada}
+\end{equation}
+
+% \noindent a \autoref{eq:only_client} garante que, para cada cliente $i$, exatamente uma aresta de saída seja selecionada, ou seja, cada cliente é atendido por meio de uma única rota que parte dele. Já a \autoref{eq:only_city} assegura que, para cada cliente $j$, exatamente uma aresta de entrada seja escolhida, garantindo que cada cliente seja visitado uma única vez por alguma rota. Em conjunto, essas restrições impõem a conservação de fluxo nos nós correspondentes aos clientes, evitando tanto visitas múltiplas quanto a omissão de clientes no conjunto de rotas. 
+
+% A conservação de fluxo no depósito, que controla o número de veículos $K$ utilizados, é garantida por:
+
+A \autoref{eq:visita_saida} garante que cada cliente é atendido por exatamente uma rota de saída, enquanto a \autoref{eq:visita_entrada} assegura que cada cliente é visitado exatamente uma vez por alguma rota de entrada. Em conjunto, essas restrições impõem a conservação de fluxo nos nós correspondentes aos clientes, evitando tanto visitas múltiplas quanto a omissão de clientes no conjunto de rotas.
+
+A conservação de fluxo no depósito, que controla o número de veículos utilizados, é garantida por:
+
+\begin{equation}
+    \sum_{j \in V \setminus \{0\}} x_{0jk} = 1, \quad \forall\, k \in K,
+    \label{eq:fluxo_saida}
+\end{equation}
+
+\begin{equation}
+    \sum_{i \in V \setminus \{0\}} x_{i0k} = 1, \quad \forall\, k \in K.
+    \label{eq:fluxo_entrada}
+\end{equation}
+
+% As restrições de capacidade podem ser modeladas por diferentes formulações, frequentemente por meio de variáveis auxiliares ou de estruturas baseadas em fluxo. De forma geral, essas restrições asseguram que a soma das demandas atendidas em cada rota não exceda a capacidade $Q$ do veículo.
+As restrições de capacidade asseguram que a soma das demandas atendidas em cada rota não exceda a capacidade $Q$ do veículo:
+\begin{equation}
+    \sum_{i \in V} \sum_{\substack{j \in V \\ j \neq i}} d_j\, x_{ijk} \leq Q, 
+    \quad \forall\, k \in K.
+    \label{eq:capacidade}
+\end{equation}
+
+% Além das restrições de visita, fluxo e capacidade, é necessário garantir a conectividade das rotas, impedindo a formação de sub-rotas desconectadas ou inviáveis. A eliminação de sub-rotas constitui, portanto, um dos principais desafios na formulação matemática de problemas de roteamento de veículos, uma vez que as restrições básicas do modelo não são suficientes para assegurar a conectividade global das soluções. Nesse contexto, diferentes estratégias de modelagem têm sido propostas na literatura, variando em complexidade e eficiência computacional, mas compartilhando o objetivo de garantir a viabilidade estrutural das rotas.
+Além das restrições de visita, fluxo e capacidade, é necessário garantir a conectividade das rotas, impedindo a formação de sub-rotas desconectadas do depósito. A eliminação de sub-rotas constitui, portanto, um dos principais desafios na formulação matemática de problemas de roteamento de veículos, uma vez que as restrições básicas do modelo não são suficientes para assegurar a conectividade global das soluções. Nesse contexto, diferentes estratégias de modelagem têm sido propostas na literatura, variando em complexidade e eficiência computacional, mas compartilhando o objetivo de garantir a viabilidade estrutural das rotas.
+
+Uma abordagem clássica consiste no uso de restrições explícitas de eliminação de sub-rotas \cite{dantzig2009solution}:
+
+% \begin{equation}
+% \sum_{i \in S} \sum_{j \in S} x_{ij} \leq |S| - 1, 
+% \quad \forall S \subset V,\; 2 \leq |S| \leq |V|-1,
+% \end{equation}
+
+\begin{equation}
+    \sum_{i \in S} \sum_{j \in S} x_{ijk} \leq |S| - 1, 
+    \quad \forall\, S \subset V,\; 2 \leq |S| \leq |V| - 1,\; \forall\, k \in K,
+    \label{eq:subciclo}
+\end{equation}
+
+
+% \noindent em que $S$ representa qualquer subconjunto próprio de vértices que não inclui todos os nós do problema, podendo ser interpretado como um possível grupo de clientes que formaria uma rota isolada do restante da rede. A restrição impõe que o número de arestas selecionadas dentro desse subconjunto seja estritamente menor que o necessário para formar um ciclo fechado, impedindo assim a ocorrência de sub-rotas desconectadas do depósito. Alternativamente, podem ser empregadas formulações baseadas em fluxo, nas quais variáveis adicionais garantem que todo cliente esteja conectado ao depósito por meio de um fluxo viável ao longo das arestas selecionadas.
+
+\noindent em que $S$ representa qualquer subconjunto próprio de vértices que não inclui o depósito. A restrição impõe que o número de arcos selecionados dentro desse subconjunto seja estritamente menor que o necessário para formar um ciclo fechado, impedindo assim a ocorrência de sub-rotas desconectadas. Alternativamente, podem ser empregadas formulações baseadas em fluxo ou o uso de variáveis auxiliares, como na formulação de Miller--Tucker--Zemlin (MTZ) \cite{miller1960integer}, na qual $u_i$ representa a carga acumulada no momento da chegada ao nó $i$, e a variável binária $x_{ijk}$ indica se o veículo $k$ percorre o arco $(i,j)$, enquanto $d_j$ corresponde à demanda associada ao nó $j$. As restrições são dadas por:
+
+\begin{equation}
+    u_i - u_j + Q\, x_{ijk} \leq Q - d_j, 
+    \quad \forall\, i \neq j,\; i,j \in V \setminus \{0\},\; \forall\, k \in K,
+    \label{eq:mtz1}
+\end{equation}
+
+\begin{equation}
+    d_i \leq u_i \leq Q, \quad \forall\, i \in V \setminus \{0\}.
+    \label{eq:mtz2}
+\end{equation}
+
+% Outra estratégia amplamente utilizada consiste no uso de variáveis auxiliares, como na formulação de Miller--Tucker--Zemlin (MTZ) \cite{miller1960integer}, na qual $u_i$ representa a carga acumulada no momento da chegada ao nó $i$. Nesse contexto, a variável binária $x_{ij}$ indica se a aresta $(i,j)$ é percorrida, enquanto $d_j$ corresponde à demanda associada ao nó $j$. As restrições são dadas por:
+
+Quando o arco $(i,j)$ é percorrido por algum veículo ($x_{ijk} = 1$), a restrição implica $u_j \geq u_i + d_j$, induzindo uma progressão ao longo da rota. Essa característica impede a formação de ciclos inconsistentes e contribui para a eliminação de sub-rotas, ao mesmo tempo em que assegura o respeito à capacidade $Q$.
+
+O TSP pode ser interpretado como um caso particular do VRP no qual há um único veículo ($|K| = 1$) \cite{toth2002vehicle} e as restrições de capacidade são suprimidas, ou, equivalentemente, $Q$ é suficientemente grande para atender todos os clientes em uma única rota \cite{balinski1964integer, eilon1974distribution}. Nesse caso, as variáveis binárias $x_{ij}$ indicam se a aresta entre as cidades $i$ e $j$ pertence ao ciclo Hamiltoniano, e a formulação resultante preserva a mesma função objetivo com um conjunto reduzido de restrições, reduzindo o problema à determinação de um ciclo Hamiltoniano de custo mínimo, definido como o caminho fechado que percorre todos os vértices de um grafo exatamente uma vez, retornando ao vértice inicial ao final.
+
+% \begin{eqnarray}
+% u_i - u_j + Q\, x_{ij} \leq Q - d_j, & \quad \forall\, i \neq j,\; i,j \in V \setminus \{0\}, \\[4pt]
+% d_i \leq u_i \leq Q, & \quad \forall\, i \in V \setminus \{0\}.
+% \end{eqnarray}
+
+% Quando $(i,j)$ é percorrida ($x_{ij}=1$), a restrição implica $u_j \geq u_i + d_j$, induzindo uma progressão ao longo da rota. Essa característica impede a formação de ciclos inconsistentes e contribui para a eliminação de sub-rotas, ao mesmo tempo em que assegura o respeito à capacidade $Q$.
+
+% O TSP pode ser interpretado como um caso particular do VRP no qual há um único veículo ($K = 1$) \cite{toth2002vehicle} e as restrições de capacidade são suprimidas, ou, equivalentemente, $Q$ é suficientemente grande para atender todos os clientes em uma única rota \cite{balinski1964integer, eilon1974distribution}. A formulação resultante preserva a mesma função objetivo:
+
+% \begin{equation}
+%     \min \sum_{i \in V} \sum_{\substack{j \in V \\ j \neq i}} c_{ij}\, x_{ij},
+% \end{equation}
+
+% \noindent porém com um conjunto reduzido de restrições. A condição de que cada vértice possua exatamente uma aresta de saída e uma de entrada é expressa por:
+
+% \begin{eqnarray}
+% \sum_{\substack{j \in V \\ j \neq i}} x_{ij} = 1, & \quad \forall\, i \in V, \label{eq:one_out} \\[4pt]
+% \sum_{\substack{i \in V \\ i \neq j}} x_{ij} = 1, & \quad \forall\, j \in V. \label{eq:one_in}
+% \end{eqnarray}
+
+% A \autoref{eq:one_out} assegura que, após visitar cada vértice, o percurso segue para exatamente um vértice subsequente, enquanto a \autoref{eq:one_in} garante que cada vértice seja visitado exatamente uma vez. Em conjunto, essas restrições impõem a estrutura de grau unitário, prevenindo duplicações e omissões de visitas.
+
+% Assim como no VRP, à eliminação de sub-rotas no TSP pode ser tratada por diferentes formulações, incluindo restrições de eliminação de sub-rotas, modelos baseados em fluxo ou o uso de variáveis auxiliares. Em síntese, a transição do VRP para o TSP consiste na remoção das restrições de capacidade e na fixação de um único veículo, reduzindo o problema à determinação de um ciclo hamiltoniano\footnote{Denomina-se ciclo hamiltoniano o caminho fechado que percorre todos os vértices de um grafo exatamente uma vez, retornando ao vértice inicial ao final.} de custo mínimo. Essa relação estrutural evidencia que o TSP constitui um caso particular do VRP, compartilhando a mesma base de modelagem matemática, embora operando sobre um conjunto reduzido de restrições.
+
+Quando o arco $(i,j)$ é percorrido por algum veículo ($x_{ijk} = 1$), a restrição implica $u_j \geq u_i + d_j$, induzindo uma progressão ao longo da rota. Essa característica impede a formação de ciclos inconsistentes e contribui para a eliminação de sub-rotas, ao mesmo tempo em que assegura o respeito à capacidade $Q$.
+
+O TSP pode ser interpretado como um caso particular do VRP no qual há um único veículo ($|K| = 1$) \cite{toth2002vehicle} e as restrições de capacidade são suprimidas, ou, equivalentemente, $Q$ é suficientemente grande para atender todos os clientes em uma única rota \cite{balinski1964integer, eilon1974distribution}. Nesse caso, as variáveis binárias $x_{ij}$ indicam se a aresta entre as cidades $i$ e $j$ pertence ao ciclo Hamiltoniano, e a formulação resultante preserva a mesma função objetivo com um conjunto reduzido de restrições, reduzindo o problema à determinação de um ciclo Hamiltoniano de custo mínimo, definido como o caminho fechado que percorre todos os vértices de um grafo exatamente uma vez, retornando ao vértice inicial ao final.
