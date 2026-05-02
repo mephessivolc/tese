@@ -5,101 +5,57 @@
 
 As abordagens clássicas para o VRP e o TSP podem ser organizadas em duas categorias principais: métodos exatos, que garantem a otimalidade da solução encontrada, e métodos aproximados, que buscam soluções de boa qualidade em tempo computacional viável. Entre os métodos exatos, destaca-se o branch-and-bound, apresentado a seguir. Entre os métodos aproximados, são discutidas quatro metaheurísticas amplamente utilizadas na literatura: busca tabu, algoritmo genético, simulated annealing e colônia de formigas.
 
-\subsection{Branch-and-bound}
+\subsection{Algoritmo Guloso}
 
-O método ramificação e poda (\textit{branch-and-bound} --- B\&B) é uma estratégia exata baseada na decomposição sistemática do espaço de soluções. A ideia central consiste em dividir o problema original em subproblemas menores, processo conhecido como \textit{branching}, e calcular limites inferiores ou superiores para cada subproblema, processo conhecido como \textit{bounding}. Subproblemas que não podem conduzir a uma solução melhor do que a melhor solução já encontrada são descartados, reduzindo a quantidade de soluções que precisam ser exploradas explicitamente.
+O Algoritmo Guloso (\textit{Greedy Algorithm} --- GA), é uma estratégia heurística baseada na construção incremental de uma solução \cite{cormen2022introduction}. Em cada etapa, o algoritmo escolhe a alternativa localmente mais vantajosa segundo algum critério de custo previamente definido \cite{rosenkrantz1977analysis}. Diferentemente dos métodos exatos, como o algoritmo de força bruta, o GA não explora sistematicamente todo o espaço de soluções e, portanto, não fornece garantia de otimalidade global \cite{johnson1990traveling}. Ainda assim, sua simplicidade e baixo custo computacional tornam essa abordagem útil para gerar soluções iniciais em problemas combinatórios, incluindo o TSP e o VRP \cite{bentley1992fast}, posicionando-se como uma alternativa intermediária entre métodos exatos e metaheurísticas mais sofisticadas.
 
-No VRP, o B\&B pode ser aplicado sobre uma formulação de programação inteira. A cada nó da árvore de busca, algumas variáveis binárias são fixadas, por exemplo impondo que determinado arco seja usado ou proibido. Em seguida, resolve-se uma relaxação\footnote{Uma relaxação é uma versão menos restritiva do problema original, obtida pela remoção ou suavização de algumas restrições.} do problema, frequentemente a relaxação linear, na qual as variáveis binárias são permitidas assumir valores contínuos no intervalo $[0,1]$. Se o valor da relaxação for pior que a melhor solução inteira conhecida, o ramo é podado. Caso contrário, o algoritmo continua ramificando até encontrar soluções inteiras viáveis ou provar que nenhuma solução melhor existe.
+De forma geral, considere um conjunto de soluções parciais $S_t$ no instante $t$ e um conjunto de decisões admissíveis $A(S_t)$ que podem ser tomadas a partir da solução parcial atual \cite{korte2008combinatorial}. Uma regra gulosa seleciona a próxima decisão $a_t$ segundo:
 
-A formulação associada pode ser entendida como:
 \begin{equation*}
-    z^* = \min \{cx : Ax \leq b, \; x \in \{0,1\}^m\},    
+    a_t = \arg\min_{a \in A(S_t)} g(a,S_t),
 \end{equation*}
 
-\noindent em que $x$ representa as decisões de roteamento, $c$ os custos dos arcos e $Ax \leq b$ o conjunto de restrições de atendimento, capacidade, fluxo e eliminação de subciclos. A relaxação linear substitui $x \in \{0,1\}^m$ por $0 \leq x \leq 1$, fornecendo limites usados para decidir quais ramos da árvore devem ser explorados.
+\noindent em que $g(a,S_t)$ \cite{pearl1983heuristics} é uma função de avaliação local. Após a escolha de $a_t$, a solução parcial é atualizada, isto é, $S_{t+1} = S_t \cup \{a_t\}$. Esse procedimento é repetido até que uma solução completa seja obtida. A característica central do GA é que decisões tomadas anteriormente não são reconsideradas, o que reduz o custo computacional, mas pode levar a soluções subótimas \cite{hillier2005introduction, vazirani2001approximation}.
 
-Em aplicações ao TSP e ao VRP, B\&B é eficiente quando combinado com boas estratégias de poda, geração de cortes e heurísticas para 
-obtenção rápida de boas soluções viáveis. Entretanto, em instâncias grandes, a árvore de busca pode crescer exponencialmente, tornando o método computacionalmente inviável. Por essa razão, B\&B é frequentemente integrado a técnicas mais sofisticadas, como ramificação e corte (\textit{branch-and-cut} --- B\&C) e ramificação e geração de coluna (\textit{branch-and-price} --- B\&P), ou utilizado como referência para resolver instâncias menores e comparar a qualidade de soluções obtidas por metaheurísticas.
+No TSP, uma estratégia gulosa clássica é a heurística do vizinho mais próximo \cite{rosenkrantz1977analysis}. A partir de uma cidade inicial, escolhe-se repetidamente a cidade ainda não visitada mais próxima da cidade atual \cite{applegate2011traveling}. Se $V_t$ representa o conjunto de cidades ainda não visitadas e $i$ é a cidade atual, a próxima cidade $j^*$ é escolhida por:
 
-\subsection{Busca tabu}
+\begin{equation*}
+    j^* = \arg\min_{j \in V_t} c_{ij},
+\end{equation*}
 
-A busca tabu é uma metaheurística baseada em busca local que procura evitar ciclos e mínimos locais por meio do uso de uma memória adaptativa. A partir de uma solução inicial, o método explora uma vizinhança de soluções obtidas por pequenas modificações, como troca de clientes entre rotas, inversão de segmentos ou realocação de um cliente. Diferentemente de uma busca local simples, a busca tabu permite movimentos que pioram temporariamente a função objetivo, desde que esses movimentos ajudem a explorar regiões ainda não visitadas do espaço de soluções.
+\noindent em que $c_{ij}$ representa o custo ou distância entre as cidades $i$ e $j$ \cite{bentley1992fast}. Após visitar todas as cidades, o percurso é fechado retornando à cidade inicial. Embora essa regra seja simples, ela pode produzir rotas ruins quando escolhas locais impedem combinações globalmente melhores.
 
-Matematicamente, considere uma solução $s \in S$, em que $S$ representa o conjunto de soluções viáveis ou parcialmente viáveis do VRP. A cada iteração, escolhe-se uma solução vizinha $s' \in N(s)$, em que $N(s)$ é a vizinhança de $s$, buscando minimizar uma função objetivo $f(s)$. A escolha pode ser representada por:
-\[
-s_{t+1} = \arg\min_{s' \in N(s_t), \; m(s_t,s') \notin T} f(s'),
-\]
-em que $T$ é a lista tabu, responsável por armazenar movimentos recentemente executados e impedir que sejam imediatamente revertidos. Em alguns casos, um critério de aspiração permite aceitar um movimento tabu caso ele produza uma solução melhor do que a melhor solução conhecida.
+No VRP, estratégias gulosas podem ser usadas para construir rotas de veículos de forma sequencial \cite{mole1976sequential}. Um veículo inicia no depósito e clientes são inseridos na rota conforme algum critério local, como menor distância ao último cliente visitado ou menor custo de inserção \cite{solomon1987algorithms}. A inclusão de um cliente $j$ em uma rota $r$ deve respeitar restrições de capacidade do veículo \cite{toth2014vehicle}:
 
-No VRP, a busca tabu é particularmente adequada porque muitas estruturas de vizinhança podem ser definidas de forma natural. Exemplos incluem movimentos \textit{swap}, que trocam clientes entre rotas, e \textit{relocate}, que move um cliente de uma posição para outra. Além desses, os movimentos \textit{2-opt} e \textit{3-opt} reordenam segmentos dentro de uma mesma rota: o \textit{2-opt} consiste em remover duas arestas da rota e reconectar os segmentos resultantes de forma alternativa, frequentemente invertendo parte do percurso com o objetivo de reduzir o custo total; o \textit{3-opt} generaliza essa ideia ao remover três arestas e considerar diferentes formas de reconectar os três segmentos resultantes, explorando uma vizinhança maior, embora com maior custo computacional. Tais movimentos também são comuns no TSP, especialmente o \textit{2-opt}, amplamente utilizado para reduzir progressivamente o comprimento total do percurso.
+\begin{equation*}
+    \sum_{j \in r} q_j \leq Q,
+\end{equation*}
 
-A principal vantagem da busca tabu está em sua capacidade de explorar o espaço de soluções de forma mais ampla do que heurísticas puramente gulosas. Ela pode escapar de ótimos locais e produzir soluções de alta qualidade para instâncias grandes de VRP. No entanto, seu desempenho depende da escolha adequada da vizinhança, do tamanho da lista tabu, dos critérios de aspiração e das estratégias de intensificação e diversificação.
+\noindent em que $q_j$ é a demanda do cliente $j$ e $Q$ é a capacidade máxima do veículo. Quando nenhum cliente adicional pode ser inserido sem violar as restrições, a rota é encerrada e um novo veículo é iniciado. Por sua rapidez, a busca gulosa é frequentemente utilizada como procedimento construtivo inicial, servindo tanto como ponto de partida para metaheurísticas mais sofisticadas \cite{gendreau1996stochastic} quanto como referência de comparação para abordagens quânticas de otimização.
 
-\subsection{Algoritmo genético}
+\subsection{Metaheurísticas Clássicas}
 
-Algoritmos genéticos são metaheurísticas inspiradas em processos evolutivos naturais. Nessa abordagem, uma população de soluções candidatas evolui ao longo de gerações por meio de operadores como seleção, cruzamento e mutação. Soluções com melhor valor de aptidão, ou \textit{fitness}, têm maior probabilidade de transmitir suas características para as próximas gerações, favorecendo a exploração de regiões promissoras do espaço de busca.
+As metaheurísticas constituem uma classe de métodos aproximados que buscam soluções de boa qualidade para problemas combinatórios sem garantia de otimalidade global. Diferentemente da busca gulosa, essas abordagens incorporam mecanismos para escapar de ótimos locais e explorar regiões mais amplas do espaço de soluções, sendo amplamente aplicadas ao VRP e ao TSP \cite{golden2008vehicle, toth2002vehicle}.
 
-No contexto do VRP, cada indivíduo pode representar um conjunto de rotas. Uma codificação comum consiste em representar a sequência de clientes em um cromossomo e, posteriormente, particionar essa sequência em rotas viáveis de acordo com restrições de capacidade ou distância. A função de aptidão pode ser definida como o inverso do custo total ou como uma penalização da função objetivo:
-\[
-F(s) = \frac{1}{1 + f(s) + \lambda P(s)},
-\]
-em que $f(s)$ é o custo total das rotas, $P(s)$ representa penalidades por violações de restrições e $\lambda$ é um parâmetro de penalização. Dessa forma, soluções inviáveis podem ser mantidas temporariamente na população, desde que sejam penalizadas adequadamente.
+A busca tabu \cite{glover1989tabu, glover1990tabu} explora uma vizinhança de soluções por meio de pequenas modificações — como troca de clientes entre rotas, realocação ou movimentos \textit{2-opt} e \textit{3-opt} — e utiliza uma memória adaptativa para evitar revisitar soluções recentes. Embora produza resultados competitivos, seu desempenho depende fortemente da escolha da vizinhança, do tamanho da lista tabu e das estratégias de intensificação e diversificação, exigindo calibração cuidadosa para cada instância.
 
-Os operadores genéticos precisam ser adaptados à estrutura do VRP e do TSP. No TSP, cruzamentos como \textit{Order Crossover} (OX), \textit{Partially Mapped Crossover} (PMX) e \textit{Cycle Crossover} (CX) são utilizados para combinar sequências de cidades sem repetir ou omitir nós. No VRP, além de preservar a permutação dos clientes, é necessário respeitar a divisão em rotas e as restrições operacionais. Operadores de mutação podem incluir troca de clientes, inversão de segmentos ou realocação de clientes entre veículos.
+Os algoritmos genéticos \cite{holland1992adaptation, goldberg1989genetic} mantêm uma população de soluções que evolui por meio de operadores de seleção, cruzamento e mutação. Sua capacidade de explorar simultaneamente múltiplas regiões do espaço de busca reduz o risco de convergência prematura, mas o desempenho depende fortemente da codificação das soluções e do equilíbrio entre exploração global e refinamento local, tornando necessária a combinação com heurísticas de busca local para obter resultados competitivos.
 
-A aplicação de algoritmos genéticos ao VRP é atrativa por sua capacidade de explorar simultaneamente múltiplas regiões do espaço de busca. Essa característica reduz a probabilidade de convergência prematura para ótimos locais, especialmente quando há diversidade populacional suficiente. Entretanto, o desempenho do método depende fortemente da codificação das soluções, da escolha dos operadores genéticos e do equilíbrio entre exploração global e refinamento local. Por isso, é comum combinar algoritmos genéticos com heurísticas de busca local, formando abordagens híbridas conhecidas como algoritmos meméticos.
+O simulated annealing \cite{kirkpatrick1983optimization} aceita soluções piores com probabilidade $p = e^{-\Delta/T}$, em que $\Delta$ é a variação da função objetivo e $T$ é uma temperatura que decresce ao longo das iterações. Esse mecanismo permite escapar de ótimos locais, mas a qualidade da solução final é altamente sensível à escolha da temperatura inicial, da taxa de resfriamento e do critério de parada — parâmetros que precisam ser ajustados empiricamente para cada problema.
 
-\subsection{Simulated annealing}
+A otimização por Colônia de Formigas \cite{dorigo2002ant} constrói soluções incrementalmente com base em trilhas de feromônio e informações heurísticas, reforçando caminhos associados a boas soluções. Embora seja naturalmente adequada à estrutura de grafos presente no VRP e no TSP, o método exige calibração cuidadosa dos parâmetros de influência do feromônio e da taxa de evaporação, pois desequilíbrios podem causar convergência prematura ou dificultar a consolidação de boas soluções.
 
-O simulated annealing é uma metaheurística inspirada no processo físico de recozimento de materiais. A ideia consiste em iniciar a busca com uma temperatura elevada, permitindo aceitar soluções piores com maior probabilidade, e reduzir gradualmente essa temperatura ao longo das iterações. Esse mecanismo permite que o algoritmo escape de ótimos locais no início da busca e se torne progressivamente mais seletivo à medida que a temperatura diminui.
-
-Dada uma solução atual $s$ e uma solução vizinha $s' \in N(s)$, calcula-se a variação da função objetivo:
-\[
-\Delta = f(s') - f(s).
-\]
-Se $\Delta \leq 0$, a nova solução é aceita, pois melhora ou mantém o valor da função objetivo. Caso contrário, a solução pior é aceita com probabilidade:
-\[
-p = e^{-\Delta/T},
-\]
-em que $T$ é a temperatura atual. À medida que $T$ diminui, a probabilidade de aceitar soluções piores também diminui, tornando o processo mais próximo de uma busca local.
-
-No VRP, o simulated annealing pode utilizar estruturas de vizinhança semelhantes às da busca tabu, como troca, realocação, inversão de segmentos e movimentos 2-opt. A diferença central está no critério probabilístico de aceitação, que dispensa o uso explícito de uma lista tabu. No TSP, o método é frequentemente aplicado com vizinhanças baseadas em inversão de segmentos do ciclo, permitindo reduzir progressivamente o comprimento total da rota.
-
-A qualidade do simulated annealing depende de parâmetros como temperatura inicial, taxa de resfriamento, número de iterações por temperatura e critério de parada. Um resfriamento muito rápido pode levar à convergência prematura, enquanto um resfriamento muito lento aumenta o custo computacional. Apesar dessa sensibilidade, o método é simples, flexível e aplicável a diversas variantes do VRP, especialmente quando combinado com boas heurísticas para gerar soluções iniciais.
-
-\subsection{Colônia de formigas}
-
-A otimização por Colônia de Formigas, (\textit{Ant Colony Optimization} --- ACO), é uma metaheurística inspirada no comportamento coletivo de formigas na busca por alimento. No modelo computacional, formigas artificiais constroem soluções incrementalmente, escolhendo os próximos nós com base em informações heurísticas e em trilhas de feromônio. As trilhas associadas a boas soluções são reforçadas, aumentando a probabilidade de serem utilizadas em iterações futuras.
-
-No TSP, a probabilidade de uma formiga localizada no nó $i$ escolher o nó $j$ pode ser expressa por:
-\[
-p_{ij}^{k} =
-\frac{\tau_{ij}^{\alpha}\eta_{ij}^{\beta}}
-{\sum_{l \in N_i^k} \tau_{il}^{\alpha}\eta_{il}^{\beta}},
-\]
-em que $\tau_{ij}$ representa a quantidade de feromônio na aresta $(i,j)$, $\eta_{ij}=1/c_{ij}$ é a informação heurística associada ao custo da aresta, $\alpha$ controla a influência do feromônio, $\beta$ controla a influência da heurística e $N_i^k$ é o conjunto de nós ainda disponíveis para a formiga $k$. Após a construção das soluções, os feromônios são atualizados segundo uma regra geral:
-\[
-\tau_{ij} \leftarrow (1-\rho)\tau_{ij} + \Delta \tau_{ij},
-\]
-em que $\rho$ é a taxa de evaporação e $\Delta \tau_{ij}$ representa o reforço associado às melhores soluções.
-
-Para o VRP, a construção das soluções precisa considerar não apenas a escolha do próximo cliente, mas também as restrições de capacidade, retorno ao depósito e eventual abertura de novas rotas. Assim, uma formiga artificial constrói uma ou mais rotas até que todos os clientes sejam atendidos. Quando a inclusão de um novo cliente viola a capacidade do veículo, a rota atual é encerrada e uma nova rota é iniciada a partir do depósito.
-
-A colônia de formigas é particularmente adequada para problemas de roteamento porque sua dinâmica explora diretamente a estrutura de caminhos em grafos. A combinação entre exploração probabilística e reforço de boas arestas permite encontrar soluções competitivas para o TSP e para várias versões do VRP. Contudo, o método exige calibração cuidadosa dos parâmetros $\alpha$, $\beta$, $\rho$ e do número de formigas, pois excesso de reforço pode causar convergência prematura, enquanto evaporação excessiva pode dificultar a consolidação de boas soluções.
-
-Embora as abordagens apresentadas produzam soluções de boa qualidade para diversas instâncias do VRP e do TSP, sua eficiência diminui progressivamente à medida que o tamanho do problema cresce, em razão da natureza NP-difícil do problema. Essa limitação motiva a investigação de paradigmas computacionais alternativos, como a computação quântica, cujas abordagens de otimização são discutidas na seção seguinte.
+Em comum, todas essas metaheurísticas enfrentam uma limitação fundamental: à medida que o tamanho do problema cresce, a qualidade das soluções encontradas tende a deteriorar e o custo computacional aumenta significativamente \cite{braekers2016vehicle}. Essa degradação decorre da natureza NP-difícil do VRP — o espaço de soluções cresce de forma combinatória, tornando a exploração eficiente progressivamente mais difícil independentemente da estratégia adotada. Nesse cenário, paradigmas computacionais alternativos, como a computação quântica, surgem como uma direção promissora para superar essas limitações, conforme discutido na seção seguinte.
 
 \section{Abordagens Quânticas}\label{sec:quantum_approach}
-
 \subsection{Representação Quântica de Problemas Combinatórios}
+\label{sec:quantum_representation}
 
-As abordagens quânticas para problemas de otimização têm se consolidado como uma alternativa promissora aos métodos clássicos, especialmente diante da crescente complexidade combinatória de problemas em larga escala. Nesse contexto, a formulação matemática desempenha um papel central, pois permite traduzir problemas do mundo real em estruturas compatíveis com dispositivos quânticos. Entre essas formulações, destacam-se o modelo de Ising e o Otimização Binária Quadrática Irrestrita (\textit{Quadratic Unconstrained Binary Optimization} - QUBO), que estabelecem a base para diversas estratégias de otimização quântica, tanto no paradigma adiabático quanto no modelo de circuitos.
- 
-Um dos modelos que nos permite escrever problemas do tipo TSP de forma mais genérica é a QUBO \cite{lewis2017quadratic}. O QUBO é uma estrutura que nos permite modelar problemas em forma quadrática sujeitos a restrições lineares de forma nativa. No entanto, com o auxílio de funções de penalidade, é possível reformular tarefas de ordem superior a dois e restrições de desigualdade para o modelo QUBO. Outra característica que torna o QUBO um ambiente de modelagem muito importante é sua estreita conexão com o modelo de Ising \cite{cipra1987introduction}. 
+As abordagens quânticas para problemas de otimização têm se consolidado como uma alternativa promissora aos métodos clássicos, especialmente diante da crescente complexidade combinatória de problemas em larga escala. Nesse contexto, a formulação matemática desempenha um papel central, pois permite traduzir problemas do mundo real em estruturas compatíveis com dispositivos quânticos. Entre essas formulações, destacam-se o modelo de Ising e a Otimização Binária Quadrática Irrestrita (QUBO), que estabelecem a base para diversas estratégias de otimização quântica, tanto no paradigma adiabático quanto no modelo de circuitos.
 
-O modelo QUBO constitui um problema central para a computação quântica adiabática \cite{mcgeoch2013experimental}, que é resolvido por meio de um processo físico chamado recozimento quântico \cite{mcgeoch2022adiabatic, brooke1999quantum}. Formalmente, o QUBO é expresso como uma função custo sobre variáveis binárias 
-$x_i \in \{0,1\}$, conforme a \autoref{eq:qubo}:
+Um dos modelos que nos permite escrever problemas do tipo TSP de forma mais genérica é o QUBO \cite{lewis2017quadratic}. O QUBO é uma estrutura que permite modelar problemas em forma quadrática sujeitos a restrições lineares de forma nativa. No entanto, com o auxílio de funções de penalidade, é possível reformular tarefas de ordem superior a dois e restrições de desigualdade para o modelo QUBO. Outra característica que torna o QUBO um ambiente de modelagem muito importante é sua estreita conexão com o modelo de Ising \cite{cipra1987introduction}.
 
+O modelo QUBO constitui um problema central para a computação quântica adiabática \cite{mcgeoch2013experimental}, que é resolvido por meio de um processo físico chamado recozimento quântico \cite{mcgeoch2022adiabatic, brooke1999quantum}. Formalmente, o QUBO é expresso como uma função custo sobre variáveis binárias $x_i \in \{0,1\}$, conforme a \autoref{eq:qubo}:
 \begin{equation}
     \label{eq:qubo}
     H_{\text{QUBO}}=\sum_{i\in V}a_ix_i+\sum_{(ij)\in E}b_{ij}x_ix_j
@@ -107,41 +63,366 @@ $x_i \in \{0,1\}$, conforme a \autoref{eq:qubo}:
 
 \noindent onde $a_i$ e $b_{ij}$ são coeficientes reais que representam, respectivamente, os pesos lineares dos vértices e os pesos quadráticos das arestas do grafo $G = (V, E)$. A notação $H$ é adotada por analogia ao Hamiltoniano do modelo de Ising, cuja equivalência com o QUBO é discutida a seguir.
 
-O modelo de Ising descreve sistemas físicos compostos por spins binários $s_i \in \{-1, +1\}$, cuja energia é dada por uma função Hamiltoniana semelhante a \autoref{eq:ising_hamiltonian}
-
+O modelo de Ising descreve sistemas físicos compostos por spins binários $s_i \in \{-1, +1\}$, cuja energia é dada por uma função Hamiltoniana:
 \begin{equation}
     \label{eq:ising_hamiltonian}
     H(s) = \sum_i h_i s_i + \sum_{i<j} J_{ij} s_i s_j,
 \end{equation}
-onde $h_i$ representa campos locais e $J_{ij}$ os acoplamentos entre spins. A solução de um problema de otimização é obtida pela configuração de spins que minimiza essa energia. A equivalência entre o modelo de Ising e o QUBO permite mapear variáveis binárias $x_i \in \{0,1\}$ em spins por meio de uma transformação linear, como apresentada na \autoref{eq:ising_to_qubo}, preservando a estrutura do problema, o que viabiliza sua implementação em diferentes arquiteturas quânticas.
 
+\noindent onde $h_i$ representa campos locais e $J_{ij}$ os acoplamentos entre spins. A solução de um problema de otimização é obtida pela configuração de spins que minimiza essa energia. A equivalência entre o modelo de Ising e o QUBO permite mapear variáveis binárias $x_i \in \{0,1\}$ em spins por meio de uma transformação linear, como apresentada na \autoref{eq:ising_to_qubo}, preservando a estrutura do problema, o que viabiliza sua implementação em diferentes arquiteturas quânticas.
 \begin{equation}
     \label{eq:ising_to_qubo}
     x_i=\frac{1+s_i}{2}
 \end{equation}
 
-\subsection{Algoritmo Variacional de Autovalor Mínimo}
+No paradigma de computação quântica de variáveis contínuas, entretanto, essa representação discreta pode ser estendida de forma natural. O estudo dos algoritmos variacionais apresentado nas seções seguintes tem caráter introdutório: o objetivo é estabelecer os fundamentos teóricos necessários para compreender como os métodos podem ser formulados no contexto de variáveis contínuas, sendo sua implementação efetiva prevista como etapa posterior à qualificação.
 
-No paradigma de circuitos quânticos, algoritmos híbridos variacionais têm se destacado como candidatos viáveis para dispositivos quânticos NISQ. O Algoritmo Variacional de Autovalor Mínimo (\textit{Variational Quantum Eigensolver} - VQE) baseia-se no princípio variacional da mecânica quântica \cite{cerezo2021variational,peruzzo2014variational}, no qual um estado parametrizado $\ket{\theta}$ é preparado e otimizado para minimizar o valor esperado de um Hamiltoniano de custo como em \autoref{eq:energy_hamiltonian}:
+Nesse contexto, cada variável $x_i$ de um problema de otimização pode ser associada a um qumode, descrito por operadores de quadratura $\hat{x}_i$ e $\hat{p}_i$, que satisfazem a relação de comutação
+\begin{equation}
+    [\hat{x}_i,\hat{p}_j] = i\delta_{ij},
+\end{equation}
 
+\noindent assumindo $\hbar = 1$. O vetor clássico $\mathbf{x}$ corresponde então a um vetor de operadores de posição
+\begin{equation}
+    \hat{\mathbf{x}} = (\hat{x}_1,\hat{x}_2,\ldots,\hat{x}_d),
+    \label{eq:position_operator}
+\end{equation}
+
+\noindent e a função objetivo é codificada em um Hamiltoniano de custo
+\begin{equation}
+    \hat{H}_C = f(\hat{\mathbf{x}}).
+    \label{eq:cv_cost_hamiltonian_basic}
+\end{equation}
+
+Quando há restrições, pode-se utilizar uma formulação penalizada,
+\begin{equation}
+    \hat{H}_C =
+    f(\hat{\mathbf{q}})
+    + \lambda_h \sum_{r=1}^{R} h_r(\hat{\mathbf{x}})^2
+    + \lambda_g \sum_{s=1}^{S} \max\{0,g_s(\hat{\mathbf{x}})\}^{2}
+    + \lambda_b B(\hat{\mathbf{x}}),
+    \label{eq:cv_cost_hamiltonian_penalized}
+\end{equation}
+
+\noindent em que $\lambda_h$, $\lambda_g$ e $\lambda_b$ são coeficientes de penalização, e $B(\hat{\mathbf{x}})$ representa termos de barreira ou penalização para manter as variáveis dentro do domínio admissível $\Omega$. Assim, soluções inviáveis são energeticamente desfavorecidas, enquanto soluções viáveis de menor custo correspondem a regiões de menor energia do Hamiltoniano. 
+
+\subsection{Variational Quantum Eigensolver}
+
+Entre os algoritmos híbridos variacionais desenvolvidos para dispositivos NISQ, o Algoritmo Variacional Quântico para Autovalores (Variational Quantum Eigensolver --- VQE) \cite{peruzzo2014variational, cerezo2021variational} destaca-se como uma das principais estratégias para a estimação do menor autovalor de Hamiltonianos quânticos, com aplicação inicial em química quântica e posterior extensão a problemas de otimização combinatória \cite{cao2019quantum, moll2018quantum}. A ideia central consiste em preparar, em um processador quântico, um estado parametrizado $\ket{\psi(\theta)}$ por meio de um circuito variacional, enquanto um otimizador clássico ajusta os parâmetros $\theta$ de modo a minimizar o valor esperado de um Hamiltoniano de custo.
+
+De forma geral, o estado variacional é produzido pela aplicação de um circuito parametrizado $U(\theta)$ sobre um estado inicial, usualmente $\ket{0}^{\otimes n}$:
+\begin{equation}
+    \ket{\psi(\theta)} = U(\theta)\ket{0}^{\otimes n}.
+\end{equation}
+
+A função objetivo do VQE é definida pelo valor esperado do Hamiltoniano $H$ nesse estado:
 \begin{equation}
     \label{eq:energy_hamiltonian}
     E(\theta) = \bra{\psi(\theta)} H \ket{\psi(\theta)}.
 \end{equation}
 
-A otimização dos parâmetros $\theta$ é realizada por um algoritmo clássico, caracterizando uma abordagem híbrida. O VQE tem sido amplamente utilizado em química quântica \cite{cao2019quantum} e também pode ser adaptado para problemas de otimização \cite{moll2018quantum} ao empregar Hamiltonianos derivados de formulações QUBO ou de Ising.
-
-\subsection{Algoritmo de Otimização Aproximada Quântica}
-
-Outro algoritmo de destaque é o Algoritmo de Otimização Aproximada Quântica (QAOA) \cite{farhi_quantum_2014}, que combina operadores associados ao Hamiltoniano de custo e a um Hamiltoniano misturador. O estado quântico é construído por uma sequência de camadas parametrizadas:
-
+Pelo princípio variacional, para qualquer estado normalizado $\ket{\psi(\theta)}$, o valor esperado $E(\theta)$ fornece um limite superior para o menor autovalor de $H$. Assim, o problema tratado pelo VQE pode ser escrito como:
 \begin{equation}
-    \ket{\gamma, \beta} = \prod_{l=1}^{p} e^{-i \beta_l H_M} e^{-i \gamma_l H_C} \ket{+}^{\otimes n},
+    E_{\min} \approx \min_{\theta} E(\theta)
+    =
+    \min_{\theta}
+    \bra{\psi(\theta)} H \ket{\psi(\theta)}.
 \end{equation}
-onde $H_C$ representa o Hamiltoniano do problema e $H_M$ promove a exploração do espaço de soluções. Assim como no VQE, os parâmetros $(\gamma, \beta)$ são otimizados classicamente. O QAOA estabelece uma conexão entre algoritmos digitais \cite{farhi_quantum_2014} e técnicas inspiradas no recozimento quântico \cite{zhou2020quantum}, oferecendo garantias de aproximação para classes específicas de problemas.
 
-\subsection{Recozimento Quântico}
+A execução do VQE ocorre de forma híbrida. O processador quântico prepara o estado $\ket{\psi(\theta)}$ e estima o valor esperado do Hamiltoniano, geralmente decomposto em uma soma de operadores de Pauli:
+\begin{equation}
+    H = \sum_{\ell} h_{\ell} P_{\ell},
+\end{equation}
 
-Em conjunto, essas abordagens evidenciam que a modelagem matemática, especialmente por meio dos formalismos de Ising e QUBO, é essencial para a aplicação de algoritmos quânticos em otimização. A escolha entre recozimento quântico, VQE ou QAOA depende tanto da natureza do problema quanto das limitações do hardware disponível, sendo a integração entre formulação teórica e implementação prática um dos principais desafios contemporâneos da área.
+\noindent em que $h_{\ell}$ são coeficientes reais e $P_{\ell}$ são produtos tensoriais de matrizes de Pauli. O valor esperado é então obtido por medições repetidas:
+\begin{equation}
+    E(\theta) = \sum_{\ell} h_{\ell}
+    \bra{\psi(\theta)} P_{\ell} \ket{\psi(\theta)}.
+\end{equation}
 
-% Em conjunto, essas abordagens evidenciam que a modelagem matemática, especialmente por meio dos formalismos de Ising e QUBO, é essencial para a aplicação de algoritmos quânticos em problemas de otimização. As metaheurísticas clássicas, embora produzam soluções de boa qualidade, não garantem otimalidade e enfrentam limitações crescentes à medida que o tamanho do problema aumenta — característica inerente à natureza NP-difícil do VRP. Os métodos exatos, por sua vez, tornam-se computacionalmente inviáveis para instâncias de grande porte devido ao crescimento exponencial do espaço de busca. Nesse cenário, a computação quântica surge como um paradigma promissor: ao explorar princípios fundamentais como superposição, emaranhamento e interferência, algoritmos variacionais híbridos como o VQE e o QAOA propõem-se a navegar o espaço de soluções de forma estruturalmente distinta dos métodos clássicos. Ainda que o foco contemporâneo resida na obtenção de soluções aproximadas de alta fidelidade, em consonância com as restrições do estágio atual da computação quântica, a integração entre a formulação teórica e a implementação prática desses algoritmos constitui um dos principais desafios e motivações do presente trabalho.
+Após essa etapa, um algoritmo clássico de otimização atualiza os parâmetros $\theta$ e envia uma nova configuração ao circuito quântico. Esse ciclo é repetido até que um critério de parada seja satisfeito, como convergência da energia, número máximo de iterações ou estabilização dos parâmetros.
+
+Para problemas de otimização combinatória como o TSP e o VRP, o problema clássico é formulado como um Hamiltoniano de custo, frequentemente obtido a partir de uma formulação QUBO ou de um modelo de Ising \cite{lucas2014ising}. A função objetivo representa o custo total das rotas, enquanto as restrições — como visita única a cada cliente, retorno ao depósito e capacidade dos veículos — são incorporadas ao Hamiltoniano por meio de termos de penalização. Minimizar o valor esperado de $H$ corresponde, portanto, a buscar configurações de menor custo que representem rotas viáveis ou aproximadamente viáveis.
+
+Apesar de seu potencial, o VQE apresenta limitações relevantes no contexto de problemas combinatórios de grande escala \cite{cerezo2021variational}. A qualidade da solução depende fortemente da escolha do ansatz\footnote{Um \textit{ansatz} é uma forma parametrizada assumida para o estado quântico ou para o circuito quântico, escolhida antes da otimização. Em algoritmos variacionais, seus parâmetros são ajustados classicamente para minimizar uma função objetivo, como o valor esperado de um Hamiltoniano.}, da codificação do problema e da capacidade do otimizador clássico de lidar com paisagens de custo ruidosas e possivelmente não convexas — fenômeno conhecido como barren plateaus \cite{mcclean2018barren}, em que os gradientes da função objetivo tornam-se exponencialmente pequenos à medida que o número de qubits cresce, dificultando a otimização. 
+
+\subsubsection{Formulação em variáveis contínuas}
+
+No VQE tradicional, o objetivo é aproximar o menor autovalor de um Hamiltoniano por meio da preparação de um estado parametrizado e da minimização clássica do valor esperado da energia. Em variáveis contínuas, a mesma lógica pode ser preservada, substituindo circuitos sobre qubits por circuitos parametrizados sobre qumodes. Define-se, então, um ansatz contínuo
+\begin{equation}
+    \ket{\psi(\boldsymbol{\theta})}
+    =
+    U_{\mathrm{CV}}(\boldsymbol{\theta}) \ket{\psi_0},
+    \label{eq:cv_vqe_ansatz}
+\end{equation}
+
+\noindent em que $\ket{\psi_0}$ é um estado inicial, por exemplo um estado comprimido, coerente ou térmico purificado, e $U_{\mathrm{CV}}(\boldsymbol{\theta})$ é uma sequência de operações gaussianas e, quando necessário, não gaussianas. De forma geral, esse operador pode ser escrito como
+\begin{equation}
+    U_{\mathrm{CV}}(\boldsymbol{\theta})
+    =
+    \prod_{\ell=1}^{L}
+    U_{\ell}(\theta_{\ell}),
+    \label{eq:cv_ansatz_layers}
+\end{equation}
+
+\noindent com camadas compostas por portas gaussianas e não gaussianas, conforme apresentado  em \autoref{sec:logic_gates_continuous_variables}.
+
+O funcional variacional a ser minimizado é
+\begin{equation}
+    E(\boldsymbol{\theta})
+    =
+    \bra{\psi(\boldsymbol{\theta})}
+    \hat{H}_C
+    \ket{\psi(\boldsymbol{\theta})}.
+    \label{eq:cv_vqe_energy}
+\end{equation}
+
+Como $\hat{H}_C$ depende dos operadores de posição, o valor esperado também pode ser interpretado como uma média sobre a distribuição de probabilidade induzida pelas medições de homódino\footnote{A medição homódina é uma técnica típica de óptica quântica usada para medir uma quadratura de um modo bosônico, como posição $\hat{q}$ ou momento $\hat{p}$. Ela é realizada pela interferência do estado quântico com um campo clássico de referência, chamado oscilador local, permitindo estimar a distribuição de probabilidade associada à quadratura medida.}\cite{weedbrook2012gaussian}:
+\begin{equation}
+    E(\boldsymbol{\theta})
+    =
+    \int_{\Omega}
+    p_{\boldsymbol{\theta}}(\mathbf{x})
+    \widetilde{f}(\mathbf{x})
+    \, d\mathbf{x},
+    \label{eq:cv_vqe_integral}
+\end{equation}
+
+\noindent em que $p_{\boldsymbol{\theta}}(\mathbf{x}) = |\psi_{\boldsymbol{\theta}}(\mathbf{x})|^2$ é a distribuição obtida no espaço de posição, e $\widetilde{f}(\mathbf{x})$ representa a função objetivo acrescida das penalizações de restrição. O problema variacional torna-se
+\begin{equation}
+    \boldsymbol{\theta}^{*}
+    =
+    \arg\min_{\boldsymbol{\theta}}
+    E(\boldsymbol{\theta}).
+    \label{eq:cv_vqe_optimization}
+\end{equation}
+
+Após a otimização, candidatos clássicos são extraídos por amostragem:
+\begin{equation}
+    \mathbf{x}^{*}
+    \approx
+    \arg\min_{\mathbf{x}^{(m)} \sim p_{\boldsymbol{\theta}^{*}}}
+    \widetilde{f}(\mathbf{x}^{(m)}).
+    \label{eq:cv_vqe_sampling_solution}
+\end{equation}
+
+Essa formulação permite interpretar o VQE em variáveis contínuas como um método de busca por distribuições de probabilidade concentradas em regiões de baixo custo. Em vez de representar diretamente uma única solução, o circuito parametrizado representa uma família de distribuições sobre o espaço contínuo de soluções. A otimização clássica ajusta os parâmetros do circuito para deslocar, comprimir e deformar essa distribuição em direção às regiões de menor energia.
+
+
+% No contexto do presente trabalho, o VQE é adaptado ao formalismo de variáveis contínuas \cite{weedbrook2012gaussian}, em que os circuitos variacionais são compostos por portas gaussianas e não gaussianas atuando sobre qumodes, substituindo a representação discreta baseada em qubits por uma representação contínua mais expressiva para a codificação dos Hamiltonianos construídos.
+
+\subsection{Quantum Approximate Optimization Algorithm}
+
+O Algoritmo Quântico de Otimização Aproximada (\textit{Quantum Approximate Optimization Algorithm} --- QAOA) é um algoritmo híbrido variacional proposto para resolver problemas de otimização combinatória em dispositivos quânticos digitais. Assim como o VQE, o QAOA combina a preparação de estados quânticos parametrizados com uma etapa clássica de otimização. No entanto, sua estrutura é mais diretamente orientada à otimização discreta, pois o circuito é construído a partir de dois operadores principais: um Hamiltoniano de custo $H_C$, que codifica a função objetivo do problema, e um Hamiltoniano misturador $H_M$, responsável por promover transições entre diferentes configurações candidatas \cite{farhi_quantum_2014}.
+
+A formulação do QAOA parte de um $H_C$, diagonal na base computacional, cujos autovalores representam os custos associados às soluções clássicas do problema. O Hamiltoniano misturador $H_M$ é frequentemente definido como uma soma de operadores de Pauli-$X$:
+\begin{equation}
+    H_M = \sum_{i=1}^{n} X_i,
+\end{equation}
+
+\noindent em que $X_i$ atua sobre o $i$-ésimo qubit. A partir de um estado inicial uniforme, usualmente $\ket{+}^{\otimes n}$, o estado variacional do QAOA com profundidade $p$ é preparado por uma sequência alternada de operadores associados a $H_C$ e $H_M$:
+\begin{equation}
+    \ket{\gamma,\beta}
+    =
+    \prod_{\ell=1}^{p}
+    e^{-i\beta_{\ell}H_M}
+    e^{-i\gamma_{\ell}H_C}
+    \ket{+}^{\otimes n}.
+\end{equation}
+
+Os parâmetros variacionais $\gamma=(\gamma_1,\ldots,\gamma_p)$ e $\beta=(\beta_1,\ldots,\beta_p)$ controlam, respectivamente, a aplicação do Hamiltoniano de custo e do Hamiltoniano misturador em cada camada do circuito.
+
+A função objetivo a ser minimizada é dada pelo valor esperado do Hamiltoniano de custo no estado preparado pelo circuito:
+\begin{equation}
+    F_p(\gamma,\beta)
+    =
+    \bra{\gamma,\beta}
+    H_C
+    \ket{\gamma,\beta}.
+\end{equation}
+
+A otimização dos parâmetros $(\gamma,\beta)$ é realizada por um algoritmo clássico, que recebe estimativas de $F_p(\gamma,\beta)$ obtidas por medições repetidas do circuito quântico. Após a convergência, o estado final é medido na base computacional, produzindo cadeias binárias que representam soluções candidatas para o problema.
+
+Para problemas como o TSP e o VRP, o Hamiltoniano de custo pode ser construído a partir de uma formulação QUBO ou de Ising \cite{lucas2014ising}, na qual os termos da função objetivo representam o custo total das rotas e as restrições são incorporadas por penalizações:
+\begin{equation}
+    H_C = H_{\mathrm{obj}} + \lambda H_{\mathrm{pen}},
+\end{equation}
+
+\noindent em que $H_{\mathrm{obj}}$ codifica o custo de deslocamento, $H_{\mathrm{pen}}$ reúne os termos associados às restrições do problema e $\lambda$ é um parâmetro de penalização \cite{irie2019quantum}.
+
+O parâmetro $p$ determina o número de camadas alternadas do circuito e influencia diretamente a qualidade das soluções obtidas: valores maiores de $p$ aumentam a expressividade do ansatz e, no limite $p \to \infty$, o QAOA converge para a solução ótima \cite{farhi_quantum_2014}. No entanto, circuitos mais profundos elevam a sensibilidade a ruídos em dispositivos NISQ, limitando a profundidade prática \cite{preskill2019quantum}. Além disso, em formulações com muitas restrições, a presença de termos de penalização intensos pode deformar a paisagem de custo, dificultando a convergência do otimizador clássico. Misturadores específicos que preservam o subespaço de soluções viáveis constituem uma alternativa para reduzir essa dependência \cite{hadfield2019quantum}. 
+
+\subsubsection{Formulação em variáveis contínuas}
+
+O QAOA convencional alterna evoluções associadas a um Hamiltoniano de custo e a um Hamiltoniano misturador. Para variáveis contínuas, a mesma estrutura pode ser definida por meio de operadores de posição e momento. O Hamiltoniano de custo é novamente dado por
+\begin{equation}
+    \hat{H}_C = \widetilde{f}(\hat{\mathbf{x}}),
+    \label{eq:cv_qaoa_cost}
+\end{equation}
+
+\noindent em que $\hat{x}$ é dado na \autoref{eq:position_operator} e $\widetilde{f}(\cdot)$ é a função objetivo acrescida de suas penalizações, enquanto um misturador natural pode ser definido a partir do operador de momento:
+\begin{equation}
+    \hat{H}_M
+    =
+    \frac{1}{2}
+    \sum_{i=1}^{d}
+    \hat{p}_i^2.
+    \label{eq:cv_qaoa_mixer}
+\end{equation}
+
+Esse Hamiltoniano atua como um termo cinético, promovendo a propagação da função de onda no espaço contínuo de soluções. O estado parametrizado do QAOA contínuo com profundidade $p$ pode então ser escrito como
+\begin{equation}
+    \ket{\boldsymbol{\gamma},\boldsymbol{\beta}}
+    =
+    \prod_{\ell=1}^{p}
+    e^{-i\beta_{\ell}\hat{H}_M}
+    e^{-i\gamma_{\ell}\hat{H}_C}
+    \ket{\psi_0}.
+    \label{eq:cv_qaoa_state}
+\end{equation}
+
+Os parâmetros variacionais
+\begin{equation}
+    \boldsymbol{\gamma} = (\gamma_1,\ldots,\gamma_p),
+    \qquad
+    \boldsymbol{\beta} = (\beta_1,\ldots,\beta_p)
+\end{equation}
+
+\noindent são ajustados por um otimizador clássico a partir do funcional
+\begin{equation}
+    F(\boldsymbol{\gamma},\boldsymbol{\beta})
+    =
+    \bra{\boldsymbol{\gamma},\boldsymbol{\beta}}
+    \hat{H}_C
+    \ket{\boldsymbol{\gamma},\boldsymbol{\beta}}.
+    \label{eq:cv_qaoa_objective}
+\end{equation}
+
+Portanto,
+\begin{equation}
+    (\boldsymbol{\gamma}^{*},\boldsymbol{\beta}^{*})
+    =
+    \arg\min_{\boldsymbol{\gamma},\boldsymbol{\beta}}
+    F(\boldsymbol{\gamma},\boldsymbol{\beta}).
+    \label{eq:cv_qaoa_parameter_optimization}
+\end{equation}
+
+A alternância entre $e^{-i\gamma_{\ell}\hat{H}_C}$ e $e^{-i\beta_{\ell}\hat{H}_M}$ possui uma interpretação física útil \cite{verdon2019quantum}. A evolução pelo Hamiltoniano de custo introduz fases dependentes da função objetivo, enquanto a evolução pelo Hamiltoniano misturador redistribui a amplitude de probabilidade no domínio contínuo. Assim, regiões associadas a menores valores de custo podem sofrer interferência construtiva ao longo das camadas, enquanto regiões de alto custo tendem a ser suprimidas após a otimização dos parâmetros \cite{arrazola2019machine}.
+
+Para problemas com domínio limitado, isto é, $x_i \in [a_i,b_i]$, pode-se empregar uma penalização de borda,
+\begin{equation}
+    B(\hat{\mathbf{x}})
+    =
+    \sum_{i=1}^{d}
+    \left(
+    [a_i-\hat{x}_i]_+^2
+    +
+    [\hat{x}_i-b_i]_+^2
+    \right),
+    \label{eq:boundary_penalty}
+\end{equation}
+
+\noindent ou utilizar uma reparametrização clássica das variáveis, por exemplo
+\begin{equation}
+    x_i
+    =
+    a_i + (b_i-a_i)\sigma(y_i),
+    \label{eq:bounded_reparametrization}
+\end{equation}
+
+\noindent em que $\sigma(\cdot)$ é uma função sigmoidal e $y_i$ é a variável contínua representada no qumode. A primeira estratégia mantém a formulação diretamente no espaço físico das variáveis, enquanto a segunda transforma um domínio ilimitado em um intervalo admissível.
+
+\subsection{Quantum Annealing}
+
+O Recozimento Quântico (\textit{Quantum Annealing} --- QA) \cite{kadowaki1998quantum, farhi_quantum_2014} é uma abordagem de otimização inspirada na evolução adiabática de sistemas quânticos. Diferentemente de algoritmos variacionais como VQE e QAOA, que são formulados no modelo de circuitos quânticos, o QA é geralmente descrito como um processo analógico no qual um sistema é preparado no estado fundamental de um Hamiltoniano inicial simples e evolui gradualmente até um Hamiltoniano final que codifica o problema de otimização. Se a evolução for suficientemente lenta e certas condições espectrais forem satisfeitas, o teorema adiabático sugere que o sistema tende a permanecer próximo ao estado fundamental, de modo que a medição final fornece uma configuração associada a uma solução de baixo custo.
+
+A formulação geral do recozimento quântico pode ser escrita por meio de um Hamiltoniano dependente do tempo:
+\begin{equation}
+    H(t) = A(t)H_M + B(t)H_C,
+\end{equation}
+
+\noindent em que $H_M$ é o Hamiltoniano misturador, $H_C$ é o Hamiltoniano de custo que representa o problema, e $A(t)$ e $B(t)$ são funções de controle que variam ao longo do tempo de recozimento. Em uma formulação equivalente, define-se $s=\frac{t}{T}$, com $s \in [0,1]$, sendo $T$ o tempo total de evolução:
+\begin{equation}
+    H(s) = (1-s)H_M + sH_C.
+\end{equation}
+
+Usualmente, o Hamiltoniano inicial é escolhido como um campo transverso:
+\begin{equation}
+    H_M = -\sum_{i=1}^{n} X_i,
+\end{equation}
+
+\noindent cujo estado fundamental é uma superposição uniforme na base computacional. O Hamiltoniano final é frequentemente expresso na forma de Ising:
+\begin{equation}
+    H_C = \sum_i h_i Z_i + \sum_{i<j} J_{ij} Z_i Z_j,
+\end{equation}
+
+\noindent em que $h_i$ são campos locais, $J_{ij}$ são acoplamentos entre variáveis e $Z_i$ representa o operador de Pauli-$Z$ aplicado ao $i$-ésimo qubit.
+
+Problemas de otimização combinatória como o TSP e o VRP podem ser tratados por recozimento quântico quando convertidos para uma formulação QUBO ou Ising, conforme discutido na \autoref{sec:vrp}. Nessa representação, minimizar a função QUBO equivale a encontrar o estado fundamental do Hamiltoniano de Ising correspondente, de modo que o recozimento quântico busca naturalmente configurações de menor energia associadas a rotas de menor custo.
+
+O desempenho do recozimento quântico depende fortemente da qualidade da formulação QUBO, da escolha dos pesos de penalização, da conectividade do hardware e da sensibilidade a ruído e degenerescências energéticas. Em particular, a necessidade de mapear o problema em um grafo físico com conectividade limitada — processo conhecido como \textit{embedding} — pode aumentar significativamente o número de variáveis físicas necessárias, reduzindo a escala efetiva dos problemas tratáveis \cite{choi2008minor}. Apesar dessas limitações, o recozimento quântico estabelece uma conexão conceitual importante com os algoritmos variacionais apresentados anteriormente: tanto o QAOA quanto o recozimento quântico exploram a evolução de um sistema quântico guiada por um Hamiltoniano de custo para encontrar configurações de menor energia \cite{mcgeoch2022adiabatic}.
+
+
+\subsubsection{Formulação em Variáveis Contínuas}
+\label{sec:quantum_annealing_cv}
+
+Em sua formulação convencional, o recozimento quântico opera sobre variáveis discretas representadas por spins ou qubits. No contexto deste trabalho, entretanto, o substrato físico utilizado são qumodes bosônicos truncados na base de Fock, de modo que cada qumode é restrito ao subespaço
+\begin{equation}
+    \mathcal{H}_{d}
+    =
+    \mathrm{span}
+    \{
+    \ket{0},\ket{1},\ldots,\ket{d-1}
+    \},
+\end{equation}
+
+\noindent com corte $d=N$. Os níveis de Fock codificam alternativas discretas, como cidades ou posições na rota, preservando a natureza combinatória do problema em um substrato de variáveis contínuas.
+
+O Hamiltoniano de annealing segue a mesma estrutura da formulação discreta, com interpolação entre um Hamiltoniano misturador $\hat{H}_M$ e o Hamiltoniano de custo $\hat{H}_C$:
+\begin{equation}
+    \hat{H}(s)
+    =
+    A(s)\hat{H}_{M}
+    +
+    B(s)\hat{H}_{C},
+    \qquad
+    s \in [0,1].
+\end{equation}
+
+O Hamiltoniano de custo é construído a partir de projetores sobre os níveis de Fock, de forma análoga à formulação apresentada na \autoref{sec:quantum_representation}, e penaliza configurações inválidas por meio de termos adicionais. Para o misturador, duas escolhas naturais se apresentam: um misturador uniforme sobre os níveis de Fock de cada qumode, análogo ao campo transverso da formulação discreta, ou um misturador baseado no operador de quadratura truncado, que induz transições entre níveis adjacentes e está mais diretamente associado ao formalismo de variáveis contínuas.
+
+A principal vantagem conceitual dessa abordagem é que uma variável discreta com $N$ alternativas é codificada em um único qumode truncado com $d=N$, em vez de exigir $N$ qubits em uma codificação binária ou $N^2$ variáveis em uma codificação QUBO.
+
+\subsection{Proposta de uso como método de otimização}
+
+Com base nas formulações anteriores, propõe-se interpretar os algoritmos VQE-CV e QAOA-CV como mecanismos variacionais para construir distribuições de probabilidade sobre o espaço contínuo de soluções. O procedimento geral pode ser descrito pelas seguintes etapas:
+
+\begin{enumerate}
+    \item Definir a função objetivo contínua $f(\mathbf{x})$ e suas 
+    restrições;
+    \item Construir o Hamiltoniano de custo penalizado 
+    $\hat{H}_C = \widetilde{f}(\hat{\mathbf{x}})$;
+    \item Escolher um estado inicial $\ket{\psi_0}$ com suporte adequado 
+    sobre o domínio de busca;
+    \item Selecionar um ansatz variacional, baseado em VQE-CV ou QAOA-CV;
+    \item Estimar o valor esperado do Hamiltoniano por medições de 
+    quadratura;
+    \item Atualizar os parâmetros por um otimizador clássico;
+    \item Extrair soluções candidatas por amostragem da distribuição 
+    final.
+\end{enumerate}
+
+No caso VQE-CV, a flexibilidade está concentrada na escolha do ansatz $U_{\mathrm{CV}}(\boldsymbol{\theta})$. No caso QAOA-CV, a estrutura é mais restrita e fisicamente interpretável, pois alterna explicitamente entre operadores de custo e operadores misturadores. Assim, o VQE-CV pode ser mais adequado quando se deseja maior expressividade no circuito, enquanto o QAOA-CV oferece uma ligação mais direta com métodos de busca baseados em dinâmica Hamiltoniana e descida de gradiente em superposição.
+
+No contexto específico deste trabalho, entretanto, o formalismo de variáveis contínuas não é empregado para representar diretamente variáveis clássicas contínuas $x_i \in \mathbb{R}$. O que se utiliza é a arquitetura de qumodes bosônicos truncados na base de Fock, de modo que cada qumode é restrito ao subespaço
+\begin{equation}
+    \mathcal{H}_{d}
+    =
+    \mathrm{span}\{
+    \ket{0},\ket{1},\ldots,\ket{d-1}
+    \},
+\end{equation}
+
+\noindent com corte $d=N$. Nessa representação, os níveis de Fock codificam alternativas discretas, como a cidade visitada em cada posição da rota no contexto do TSP e do VRP. Embora o substrato físico pertença ao paradigma de variáveis contínuas, o espaço computacional efetivamente utilizado é discreto e finito-dimensional. A vantagem da abordagem reside, portanto, na capacidade de representar variáveis discretas de alta cardinalidade de forma mais compacta do que uma codificação puramente binária em qubits, e não no tratamento do problema como uma otimização contínua convencional.
+
+A extensão do VQE e do QAOA para variáveis contínuas fornece uma ponte natural entre otimização clássica contínua e computação quântica variacional. A principal mudança conceitual consiste em substituir cadeias discretas de bits por distribuições de probabilidade representadas em qumodes. O problema de otimização é codificado em um Hamiltoniano dependente dos operadores de posição, enquanto o processo variacional ajusta estados quânticos para concentrar probabilidade em regiões de menor custo. Essa abordagem é especialmente promissora para problemas com variáveis físicas naturalmente contínuas, podendo ainda ser combinada com registradores discretos em formulações híbridas.
