@@ -48,6 +48,9 @@ A otimização por Colônia de Formigas \cite{dorigo2002ant} constrói soluçõe
 Em comum, todas essas metaheurísticas enfrentam uma limitação fundamental: à medida que o tamanho do problema cresce, a qualidade das soluções encontradas tende a deteriorar e o custo computacional aumenta significativamente \cite{braekers2016vehicle}. Essa degradação decorre da natureza NP-difícil do VRP — o espaço de soluções cresce de forma combinatória, tornando a exploração eficiente progressivamente mais difícil independentemente da estratégia adotada. Nesse cenário, paradigmas computacionais alternativos, como a computação quântica, surgem como uma direção promissora para superar essas limitações, conforme discutido na seção seguinte.
 
 \section{Abordagens Quânticas}\label{sec:quantum_approach}
+
+Esta seção apresenta os fundamentos teóricos das principais abordagens quânticas para problemas de otimização combinatória, constituindo a base conceitual sobre a qual se apoiam os desenvolvimentos metodológicos previstos nas etapas seguintes deste trabalho. Inicialmente, na \autoref{sec:quantum_representation}, discute-se a representação quântica de problemas combinatórios, com ênfase nos modelos QUBO e de Ising e em sua extensão natural ao formalismo de variáveis contínuas. Em seguida, nas \autoref{sec:vqe}, \autoref{sec:qaoa} e \autoref{sec:qa}, apresentam-se, respectivamente, o Algoritmo Variacional de Autovalor Mínimo (VQE), o Algoritmo Quântico de Otimização Aproximada (QAOA) e o Recozimento Quântico (QA), cada um acompanhado de sua formulação adaptada ao paradigma de variáveis contínuas. Por fim, na \autoref{sec:optimization_proposal}, integram-se os elementos introduzidos nas seções anteriores em uma proposta unificada de uso desses algoritmos como métodos de otimização sobre os Hamiltonianos construídos neste trabalho. A análise aqui desenvolvida é de caráter introdutório e preparatório: seu propósito é estabelecer os fundamentos teóricos necessários para a implementação e avaliação experimental desses métodos, previstas como etapas centrais do desenvolvimento posterior à qualificação.
+
 \subsection{Representação Quântica de Problemas Combinatórios}
 \label{sec:quantum_representation}
 
@@ -106,7 +109,7 @@ Quando há restrições, pode-se utilizar uma formulação penalizada,
 
 \noindent em que $\lambda_h$, $\lambda_g$ e $\lambda_b$ são coeficientes de penalização, e $B(\hat{\mathbf{x}})$ representa termos de barreira ou penalização para manter as variáveis dentro do domínio admissível $\Omega$. Assim, soluções inviáveis são energeticamente desfavorecidas, enquanto soluções viáveis de menor custo correspondem a regiões de menor energia do Hamiltoniano. 
 
-\subsection{Variational Quantum Eigensolver}
+\subsection{Variational Quantum Eigensolver}\label{sec:vqe}
 
 Entre os algoritmos híbridos variacionais desenvolvidos para dispositivos NISQ, o Algoritmo Variacional Quântico para Autovalores (Variational Quantum Eigensolver --- VQE) \cite{peruzzo2014variational, cerezo2021variational} destaca-se como uma das principais estratégias para a estimação do menor autovalor de Hamiltonianos quânticos, com aplicação inicial em química quântica e posterior extensão a problemas de otimização combinatória \cite{cao2019quantum, moll2018quantum}. A ideia central consiste em preparar, em um processador quântico, um estado parametrizado $\ket{\psi(\theta)}$ por meio de um circuito variacional, enquanto um otimizador clássico ajusta os parâmetros $\theta$ de modo a minimizar o valor esperado de um Hamiltoniano de custo.
 
@@ -212,6 +215,7 @@ Essa formulação permite interpretar o VQE em variáveis contínuas como um mé
 % No contexto do presente trabalho, o VQE é adaptado ao formalismo de variáveis contínuas \cite{weedbrook2012gaussian}, em que os circuitos variacionais são compostos por portas gaussianas e não gaussianas atuando sobre qumodes, substituindo a representação discreta baseada em qubits por uma representação contínua mais expressiva para a codificação dos Hamiltonianos construídos.
 
 \subsection{Quantum Approximate Optimization Algorithm}
+\label{sec:qaoa}
 
 O Algoritmo Quântico de Otimização Aproximada (\textit{Quantum Approximate Optimization Algorithm} --- QAOA) é um algoritmo híbrido variacional proposto para resolver problemas de otimização combinatória em dispositivos quânticos digitais. Assim como o VQE, o QAOA combina a preparação de estados quânticos parametrizados com uma etapa clássica de otimização. No entanto, sua estrutura é mais diretamente orientada à otimização discreta, pois o circuito é construído a partir de dois operadores principais: um Hamiltoniano de custo $H_C$, que codifica a função objetivo do problema, e um Hamiltoniano misturador $H_M$, responsável por promover transições entre diferentes configurações candidatas \cite{farhi_quantum_2014}.
 
@@ -332,7 +336,7 @@ Para problemas com domínio limitado, isto é, $x_i \in [a_i,b_i]$, pode-se empr
 
 \noindent em que $\sigma(\cdot)$ é uma função sigmoidal e $y_i$ é a variável contínua representada no qumode. A primeira estratégia mantém a formulação diretamente no espaço físico das variáveis, enquanto a segunda transforma um domínio ilimitado em um intervalo admissível.
 
-\subsection{Quantum Annealing}
+\subsection{Quantum Annealing}\label{sec:qa}
 
 O Recozimento Quântico (\textit{Quantum Annealing} --- QA) \cite{kadowaki1998quantum, farhi_quantum_2014} é uma abordagem de otimização inspirada na evolução adiabática de sistemas quânticos. Diferentemente de algoritmos variacionais como VQE e QAOA, que são formulados no modelo de circuitos quânticos, o QA é geralmente descrito como um processo analógico no qual um sistema é preparado no estado fundamental de um Hamiltoniano inicial simples e evolui gradualmente até um Hamiltoniano final que codifica o problema de otimização. Se a evolução for suficientemente lenta e certas condições espectrais forem satisfeitas, o teorema adiabático sugere que o sistema tende a permanecer próximo ao estado fundamental, de modo que a medição final fornece uma configuração associada a uma solução de baixo custo.
 
@@ -394,6 +398,7 @@ O Hamiltoniano de custo é construído a partir de projetores sobre os níveis d
 A principal vantagem conceitual dessa abordagem é que uma variável discreta com $N$ alternativas é codificada em um único qumode truncado com $d=N$, em vez de exigir $N$ qubits em uma codificação binária ou $N^2$ variáveis em uma codificação QUBO.
 
 \subsection{Proposta de uso como método de otimização}
+\label{sec:optimization_proposal}
 
 Com base nas formulações anteriores, propõe-se interpretar os algoritmos VQE-CV e QAOA-CV como mecanismos variacionais para construir distribuições de probabilidade sobre o espaço contínuo de soluções. O procedimento geral pode ser descrito pelas seguintes etapas:
 
