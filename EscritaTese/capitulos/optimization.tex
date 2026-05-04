@@ -111,7 +111,7 @@ Quando há restrições, pode-se utilizar uma formulação penalizada,
 
 \subsection{Variational Quantum Eigensolver}\label{sec:vqe}
 
-Entre os algoritmos híbridos variacionais desenvolvidos para dispositivos NISQ, o Algoritmo Variacional Quântico para Autovalores (Variational Quantum Eigensolver --- VQE) \cite{peruzzo2014variational, cerezo2021variational} destaca-se como uma das principais estratégias para a estimação do menor autovalor de Hamiltonianos quânticos, com aplicação inicial em química quântica e posterior extensão a problemas de otimização combinatória \cite{cao2019quantum, moll2018quantum}. A ideia central consiste em preparar, em um processador quântico, um estado parametrizado $\ket{\psi(\theta)}$ por meio de um circuito variacional, enquanto um otimizador clássico ajusta os parâmetros $\theta$ de modo a minimizar o valor esperado de um Hamiltoniano de custo.
+Entre os algoritmos híbridos variacionais desenvolvidos para dispositivos NISQ, o Algoritmo Variacional Quântico para Autovalores (\textit{Variational Quantum Eigensolver} --- VQE) \cite{peruzzo2014variational, cerezo2021variational} destaca-se como uma das principais estratégias para a estimação do menor autovalor de Hamiltonianos quânticos, com aplicação inicial em química quântica e posterior extensão a problemas de otimização combinatória \cite{cao2019quantum, moll2018quantum}. A ideia central consiste em preparar, em um processador quântico, um estado parametrizado $\ket{\psi(\theta)}$ por meio de um circuito variacional, enquanto um otimizador clássico ajusta os parâmetros $\theta$ de modo a minimizar o valor esperado de um Hamiltoniano de custo.
 
 De forma geral, o estado variacional é produzido pela aplicação de um circuito parametrizado $U(\theta)$ sobre um estado inicial, usualmente $\ket{0}^{\otimes n}$:
 \begin{equation}
@@ -397,7 +397,7 @@ O Hamiltoniano de custo é construído a partir de projetores sobre os níveis d
 
 A principal vantagem conceitual dessa abordagem é que uma variável discreta com $N$ alternativas é codificada em um único qumode truncado com $d=N$, em vez de exigir $N$ qubits em uma codificação binária ou $N^2$ variáveis em uma codificação QUBO.
 
-\subsection{Proposta de uso como método de otimização}
+\section{Abordagem de uso como método de otimização}
 \label{sec:optimization_proposal}
 
 Com base nas formulações anteriores, propõe-se interpretar os algoritmos VQE-CV e QAOA-CV como mecanismos variacionais para construir distribuições de probabilidade sobre o espaço contínuo de soluções. O procedimento geral pode ser descrito pelas seguintes etapas:
