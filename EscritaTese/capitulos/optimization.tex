@@ -1,7 +1,13 @@
 
 \chapter{Modelos de Otimização para Problemas de Rotas de Veículos}
 
-\section{Abordagens Clássicas}
+Este capítulo apresenta os principais modelos e algoritmos empregados na resolução de problemas de roteamento de veículos, organizados em duas grandes categorias. Na \autoref{sec:classical_approaches}, discutem-se as abordagens clássicas, que compreendem tanto métodos exatos, capazes de garantir a otimalidade da solução, quanto metaheurísticas, que buscam soluções de boa qualidade em tempo computacional viável. 
+
+Essa revisão estabelece o estado da arte convencional e serve de referência comparativa para as abordagens desenvolvidas neste trabalho. Em seguida, na \autoref{sec:quantum_approach}, introduzem-se as abordagens quânticas de otimização, com ênfase nos algoritmos variacionais VQE e QAOA e no recozimento quântico, cada um apresentado tanto em sua formulação original quanto em sua extensão ao paradigma de variáveis contínuas. 
+
+A exposição conjunta dessas duas perspectivas tem como propósito evidenciar as limitações inerentes aos métodos clássicos diante do crescimento combinatório do espaço de soluções, motivando o desenvolvimento de abordagens quânticas alternativas, e fornecer a base teórica necessária para a metodologia apresentada no \autoref{cap:proposta}.
+
+\section{Abordagens Clássicas}\label{sec:classical_approaches}
 
 As abordagens clássicas para o VRP e o TSP podem ser organizadas em duas categorias principais: métodos exatos, que garantem a otimalidade da solução encontrada, e métodos aproximados, que buscam soluções de boa qualidade em tempo computacional viável. Entre os métodos exatos, destaca-se o branch-and-bound, apresentado a seguir. Entre os métodos aproximados, são discutidas quatro metaheurísticas amplamente utilizadas na literatura: busca tabu, algoritmo genético, simulated annealing e colônia de formigas.
 
