@@ -377,7 +377,11 @@ def analyze_qubit_tsp_hamiltonian(d_ij, beta=100.0, gamma=100.0):
         "valid_results": valid_results,
     }
 
+<<<<<<< HEAD
 N = [3,4,5]
+=======
+N = [4,9]
+>>>>>>> 2f929bf (update 05 13 2026 17:56)
 linhas_tabela = []
 
 alpha = 100

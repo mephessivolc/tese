@@ -11,9 +11,13 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONUNBUFFERED=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PIP_NO_CACHE_DIR=1 \
+<<<<<<< HEAD
     PYTHONPATH=/workspace:/workspace/code:/workspace/code/src \
     VIRTUAL_ENV=/opt/venv \
     PATH=/opt/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+=======
+    PYTHONPATH=/workspace/code:/workspace/code/src:/workspace
+>>>>>>> 2f929bf (update 05 13 2026 17:56)
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -36,20 +40,34 @@ RUN groupadd --gid "${USER_GID}" "${USERNAME}" \
     && echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > "/etc/sudoers.d/${USERNAME}" \
     && chmod 0440 "/etc/sudoers.d/${USERNAME}" \
     && install -d -o "${USER_UID}" -g "${USER_GID}" "/home/${USERNAME}/.cache/matplotlib"
+<<<<<<< HEAD
 
 RUN python -m venv "${VIRTUAL_ENV}" \
     && chown -R "${USER_UID}:${USER_GID}" "${VIRTUAL_ENV}"
 
+=======
+    
+>>>>>>> 2f929bf (update 05 13 2026 17:56)
 WORKDIR /workspace
 
 COPY requirements.txt /tmp/requirements.txt
 
 RUN python -m pip install --upgrade pip setuptools wheel \
+<<<<<<< HEAD
     && python -m pip install -r /tmp/requirements.txt \
     && python -c "import numpy; print('numpy ok:', numpy.__version__)"
 
 COPY . /workspace/
 
+=======
+    && pip install -r requirements.txt
+
+COPY . /workspace/
+
+CMD ["sleep", "infinity"]
+
+
+>>>>>>> 2f929bf (update 05 13 2026 17:56)
 FROM python-base AS local
 
 ARG USERNAME=devuser
@@ -78,6 +96,10 @@ ARG USERNAME=devuser
 
 ENV MPLCONFIGDIR=/home/${USERNAME}/.cache/matplotlib
 
+<<<<<<< HEAD
 USER ${USERNAME}
 
 CMD ["python", "/workspace/code/src/teste.py"]
+=======
+USER ${USERNAME}
+>>>>>>> 2f929bf (update 05 13 2026 17:56)
