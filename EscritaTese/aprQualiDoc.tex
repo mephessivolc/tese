@@ -442,7 +442,7 @@
 \begin{frame}
     \frametitle{Metodologia e Resultados Parciais}
 
-    \begin{block}{Modelagem qubits$\rightarrow$qumodes}
+    \begin{block}{Proposta 1: qubits$\rightarrow$qumodes}
         \begin{itemize}
             \item variáveis discretas $x_{ik}\rightarrow x'_{ik}\rightarrow \hat{x}_{ik}=\displaystyle\frac{1+x'_{ik}}{2} \rightarrow\hat{x}_{ik}$ operador de posição e $\hat{p}_{ik}$ operador de momento 
             \item $[\hat{x}_{ik},{\hat{p}_{kl}}]=i\hbar\delta_{ij}\delta_{kl}$
@@ -484,22 +484,16 @@
                     \item Força Bruta: $V_0\rightarrow V_1\rightarrow V_2\rightarrow V_3\rightarrow V_0$
                     \item Método Qubit-Qumode: $V_0\rightarrow V_3\rightarrow V_2\rightarrow V_1\rightarrow V_0$
                 \end{itemize}
+
+                \item Intâncias de pequena dimensão
+                \item custo de memória: $O(2^M)$ qubits $\rightarrow O(d^M)$ qumodes
             \end{itemize}
         \end{itemize}
     \end{block}
 \end{frame}
 
 \begin{frame}{Metodologia e Resultados Parciais}
-    \begin{block}{Resultados}
-        \begin{itemize}
-            \item Intâncias de pequena dimensão
-            \item custo de memória: $O(2^M)$ qubits $\rightarrow O(d^M)$ qumodes
-        \end{itemize}
-    \end{block}
-\end{frame}
-
-\begin{frame}{Metodologia e Resultados Parciais}
-    \begin{block}{Modelo $N-$qumode-posição}
+    \begin{block}{Proposta 2: $N-$qumode-posição}
         \begin{itemize}
             \item Cada posição da rota uma variável indica qual cidade é visitada 
             \item Exemplo 
