@@ -1,0 +1,43 @@
+\documentclass{article}
+\pagestyle{empty}
+\usepackage{qcircuit}
+\begin{document}
+
+% \vspace{6em}
+rotação \\ \\
+\Qcircuit{
+    \lstick{q} & \gate{R(\theta)} & \qw \\
+}
+
+\vspace{4em}
+deslocamento \\ \\
+\Qcircuit{
+    \lstick{q} & \gate{D(r)} & \qw \\
+}
+
+\vspace{6em}
+divisão de feixe \\ \\
+\Qcircuit {
+    \lstick{q_i} & \multigate{1}{BS(\theta)} & \qw \\
+    \lstick{q_j} & \ghost{BS(\theta)}        & \qw
+}
+
+\vspace{4em}
+compressão \\ \\
+\Qcircuit{
+    \lstick{q} & \gate{S(r)} & \qw \\
+}
+
+\vspace{6em}
+cubica \\ \\
+\Qcircuit{
+    \lstick{q} & \gate{V(\gamma)} & \qw \\
+}
+
+\vspace{6em}
+kerr \\ \\
+\Qcircuit{
+    \lstick{q} & \gate{K(\kappa)} & \qw \\
+}
+
+\end{document}

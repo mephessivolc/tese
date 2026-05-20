@@ -1,9 +1,11 @@
-\documentclass{beamer}
+\documentclass[xcolor={dvipsnames,table}]{beamer}
 
 \usepackage[utf8]{inputenc}
 \usepackage[brazil]{babel}
 \usepackage{amsmath, amssymb}
 \usepackage{physics}
+\usepackage{color}
+% \usepackage[table]{xcolor}
 
 \usetheme{Madrid}
 
@@ -35,8 +37,21 @@
 \section{Fundamentação}
 \subsection{Problemas de Rotas de Veículos}
 
-
 \begin{frame}{Problemas de Rotas de Veículos - VRP}
+    \begin{itemize}
+        \item Minimizar o custo das rotas de uma frota de veículos no atendimento a clientes
+        \item Ampla variedade de aplicações
+        \begin{itemize}
+            \item coleta de resíduos
+            \item distribuição de mercadorias
+            \item transporte escolar 
+            \item rotas de serviços emergenciais 
+        \end{itemize}
+        \item NP-Difícil
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{VRP}
     \begin{center}
         \includegraphics[width=0.75\textwidth,keepaspectratio]{figs/vrp.png}
     \end{center}
@@ -67,10 +82,9 @@
                 0, \text{caso contrário}
             \end{cases}
         $$
-            A função objetivo consiste em minimizar o custo total das rotas, sujeita às restrições do problema
+            A função objetivo consiste em minimizar o custo total das rotas % sujeita às restrições do problema
             $$
-                \min \sum_{i \in V} \sum_{\substack{j \in V \\ j \neq i}} c_{ij}\, x_{ij}\quad \sum_{j\in V\setminus\{0\}}x_{0jk}=1,\forall k\in K
-                \quad \sum_{i\in V\setminus\{0\}}x_{i0k}=1,\forall k\in K
+                \min \sum_{k\in K}^{max}\sum_{i \in V} \sum_{\substack{j \in V \\ j \neq i}} c_{ijk}\, x_{ijk}
             $$
     \end{block}
 \end{frame}
@@ -79,9 +93,9 @@
 \begin{frame}{VRP}
     \begin{minipage}[c]{0.45\textwidth}
         \begin{block}{Restrições}
-            Sujeito a restrição de visita a cada cliente uma única vez
+            Sujeito a restrição de visita 
             $$
-            \sum_{k\in K}\sum_{\substack{j \in V \\ j \neq i}}x_{ijk}=1,\forall i\in V\setminus\{0\}
+            \sum_{k\in K}\sum_{\substack{j \in V \\ j \neq i}}x_{ijk}=1,\forall j\in V\setminus\{0\}
             $$
             $$
             \sum_{k\in K}\sum_{\substack{i \in V \\ i \neq j}}x_{ijk}=1,\forall i\in V\setminus\{0\}
@@ -102,33 +116,31 @@
     \end{minipage}
 \end{frame}
 
+\begin{frame}{VRP}
+    \begin{block}{Função Custo}
+        \begin{equation*}
+            \begin{aligned}
+                C(\mathbf{x})= & \sum_{k\in K}\sum_{i \in V} \sum_{\substack{j \in V \\ j \neq i}} c_{ijk}\, x_{ijk}  \\
+                & + \alpha\left(\sum_{k\in K}\sum_{\substack{j \in V \\ j \neq i}}x_{ijk}-1\right)^2 + \beta\left( \sum_{k\in K}\sum_{\substack{i \in V \\ i \neq j}}x_{ijk}-1\right)^2 \\
+                & + \gamma\left(\sum_{k\in K}\sum_{\substack{j \in V \\ j \neq i}}x_{0jk}-1\right)^2 + \lambda\left( \sum_{k\in K}\sum_{\substack{i \in V \\ i \neq j}}x_{i0k}-1\right)^2
+            \end{aligned}
+        \end{equation*}
+        onde $\alpha, \beta, \gamma$ e $\lambda$ são hiperparâmetros do modelo.
+    \end{block}
+    
+\end{frame}
+
 
 \begin{frame}{VRP}
-    \begin{itemize}
-        \item Diversas Variantes
+    \begin{block}{Diversas Variantes}
         \begin{itemize}
             \item Capacitado:\quad $\sum_{i\in V}\sum_{\substack{j\in V\\j\neq i}}d_jx_{ijk}\leq Q,\ \forall k\in K$
             \item Janela de tempo:\quad $a_i\leq T_i\leq b_i,\ \forall i\in V$
             \item Multiplos depósitos
             \item Taxi 
         \end{itemize}
-    \end{itemize}
+    \end{block}
 \end{frame}
-
-\begin{frame}{VRP}
-    \begin{itemize}
-        \item Ampla variedade de aplicações
-        \begin{itemize}
-            \item coleta de resíduos
-            \item distribuição de mercadorias
-            \item transporte escolar 
-            \item rotas de serviços emergenciais 
-        \end{itemize}
-        \item NP-Difícil
-    \end{itemize}
-\end{frame}
-
-
 
 %------------------------------------------------
 \subsection{Abordagem Clássica}
@@ -139,8 +151,7 @@
         \begin{itemize}
             \item Guloso
             \item Tabu
-            \item Algoritmo Genético
-            \item Simulated Annealing
+            \item Algoritmo Genético    
             \item Colônia de Formigas
         \end{itemize}
     \end{itemize}
@@ -224,13 +235,15 @@
         \begin{minipage}[c]{\textwidth}
             \begin{minipage}[c]{0.45\textwidth}
                 \centering
-                \includegraphics[width=0.45\textwidth, keepaspectratio]{figs/apr_rotacao.png}\\
+                \includegraphics[width=0.45\textwidth, keepaspectratio]{figs/apr_rotacao.png}\quad
+                \includegraphics[width=0.45\textwidth, keepaspectratio]{figs/circuito_rotacao.png}\\
                 \tiny{Rotação}
             \end{minipage}
             \hfill
             \begin{minipage}[c]{0.45\textwidth}
                 \centering
-                \includegraphics[width=0.45\textwidth, keepaspectratio]{figs/apr_wigner_deslocamento.png}\\
+                \includegraphics[width=0.45\textwidth, keepaspectratio]{figs/apr_wigner_deslocamento.png}\quad
+                \includegraphics[width=0.45\textwidth, keepaspectratio]{figs/circuito_deslocamento.png}\\
                 \tiny{Deslocamento}
             \end{minipage}
         \end{minipage}
@@ -238,13 +251,15 @@
         \begin{minipage}[c]{\textwidth}
             \begin{minipage}[c]{0.45\textwidth}
                 \centering
-                \includegraphics[width=0.45\textwidth, keepaspectratio]{figs/apr_wigner_divisor_de_feixe_fock10.png}\\
+                \includegraphics[width=0.45\textwidth, keepaspectratio]{figs/apr_wigner_divisor_de_feixe_fock10.png}\quad
+                \includegraphics[width=0.45\textwidth, keepaspectratio]{figs/circuito_divisao_feixe.png}\\
                 \tiny{Divisão de Feixe}
             \end{minipage}
             \hfill
             \begin{minipage}[c]{0.45\textwidth}
                 \centering
-                \includegraphics[width=0.45\textwidth, keepaspectratio]{figs/apr_wigner_compressao.png}\\
+                \includegraphics[width=0.45\textwidth, keepaspectratio]{figs/apr_wigner_compressao.png}\quad
+                \includegraphics[width=0.45\textwidth, keepaspectratio]{figs/circuito_compressao.png}\\
                 \tiny{Compressão}
             \end{minipage}
         \end{minipage}
@@ -261,13 +276,15 @@
         \begin{minipage}[c]{\textwidth}
             \begin{minipage}[c]{0.45\textwidth}
                 \centering
-                \includegraphics[width=0.9\textwidth, keepaspectratio]{figs/apr_wigner_fase_cubica.png}\\
+                \includegraphics[width=0.45\textwidth, keepaspectratio]{figs/apr_wigner_fase_cubica.png}\quad
+                \includegraphics[width=0.45\textwidth, keepaspectratio]{figs/circuito_cubica.png}\\
                 \tiny{Fase Cúbica}
             \end{minipage}
             \hfill
             \begin{minipage}[c]{0.45\textwidth}
                 \centering
-                \includegraphics[width=0.9\textwidth, keepaspectratio]{figs/apr_wigner_kerr.png}\\
+                \includegraphics[width=0.45\textwidth, keepaspectratio]{figs/apr_wigner_kerr.png}\quad
+                \includegraphics[width=0.45\textwidth, keepaspectratio]{figs/circuito_kerr.png}\\
                 \tiny{Kerr}
             \end{minipage}
         \end{minipage}
@@ -308,7 +325,7 @@
 
 \begin{frame}
     \frametitle{Abordagem Quântica}
-    No contexto de CVQC: $x_i\rightarrow\hat{x}=(\hat{x}_1,\hat{x}_2,\dots,\hat{x}_d)$ 
+    No contexto de CVQC: $x\rightarrow\hat{x}=(\hat{x}_1,\hat{x}_2,\dots,\hat{x}_d)$ 
     Assim a formulação pode ser 
     $$
     \hat{H}=f(\hat{x})+\lambda_h\sum_{r=1}^Rh_r(\hat{x})^2+\lambda_g\sum_{s=1}^S\max\{0,g_s(\hat{x})\}^2+\lambda_b\sum B(\hat{x})
@@ -324,7 +341,7 @@
         $$
 
         $$
-            \min_{\theta} E(\theta) =\min\bra{\psi(\theta)}H\ket{\psi(\theta)}
+            \min_{\beta^*} E(\beta^*) =\min_{\beta^*}\bra{\psi(\beta^*)}H\ket{\psi(\beta^*)}
         $$
 
     \end{block}
@@ -334,7 +351,7 @@
 \begin{frame}{Abordagem Quântica}
 
     \begin{block}{Quantum Approximate Optimization Algorithm}
-        minimizar
+        Encontrar $(\gamma^*,\beta^*)$ que minimiza
         $$
             F_p(\gamma,\beta)=\bra{\gamma,\beta}H_C\ket{\gamma,\beta}
         $$
@@ -343,7 +360,6 @@
             \ket{\gamma,\beta}=\prod_{l=1}^p e^{-i\beta_lH_M}e^{-i\gamma_lH_C}\ket{\psi_0}
         $$
     \end{block}
-
 \end{frame}
 %------------------------------------------------
 \section{Objetivos}
@@ -367,21 +383,265 @@
 
 \end{frame}
 %------------------------------------------------
-\section{Metodologia}
-\begin{frame}{Metodologia}
-    Teste
+\section{Metodologia e Resultados Parciais}
+\begin{frame}{Metodologia e Resultados}
+    \begin{block}{Modelagem}
+        \begin{itemize}
+            \item Duas propostas
+            \item Grafo e variáveis
+            \begin{itemize}
+                \item $N$ cidades
+                \item $d_{ij}$ distâncias entre as cidades $i$ e $j$
+                \item variável binária
+                $$x_{ik}=\begin{cases}
+                    1, &\text{se a cidade }i\text{ é visitada na posição }k,\\
+                    0, &\text{caso contrário}
+                \end{cases}$$
+            \end{itemize}
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Metodologia e Resultados Parciais}
+
+    \begin{block}{Função Objetivo e restrições - TSP}
+        $$H=\sum_{k=1}^{N}\sum_{i=1}^{N}\sum_{j=1}^{N} d_{ij}x_{i,k}x_{j,k+1}$$
+    sujeito a 
+        \begin{itemize}
+            \item $\displaystyle\sum_{i=1}^{N} = 1,\ \forall k\in K\rightarrow$ exatamente uma cidade, 
+            \item $\displaystyle\sum_{k=1}^{N} = 1,\ \forall k\in K\rightarrow$ cada cidade deve ser visitada uma única vez
+        \end{itemize}
+    \end{block}
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Metodologia e Resultados Parciais}
+    \begin{block}{Algoritmo de Força Bruta}
+        \begin{itemize}
+            \item Base comparativa
+            \item quantidade de variáveis binárias pequenas
+            \item possibilidade de obter todas as rotas possíveis
+        \end{itemize}
+    \end{block}
+    \pause 
+    \begin{block}{Ambiente Computacional}
+        Chamado Beluga, equipado com:
+        \begin{itemize}
+            \item processador AMD EPYC 7453,
+            \item 1TB RAM 
+            \item duas GPUs
+            \item QuTiP
+        \end{itemize}
+    \end{block}
+    
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Metodologia e Resultados Parciais}
+
+    \begin{block}{Modelagem qubits$\rightarrow$qumodes}
+        \begin{itemize}
+            \item variáveis discretas $x_{ik}\rightarrow x'_{ik}\rightarrow \hat{x}_{ik}=\displaystyle\frac{1+x'_{ik}}{2} \rightarrow\hat{x}_{ik}$ operador de posição e $\hat{p}_{ik}$ operador de momento 
+            \item $[\hat{x}_{ik},{\hat{p}_{kl}}]=i\hbar\delta_{ij}\delta_{kl}$
+            \item poço duplo $H_{\text{bin}}=\displaystyle\sum_{i,k}\left(\left(x'_{ik}\right)^2-1\right)^2$
+            \item termo cinético $\displaystyle\sum_{i,k}\frac{\hat{p}^2_{ik}}{2m}$
+        \end{itemize}
+    \end{block}
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Metodologia e Resultados Parciais}
+
+    \begin{block}{Hamiltoniano completo}
+        \begin{equation*}
+            \begin{split}
+                H=&   \sum_{k=1}^{N}\sum_{i=1}^{N}\sum_{j=1}^{N} d_{ij}x_{i,k}x_{j,k+1} + \\ 
+                & + \alpha\sum_{i=1}^{N}\left(\sum_{k=1}\hat{x}_{i,k}-1\right)^2 +
+                \beta\sum_{k=1}^{N}\left(\sum_{i=1}\hat{x}_{i,k}-1\right)^2 +\\
+                & + \gamma\sum_{ik}\left(\left(x_{ik}\right)^2-1\right)^2 
+                 + \sum_{ik}\frac{\hat{p}^2_{ik}}{2m}
+            \end{split}
+        \end{equation*}
+        onde $\alpha, \beta,\gamma$ e $m$ são hiperparâmetros do modelo
+    \end{block}
+
+\end{frame}
+
+\begin{frame}{Metodologia e Resultados Parciais}
+    \begin{block}{Resultados}
+        \begin{itemize}
+            \item $n\in\{3,4\}\rightarrow$ 
+            \begin{itemize}
+                \item Comparação com resultados de força bruta
+                \item Equivalente 
+                
+                Exemplo: 
+                \begin{itemize}
+                    \item Força Bruta: $V_0\rightarrow V_1\rightarrow V_2\rightarrow V_3\rightarrow V_0$
+                    \item Método Qubit-Qumode: $V_0\rightarrow V_3\rightarrow V_2\rightarrow V_1\rightarrow V_0$
+                \end{itemize}
+            \end{itemize}
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Metodologia e Resultados Parciais}
+    \begin{block}{Resultados}
+        \begin{itemize}
+            \item Intâncias de pequena dimensão
+            \item custo de memória: $O(2^M)$ qubits $\rightarrow O(d^M)$ qumodes
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Metodologia e Resultados Parciais}
+    \begin{block}{Modelo $N-$qumode-posição}
+        \begin{itemize}
+            \item Cada posição da rota uma variável indica qual cidade é visitada 
+            \item Exemplo 
+            \begin{itemize}
+                \item para $N=4\rightarrow \ket{2\ 0\ 3 \ 1}$
+            \end{itemize}
+            \item Nesse contexto: 
+            \begin{itemize}
+                \item cidade $c_k\in\{0,1,\dots,N-1\}$
+            \end{itemize}
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Metodologia e Resultados Parciais}
+    \begin{block}{Hamiltoniano}
+        \begin{itemize}
+            \item Custo $H=\sum_{k=1}^{N} d_{n_k,n_{k+1}}$ 
+            \item Operador numero $\hat{n}_k\ket{a}=a\ket{a}$
+            \item Hamiltoniano correspondente
+            $$
+            H=\sum_{k=1}^{N} \sum_{a=1}^{N}\sum_{b=1}^{N} \ket{a}\bra{a}_k\otimes\ket{b}\bra{b}_{k+1}
+            $$
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Metodologia e Resultados Parciais}
+    \begin{block}{Penalidades}
+        \begin{itemize}
+            \item Apenas uma cidade na rota $$H_{\text{penalty}}=\sum_{k<l} \ket{a}\bra{a}_k\otimes \ket{a}\bra{a}_l$$
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Metodologia e Resultados Parciais}
+\begin{block}{Hamiltoniano}
+    $$H=\sum_{k=1}^{N} \sum_{a=1}^{N}\sum_{b=1}^{N} \ket{a}\bra{a}_k\otimes\ket{b}\bra{b}_{k+1} +\lambda \sum_{a=1}^{N}\left(\sum_{k<l} \ket{a}\bra{a}_k\otimes \ket{a}\bra{a}_l -1\right)^2$$
+
+    onde $\lambda$ é um parâmetro de penalização
+\end{block}
+\end{frame}
+
+\begin{frame}{Metodologia e Resultados Parciais}
+    \begin{block}{Comparação de Resultados}
+        \centering
+        \begin{tabular}{|c|c|c|r|}
+    \hline
+    \textbf{N} & \textbf{Custo} & \textbf{Energia} & \multicolumn{1}{c|}{\textbf{Tempo}} \\ \hline
+    3 & 19 & 19,0 & 6 ms \\ \hline
+    4 & 23 & 23,0 & 16 ms \\ \hline
+    5 & 12 & 12,0 & 86 ms \\ \hline
+    6 & 19 & 19,0 & 1 s 229 ms \\ \hline
+    7 & 41 & 41,0 & 1 min 7 s \\ \hline
+    8 & 26 & 26,0 & 2 h 53 min \\ 
+    \hline
+    9 & 17 & 17,0 & 3sems 20h 1min 35s\\ \hline
+    \end{tabular}\\ 
+    \tiny{Autoria própria (2026)}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Metodologia e Resultados Parciais}
+
+    \begin{block}{Comparação Estrutural}
+        \centering
+        \begin{tabular}{lcc}
+        \hline
+        \textbf{Característica} & \textbf{Proposta 1} & 
+        \textbf{Proposta 2} \\
+        \hline
+        Variáveis & $N^2$ binárias & $N$ qumodes \\
+        Corte local & --- & $d = N$ \\
+        Dimensão do espaço & $2^{N^2}$ & $N^N$ \\
+        Exemplo $N=6$ & $2^{36} \approx 6{,}9 \times 10^{10}$ & 
+        $6^6 = 46.656$ \\
+        Exemplo $N=8$ & $2^{64} \approx 1{,}8 \times 10^{19}$ & 
+        $8^8 = 16.777.216$ \\
+        % Restrições & Termos de penalização & Termos de penalização \\
+        % Hardware natural & Qubits & Fotônico/CV \\
+        \hline
+        \end{tabular} \\
+        \tiny{Autoria Própria (2026)}
+    \end{block}
 \end{frame}
 
 %------------------------------------------------
-\section{Resultados}
-\begin{frame}{Resultados}
-    Teste
-\end{frame}
-
-%------------------------------------------------
-\section{Conclusãoe e Próximo Passos}
+\section{Conclusões e Próximo Passos}
 \begin{frame}{Conclusão e Próximo Passos}
-    Teste
+    \begin{block}{Conclusão}
+        \begin{itemize}
+            \item Desenvolvimento de abordagem em CVQC para TSP/VRP 
+            \item Duas formulações 
+            \item Resultados obtidos demonstram a consistência da formulção 
+        \end{itemize}
+        
+    \end{block}
+\end{frame}
+
+\begin{frame}{Conclusão e Próximo Passos}
+    \begin{block}{Próximos Passos}
+        \begin{itemize}    
+            \item Aplicar modelos de otimização $VQE$ ou $QAOA$
+            \item Modificar o Hamiltoniano para um VRP 
+            \begin{itemize}
+                \item Proposta inicial
+            \end{itemize}
+        \end{itemize}
+
+        \begin{equation*}
+            H^{(M)}_{cost} =  \sum_{\mu=1}^{M} \sum_{a=1}^{N-1} \sum_{i=1}^{N} 
+            \sum_{j=1}^{N} d_{ij} \left(\ketbra{a}{a}^{(n)}_k \otimes 
+            \ketbra{\mu}{\mu}^{(v)}_k\right)  \left(\ketbra{a}{a}^{(n)}_j \otimes \ketbra{\mu}{\mu}^{(v)}_j\right)    
+        \end{equation*}
+        
+    \end{block}
+\end{frame}
+
+\begin{frame}{Conclusão e Próximo Passos}
+    \begin{block}{Próximos Passos}
+        \centering
+\resizebox{\textwidth}{!}{
+    \begin{tabular}{|p{6.2cm}|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+    \hline
+
+    \textbf{Etapa} & \textbf{Jun} & \textbf{Jul} & \textbf{Ago} & \textbf{Set} & \textbf{Out} & \textbf{Nov} & \textbf{Dez} \\  \hline \hline
+    Revisão bibliográfica e ampliação do referencial teórico &  \cellcolor{gray}  &  \cellcolor{gray}  &  \cellcolor{gray}  &     &     &     & \\  \hline
+    Desenvolvimento e extensão do Hamiltoniano               &  \cellcolor{lightgray}  &  \cellcolor{lightgray}  &  \cellcolor{lightgray}  &  \cellcolor{lightgray}  &     &     & \\  \hline
+    Implementação computacional  & &  \cellcolor{gray}  &  \cellcolor{gray}  &  \cellcolor{gray}  &  \cellcolor{gray}  &         & \\  \hline
+    Simulações, análise de resultados e validação            &     &     &  \cellcolor{lightgray}  &  \cellcolor{lightgray}  &  \cellcolor{lightgray}  &     & \\  \hline
+    Redação e consolidação da tese &  \cellcolor{gray}  &  \cellcolor{gray}  &  \cellcolor{gray}  &  \cellcolor{gray}  &  \cellcolor{gray}  &  \cellcolor{gray}  & \\  \hline
+    Defesa da Tese &    &    &    &     &     &      & \cellcolor{lightgray}  \\  \hline
+    \end{tabular}
+    }
+    \tiny{Autoria Própria (2026)}
+
+    \end{block}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+    \titlepage
 \end{frame}
 
 \end{document}

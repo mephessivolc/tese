@@ -1,0 +1,24 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{margin=2cm}
+
+\begin{document}
+
+\section*{Circuito Strawberry Fields}
+
+O método \texttt{draw\_circuit()} não conseguiu desenhar este programa. Isso pode ocorrer quando o circuito contém operações ainda não suportadas pelo desenhador do Strawberry Fields, como algumas preparações ou medições.
+
+\subsection*{Erro retornado}
+\begin{verbatim}
+UnsupportedGateException: Unsupported operation Fock(1) | (q[0]) not printable by circuit builder!
+\end{verbatim}
+
+\subsection*{Programa em sintaxe Blackbird}
+\begin{verbatim}
+Fock(1) | (q[0])
+BSgate(0.7854, 0) | (q[0], q[1])
+\end{verbatim}
+
+\end{document}

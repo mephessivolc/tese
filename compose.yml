@@ -29,16 +29,7 @@ services:
     working_dir: /workspace
     command: ["sleep", "infinity"]
     environment:
-<<<<<<< HEAD
       <<: *common-env
-=======
-      HOME: /home/${LOCAL_USER:-devuser}
-      PYTHONDONTWRITEBYTECODE: "1"
-      PYTHONUNBUFFERED: "1"
-      PIP_DISABLE_PIP_VERSION_CHECK: "1"
-      MPLCONFIGDIR: /home/${LOCAL_USER:-devuser}/.cache/matplotlib
-      PYTHONPATH: /workspace/code:/workspace/code/src:/workspace
->>>>>>> 2f929bf (update 05 13 2026 17:56)
       TEXMFVAR: /workspace/.texlive/texmf-var
       TEXMFCACHE: /workspace/.texlive/texmf-cache
     volumes:
@@ -57,15 +48,6 @@ services:
     command: ["python", "/workspace/code/src/teste.py"]
     restart: unless-stopped
     environment:
-<<<<<<< HEAD
       <<: *common-env
-=======
-      HOME: /home/${LOCAL_USER:-devuser}
-      PYTHONDONTWRITEBYTECODE: "1"
-      PYTHONUNBUFFERED: "1"
-      PIP_DISABLE_PIP_VERSION_CHECK: "1"
-      MPLCONFIGDIR: /home/${LOCAL_USER:-devuser}/.cache/matplotlib
-      PYTHONPATH: /workspace/code:/workspace/code/src:/workspace
->>>>>>> 2f929bf (update 05 13 2026 17:56)
     volumes:
       - .:/workspace

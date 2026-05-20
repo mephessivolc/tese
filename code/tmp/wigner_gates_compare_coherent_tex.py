@@ -117,6 +117,10 @@ from strawberryfields.ops import Dgate, Sgate, BSgate, Rgate, Vgate, Kgate, Fock
 OUTPUT_DIR = BASE_DIR / "figuras_wigner"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
+# Arquivos LaTeX gerados pelo Strawberry Fields para os circuitos
+CIRCUIT_TEX_DIR = OUTPUT_DIR / "circuitos_tex"
+CIRCUIT_TEX_DIR.mkdir(parents=True, exist_ok=True)
+
 # Estado coerente de referência |alpha>
 ALPHA_R = 2.5
 ALPHA_PHI = np.pi / 6  # fase do deslocamento que cria o estado coerente
@@ -237,7 +241,7 @@ def run_program_and_get_wigner(num_modes, plot_mode, prepare_state, apply_gate=N
         if apply_gate is not None:
             apply_gate(q_after)
 
-    tex_file, tex_content = prog_after.draw_circuit(tex_dir='./circuit_tex', write_to_file=False)
+    tex_content = get_circuit_tex(prog_after)
 
     eng_after = sf.Engine("fock", backend_options={"cutoff_dim": CUTOFF_DIM})
     state_after = eng_after.run(prog_after).state
@@ -322,8 +326,80 @@ def plot_gate_pair(W_before, W_after, gate_title, filename, global_vmin, global_
     plt.savefig(filename, dpi=DPI, bbox_inches="tight")
     plt.close(fig)
 
-def write_tex():
-    pass 
+def get_program_listing(prog):
+    """
+    Retorna uma representação textual do programa em sintaxe Blackbird.
+    Usado como fallback quando draw_circuit não suporta alguma operação.
+    """
+    lines = []
+
+    def collect(line):
+        lines.append(str(line))
+
+    prog.print(collect)
+    return "\n".join(lines)
+
+
+def make_fallback_tex(prog, error):
+    """
+    Gera um .tex compilável caso prog.draw_circuit() falhe.
+
+    Observação: draw_circuit() não suporta todas as operações do Strawberry Fields.
+    Quando isso ocorrer, este fallback salva o programa em formato textual
+    dentro de um documento LaTeX, em vez de perder completamente a saída.
+    """
+    blackbird = get_program_listing(prog)
+    return rf"""\documentclass{{article}}
+\usepackage[utf8]{{inputenc}}
+\usepackage[T1]{{fontenc}}
+\usepackage{{geometry}}
+\geometry{{margin=2cm}}
+
+\begin{{document}}
+
+\section*{{Circuito Strawberry Fields}}
+
+O método \texttt{{draw\_circuit()}} não conseguiu desenhar este programa. Isso pode ocorrer quando o circuito contém operações ainda não suportadas pelo desenhador do Strawberry Fields, como algumas preparações ou medições.
+
+\subsection*{{Erro retornado}}
+\begin{{verbatim}}
+{type(error).__name__}: {error}
+\end{{verbatim}}
+
+\subsection*{{Programa em sintaxe Blackbird}}
+\begin{{verbatim}}
+{blackbird}
+\end{{verbatim}}
+
+\end{{document}}
+"""
+
+
+def get_circuit_tex(prog):
+    """
+    Retorna o conteúdo LaTeX do circuito gerado pelo Strawberry Fields.
+
+    Como write_to_file=False, o Strawberry Fields não cria o arquivo diretamente;
+    ele apenas retorna o conteúdo .tex. O arquivo é salvo depois por write_tex().
+    """
+    try:
+        _, tex_content = prog.draw_circuit(
+            tex_dir=str(CIRCUIT_TEX_DIR),
+            write_to_file=False,
+        )
+        return tex_content
+    except Exception as exc:
+        return make_fallback_tex(prog, exc)
+
+
+def write_tex(tex_content, filename):
+    """
+    Salva o conteúdo LaTeX do circuito em disco.
+    """
+    filename = Path(filename)
+    filename.parent.mkdir(parents=True, exist_ok=True)
+    filename.write_text(tex_content, encoding="utf-8")
+    return filename
 
 # --------------------------------------------------
 # Programa principal
@@ -371,9 +447,8 @@ def main():
             global_vmax=global_vmax,
         )
 
-        out_file_tex = OUTPUT_DIR / f"tex_{item['key']}.tex"
-        with open(out_file_tex, "w") as file:
-            file.writelines(item['tex_file'])
+        out_file_tex = CIRCUIT_TEX_DIR / f"circuito_{item['key']}.tex"
+        write_tex(item["tex_content"], out_file_tex)
 
         print(f"Figura salva em: {out_file} e\nTex salvo em: {out_file_tex}\n")
 
