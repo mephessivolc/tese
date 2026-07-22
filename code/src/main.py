@@ -202,6 +202,6 @@ if __name__ == "__main__":
         run_experiment(
             N_cities=city, 
             p_layers=1, 
-            max_iter=iter, 
+            max_iter=15, 
             optimizer_method="COBYLA"
         )
