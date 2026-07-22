@@ -1,184 +1,165 @@
+import numpy as np
 import networkx as nx
-import numpy as np 
 import matplotlib.pyplot as plt
 
 from pathlib import Path
 
-
-def get_path():
-    """
-    Retorna o diretório onde as imagens serão armazenadas.
-
-    O diretório é criado automaticamente caso não exista.
-
-    Returns
-    -------
-    Path
-        Caminho absoluto para a pasta "images" dentro do diretório atual.
-    """
-    current_path = Path.cwd()
-    img_path = current_path / "images"
-
-    img_path.mkdir(exist_ok=True)
-
-    return img_path
+from get_paths import get_images_path
 
 
 class GraphBuilder:
-    """
-    Constrói e manipula grafos ponderados a partir de matrizes aleatórias.
-
-    A classe gera uma matriz de adjacência simétrica de tamanho `n x n`,
-    cria um grafo não-direcionado utilizando NetworkX e permite visualizar
-    o grafo com os pesos das arestas.
-
-    Parameters
-    ----------
-    n : int
-        Número de vértices do grafo.
-    intergers_number : bool, optional
-        Define se os pesos das arestas serão inteiros ou números reais
-        aleatórios. Se True, gera inteiros entre 1 e 9. Caso contrário,
-        gera números reais entre 0 e 1.
-
-    Attributes
-    ----------
-    n : int
-        Número de vértices do grafo.
-    integers_numbers : bool
-        Indica se os pesos são inteiros ou reais.
-    _G : networkx.Graph
-        Objeto de grafo criado a partir da matriz de adjacência.
-    _matrix : numpy.ndarray
-        Matriz de adjacência simétrica usada para construir o grafo.
-    """
-
-    def __init__(self, n, intergers_number=True):
-        """
-        Inicializa o construtor de grafos.
-
-        Parameters
-        ----------
-        n : int
-            Número de vértices do grafo.
-        intergers_number : bool, optional
-            Se True, utiliza pesos inteiros; caso contrário,
-            utiliza valores reais aleatórios.
-        """
+    def __init__(self, n: int = 3, seed: int = 42):
         self.n = n
-        self.integers_numbers = intergers_number
-        self._G = self._build()
-        self._matrix = self._matrix()
+        self.seed = seed
+        self.matrix = self._generate_matrix()
 
-    def _matrix(self):
+    def _generate_matrix(self) -> np.ndarray:
+        np.random.seed(self.seed)
+        # Matriz simétrica com diagonal zero (sem laços)
+        adj = np.random.uniform(1.0, 10.0, size=(self.n, self.n))
+        adj = (adj + adj.T) / 2.0
+        np.fill_diagonal(adj, 0.0)
+        return np.round(adj, 2)
+
+    def _convert_qaoa_vector_to_route(self, vector) -> list:
         """
-        Gera uma matriz de adjacência simétrica aleatória.
-
-        A matriz possui diagonal principal igual a zero
-        (sem auto-laços) e pesos simétricos, garantindo
-        um grafo não-direcionado.
-
-        Returns
-        -------
-        numpy.ndarray
-            Matriz de adjacência de dimensão (n, n).
+        Converte qualquer formato de entrada (tupla, lista simples [0, 1, 2]
+        ou vetor binário N^2 do QAOA) em uma lista Python simples de nós.
         """
-        matrix = np.random.random((self.n, self.n))
+        # Se for uma tupla ou numpy array, garante a conversão inicial para lista
+        if isinstance(vector, (tuple, np.ndarray)):
+            vector = list(vector)
 
-        if self.integers_numbers:
-            matrix = np.random.randint(low=1, high=10, size=(self.n, self.n))
+        # Se for um vetor de estados do QAOA de tamanho N^2
+        if len(vector) == self.n ** 2:
+            matrix_form = np.array(vector).reshape((self.n, self.n))
+            route = []
+            for step in range(self.n):
+                city = int(np.argmax(matrix_form[:, step]))
+                route.append(city)
+            return route
 
-        for i in range(self.n):
-            for j in range(i, self.n):
-                if i == j:
-                    matrix[i, i] = 0
-                else:
-                    matrix[j, i] = matrix[i, j]
+        # Retorna como lista simples de cidades
+        return list(vector)
 
-        return matrix
-
-    @property
-    def matrix(self):
+    def plot_graph_and_route(self, solution_vector = None, prefix: str = "tsp") -> tuple:
         """
-        Retorna a matriz de adjacência do grafo.
-
-        Returns
-        -------
-        numpy.ndarray
-            Matriz de adjacência armazenada no objeto.
-        """
-        return self._matrix
-
-    def _build(self) -> nx.Graph:
-        """
-        Constrói o grafo a partir da matriz de adjacência.
-
-        Returns
-        -------
-        networkx.Graph
-            Grafo não-direcionado criado a partir da matriz.
-        """
-        matrix = self._matrix()
-
-        G = nx.from_numpy_array(matrix)
-
-        return G
-
-    @property
-    def graph(self):
-        """
-        Retorna o grafo construído.
-
-        Returns
-        -------
-        networkx.Graph
-            Instância do grafo NetworkX.
-        """
-        return self._G
-
-    def draw(self, figsize=(8, 6), figname=None) -> None:
-        """
-        Desenha o grafo utilizando matplotlib.
-
-        O grafo é exibido com os rótulos dos vértices e
-        os pesos das arestas. Opcionalmente a figura pode
-        ser salva em arquivo.
+        Gera duas imagens na pasta de imagens:
+        1. Grafo completo original (com pesos das arestas).
+        2. Grafo com o trajeto da solução destacado em vermelho com setas.
 
         Parameters
         ----------
-        figsize : tuple, optional
-            Tamanho da figura (largura, altura).
-        figname : str, optional
-            Nome do arquivo para salvar a imagem. Caso
-            seja None, a imagem não será salva.
+        solution_vector : list, tuple or np.ndarray, optional
+            Vetor/Rota de solução (ex: (0, 1, 2) do CA ou estado binário do QAOA).
+        prefix : str
+            Prefixo para nomear as imagens geradas.
+
+        Returns
+        -------
+        tuple
+            (Path do grafo original, Path do grafo com trajeto)
         """
-        pos = nx.spring_layout(self._G, seed=7, k=0.5, iterations=100)
+        images_dir = get_images_path()
+        
+        # Cria o grafo completo não-direcionado
+        G = nx.Graph()
+        for i in range(self.n):
+            G.add_node(i, label=f"Cidade {i}")
+            for j in range(i + 1, self.n):
+                G.add_edge(i, j, weight=self.matrix[i, j])
 
-        plt.figure(figsize=figsize)
-        color_map = ["blue"]
+        # Posições fixas dos nós usando layout baseado na seed
+        pos = nx.spring_layout(G, seed=self.seed)
 
-        nx.draw(
-            self._G,
-            pos,
-            node_color=color_map,
-            with_labels=True,
-            node_size=500,
-            font_size=8,
-        )
+        # -------------------------------------------------------------
+        # 1. GERAR IMAGEM DO GRAFO ORIGINAL
+        # -------------------------------------------------------------
+        plt.figure(figsize=(7, 6))
+        nx.draw_networkx_nodes(G, pos, node_color='lightblue', node_size=700)
+        nx.draw_networkx_labels(G, pos, font_size=12, font_weight='bold')
+        nx.draw_networkx_edges(G, pos, edge_color='gray', width=1.5, alpha=0.7)
 
-        edge_labels = nx.get_edge_attributes(self._G, 'weight')
+        labels = nx.get_edge_attributes(G, 'weight')
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=labels, font_size=10)
 
-        nx.draw_networkx_edge_labels(
-            self._G,
-            pos,
-            edge_labels=edge_labels,
-            font_color='red'
-        )
+        plt.title(f"Grafo Original do TSP (N={self.n} Cidades)", fontsize=12)
+        plt.axis('off')
 
-        if figname is not None:
-            name_file = f"{figname}"
-            path = get_path()
+        orig_path = images_dir / f"{prefix}_graph_original.png"
+        plt.savefig(orig_path, dpi=300, bbox_inches='tight')
+        plt.close()
 
-            plt.savefig(path / name_file)
+        # -------------------------------------------------------------
+        # 2. GERAR IMAGEM DO GRAFO COM O TRAJETO DESTACADO
+        # -------------------------------------------------------------
+        route_path = None
+        if solution_vector is not None:
+            # Trata e converte a entrada para lista simples
+            route = self._convert_qaoa_vector_to_route(solution_vector)
+            
+            # Fecha o ciclo do TSP voltando para a cidade inicial
+            full_cycle = route + [route[0]]
 
-        plt.show()
+            # Cria grafo direcionado para desenhar as setas do trajeto
+            G_directed = nx.DiGraph()
+            for i in range(self.n):
+                G_directed.add_node(i)
+
+            route_edges = []
+            for i in range(len(full_cycle) - 1):
+                u, v = full_cycle[i], full_cycle[i + 1]
+                G_directed.add_edge(u, v, weight=self.matrix[u, v])
+                route_edges.append((u, v))
+
+            plt.figure(figsize=(7, 6))
+            
+            # Desenha fundo suave (arestas não utilizadas no ciclo)
+            nx.draw_networkx_edges(G, pos, edge_color='lightgray', width=1.0, style='dashed', alpha=0.5)
+
+            # Desenha nós
+            nx.draw_networkx_nodes(G, pos, node_color='lightgreen', node_size=750)
+            nx.draw_networkx_labels(G, pos, font_size=12, font_weight='bold')
+
+            # Desenha trajeto em vermelho com setas direcionais
+            nx.draw_networkx_edges(
+                G_directed, pos, 
+                edgelist=route_edges, 
+                edge_color='crimson', 
+                width=3.0, 
+                arrowstyle='->', 
+                arrowsize=20
+            )
+
+            # Rótulos das distâncias
+            nx.draw_networkx_edge_labels(G, pos, edge_labels=labels, font_size=10)
+
+            plt.title(f"Trajeto Destacado do TSP: {' -> '.join(map(str, full_cycle))}", fontsize=11)
+            plt.axis('off')
+
+            route_path = images_dir / f"{prefix}_graph_route.png"
+            plt.savefig(route_path, dpi=300, bbox_inches='tight')
+            plt.close()
+
+        return orig_path, route_path
+
+    def draw(self, filename: str = "graph.png") -> Path:
+        """Método de conveniência para salvar a visualização do grafo original."""
+        orig_path, _ = self.plot_graph_and_route(prefix=filename.replace(".png", ""))
+        return orig_path
+
+
+if __name__ == "__main__":
+    graph = GraphBuilder(6)
+
+    print("Matriz utilizada:")
+    print(graph.matrix)
+
+    print("\nSalvando imagem do grafo...")
+    saved_path = graph.draw("teste.png")
+    print(f"[OK] Grafo salvo com sucesso em: {saved_path}")
+
+    # Exemplo de teste com um vetor de solução em tupla
+    print("\nSalvando rota de teste...")
+    _, route_path = graph.plot_graph_and_route(solution_vector=(0, 2, 4, 1, 5, 3), prefix="teste_rota")
+    print(f"[OK] Rota salva com sucesso em: {route_path}")
