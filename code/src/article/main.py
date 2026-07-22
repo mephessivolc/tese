@@ -197,9 +197,11 @@ def run_experiment(
 
 
 if __name__ == "__main__":
-    run_experiment(
-        N_cities=3, 
-        p_layers=1, 
-        max_iter=15, 
-        optimizer_method="COBYLA"
-    )
+    for city in [3,4,5]:
+        # for iter in range(100, 1001, 50):
+        run_experiment(
+            N_cities=city, 
+            p_layers=1, 
+            max_iter=iter, 
+            optimizer_method="COBYLA"
+        )
