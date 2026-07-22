@@ -8,7 +8,7 @@ from scipy.optimize import minimize, dual_annealing
 from get_paths import get_images_path, get_results_path
 from utils import format_timespan, Logger
 from graphs import GraphBuilder
-from ca_bruteforce import tsp_bruteforce_all
+from brute_force import tsp_bruteforce_all
 from hamiltonian import Hamiltonian
 from qaoa_circuit import QAOACircuit
 
