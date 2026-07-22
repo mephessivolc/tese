@@ -1,209 +1,312 @@
 import time
-from pathlib import Path
 import numpy as np
-import matplotlib.pyplot as plt
-from scipy.optimize import minimize, dual_annealing
 
-# Módulos do Projeto
-from get_paths import get_images_path, get_results_path
-from utils import format_timespan, Logger
+import strawberryfields as sf
+
+from strawberryfields.ops import Dgate, Rgate, BSgate
+from scipy.optimize import minimize
+
 from graphs import GraphBuilder
-from brute_force import tsp_bruteforce_all
-from hamiltonian import Hamiltonian
-from qaoa_circuit import QAOACircuit
+from brute_force import tsp_bruteforce
+
+from pathlib import Path
 
 
-def run_experiment(
-    N_cities: int = 3, 
-    p_layers: int = 1, 
-    max_iter: int = 50, 
-    seed: int = 42,
-    optimizer_method: str = "COBYLA",
-    save_outputs: bool = True
-) -> dict:
+BASE_DIR = Path(__file__).resolve().parent
+
+def n_params_ansatz(n_qumodes):
+    """Número de parâmetros independentes em uma camada do ansatz."""
+    return 3 * n_qumodes + 2 * (n_qumodes - 1) + 3 * n_qumodes
+
+
+def vqe_ansatz_layer(q, n_qumodes, params):
     """
-    Orquestra o experimento CV-QAOA salvando a saída no log .txt e 
-    exibindo os VETORES DE SOLUÇÃO encontrados por CA e QAOA.
+    Camada VQE CV:
+    - deslocamento + rotação em cada qumode
+    - beam splitters entre vizinhos
+    - deslocamento + rotação final em cada qumode
     """
-    global_start_time = time.time()
+    expected = n_params_ansatz(n_qumodes)
+    if len(params) < expected:
+        raise ValueError(f"Foram recebidos {len(params)} parâmetros, mas são necessários {expected}.")
 
-    log_filename = f"experiment_N{N_cities}_p{p_layers}_mi{max_iter}_{optimizer_method.lower()}.txt"
-    log_path = get_results_path() / log_filename
+    idx = 0
 
-    with Logger(log_path):
-        print(f"\n===========================================================")
-        print(f"=== INICIANDO EXPERIMENTO CV-QAOA ({N_cities} CIDADES) ===")
-        print(f"=== Otimizador: {optimizer_method} | Camadas: {p_layers} | Seed: {seed} | MaxIter: {max_iter} ===")
-        print(f"===========================================================\n")
+    # 1. Bloco local inicial
+    for i in range(n_qumodes):
+        Dgate(params[idx], params[idx + 1]) | q[i]
+        Rgate(params[idx + 2]) | q[i]
+        idx += 3
 
-        # -------------------------------------------------------------
-        # 1. SOLUÇÃO CLÁSSICA (CA - FORÇA BRUTA)
-        # -------------------------------------------------------------
-        t0_ca = time.time()
-        gb = GraphBuilder(n=N_cities, seed=seed)
-        print("[CA] Resolvendo por Força Bruta...")
-        ca_cost, ca_paths, _ = tsp_bruteforce_all(gb.matrix)
-        t_ca = time.time() - t0_ca
+    # 2. Bloco de emaranhamento
+    for i in range(n_qumodes - 1):
+        BSgate(params[idx], params[idx + 1]) | (q[i], q[i + 1])
+        idx += 2
 
-        print(f"  -> Custo Mínimo Exato (CA): {ca_cost:.4f}")
-        print(f"  -> Vetor/Rota Ótima (CA):   {ca_paths}")
-        print(f"  -> Tempo Algoritmo Clássico: {format_timespan(t_ca)}\n")
+    # 3. Bloco local final
+    for i in range(n_qumodes):
+        Dgate(params[idx], params[idx + 1]) | q[i]
+        Rgate(params[idx + 2]) | q[i]
+        idx += 3
 
-        # -------------------------------------------------------------
-        # 2. CONSTRUÇÃO DO CIRCUITO QUÂNTICO (QA)
-        # -------------------------------------------------------------
-        t0_setup = time.time()
-        hamiltonian_builder = Hamiltonian(gb.matrix, lmbda=50.0)
-        qaoa_circuit = QAOACircuit(hamiltonian_builder)
-        t_setup = time.time() - t0_setup
+    return idx
 
-        n_qumodes = qaoa_circuit.N
-        cutoff_dim = qaoa_circuit.cutoff_dim
 
-        print(f"[QA] Circuito Montado ({n_qumodes} qumodes, cutoff={cutoff_dim}).")
-        print(f"  -> Tempo de Inicialização do Circuito: {format_timespan(t_setup)}\n")
+def estado_valido_tsp(fock_state, fix_start=True):
+    """
+    Codificação usada:
+    fock_state[cidade] = instante em que a cidade é visitada.
 
-        # -------------------------------------------------------------
-        # 3. OTIMIZAÇÃO VARIACIONAL DO QAOA
-        # -------------------------------------------------------------
-        np.random.seed(seed)
-        initial_params = np.random.uniform(0, np.pi, 2 * p_layers)
-        bounds = [(0, 2 * np.pi)] * (2 * p_layers)
+    Para N=4, os instantes válidos são 0, 1, 2, 3.
+    Exemplo:
+        fock_state = (0, 2, 1, 3)
+        rota = 0 -> 2 -> 1 -> 3 -> 0
+    """
+    N = len(fock_state)
+    esperado = set(range(N))
 
-        history = []
-        iteration_times = []
-        t0_optimization = time.time()
+    if set(fock_state) != esperado:
+        return False
 
-        def objective_function(params: np.ndarray) -> float:
-            t0_iter = time.time()
-            energy = qaoa_circuit.evaluate_energy(params, p_layers)
-            t_iter = time.time() - t0_iter
-            
-            history.append(energy)
-            iteration_times.append(t_iter)
-            
-            elapsed_so_far = time.time() - t0_optimization
-            print(f"  Iteração {len(history):02d} | <H> = {energy:.4f} | Tempo Iter: {format_timespan(t_iter)} | Decorrido: {format_timespan(elapsed_so_far)}")
-            return energy
+    if fix_start and fock_state[0] != 0:
+        return False
 
-        print(f"[QA] Iniciando Otimização ({optimizer_method})...")
-        
-        method_upper = optimizer_method.upper()
+    return True
 
-        if method_upper in ["COBYLA", "NELDER-MEAD", "POWELL"]:
-            result = minimize(
-                fun=objective_function,
-                x0=initial_params,
-                method=optimizer_method,
-                options={"maxiter": max_iter}
+
+def decodificar_rota(fock_state):
+    """Converte estado de Fock em rota fechada."""
+    rota = tuple(np.argsort(fock_state))
+    return rota + (rota[0],)
+
+
+def custo_rota(rota, d_matrix):
+    """Calcula o custo de uma rota fechada."""
+    return sum(d_matrix[rota[i], rota[i + 1]] for i in range(len(rota) - 1))
+
+
+def hamiltoniano_classico_tsp(fock_state, d_matrix, lambda_penalty, fix_start=True):
+    """
+    Hamiltoniano clássico associado à amostra de Fock.
+
+    Estados válidos são permutações de 0, ..., N-1.
+    Estados inválidos recebem penalidade.
+    """
+    N = len(fock_state)
+    fock_state = tuple(int(s) for s in fock_state)
+
+    if not estado_valido_tsp(fock_state, fix_start=fix_start):
+        n_unicos = len(set(fock_state))
+        repeticao = N - n_unicos
+        penalidade_repeticao = lambda_penalty * (repeticao + 1) ** 2
+        penalidade_inicio = lambda_penalty if fix_start and fock_state[0] != 0 else 0.0
+        return penalidade_repeticao + penalidade_inicio
+
+    rota = decodificar_rota(fock_state)
+    return custo_rota(rota, d_matrix)
+
+
+def analisar_circuito(
+    params,
+    n_qumodes,
+    d_matrix,
+    lambda_penalty,
+    cutoff_dim,
+    prob_min=1e-6,
+    top_k=10,
+    fix_start=True,
+):
+    """
+    Executa o circuito e retorna diagnóstico útil para o VQE.
+
+    A energia é calculada com normalização pela massa de probabilidade
+    dentro do cutoff e com penalidade para vazamento fora do cutoff.
+    """
+    prog = sf.Program(n_qumodes)
+
+    with prog.context as q:
+        vqe_ansatz_layer(q, n_qumodes, params)
+
+    eng = sf.Engine(
+        backend="fock",
+        backend_options={"cutoff_dim": cutoff_dim},
+    )
+
+    result = eng.run(prog)
+    probs = result.state.all_fock_probs()
+
+    prob_total = float(np.sum(probs))
+
+    if prob_total <= 1e-14:
+        return {
+            "energia": 10.0 * lambda_penalty,
+            "prob_total": prob_total,
+            "vazamento": 1.0,
+            "melhor_por_custo": None,
+            "melhor_por_probabilidade": None,
+            "top_estados": [],
+        }
+
+    energia_bruta = 0.0
+    registros = []
+
+    for fock_state, prob in np.ndenumerate(probs):
+        if prob <= 0.0:
+            continue
+
+        custo = hamiltoniano_classico_tsp(
+            fock_state,
+            d_matrix,
+            lambda_penalty,
+            fix_start=fix_start,
+        )
+
+        energia_bruta += float(prob) * custo
+
+        prob_norm = float(prob) / prob_total
+        valido = estado_valido_tsp(fock_state, fix_start=fix_start)
+        rota = decodificar_rota(fock_state) if valido else None
+
+        if prob_norm >= prob_min:
+            registros.append(
+                {
+                    "estado": tuple(int(s) for s in fock_state),
+                    "rota": rota,
+                    "custo": float(custo),
+                    "probabilidade": prob_norm,
+                    "valido": valido,
+                }
             )
-        elif method_upper in ["L-BFGS-B", "BFGS", "CG"]:
-            result = minimize(
-                fun=objective_function,
-                x0=initial_params,
-                method=optimizer_method,
-                bounds=bounds if method_upper == "L-BFGS-B" else None,
-                options={"maxiter": max_iter}
-            )
-        elif method_upper == "DUAL-ANNEALING":
-            result = dual_annealing(
-                func=objective_function,
-                bounds=bounds,
-                maxiter=max_iter,
-                seed=seed
-            )
-        else:
-            raise ValueError(f"Método '{optimizer_method}' não suportado.")
 
-        t_optimization = time.time() - t0_optimization
-        total_experiment_time = time.time() - global_start_time
+    # Energia condicional dentro do cutoff + penalidade de vazamento.
+    energia_condicional = energia_bruta / prob_total
+    vazamento = max(0.0, 1.0 - prob_total)
+    energia = energia_condicional + lambda_penalty * vazamento
 
-        opt_energy = result.fun
-        opt_params = result.x
-        approx_ratio = ca_cost / opt_energy if opt_energy > 0 else 0.0
-        avg_time_per_iter = np.mean(iteration_times) if iteration_times else 0.0
+    registros_validos = [r for r in registros if r["valido"]]
 
-        # -------------------------------------------------------------
-        # 4. EXTRAÇÃO DO VETOR DE ESTADO FINAL DO QAOA
-        # -------------------------------------------------------------
-        qaoa_solution = qaoa_circuit.get_solution_vector(opt_params, p_layers)
-        qaoa_vector = qaoa_solution["state_vector"]
-        qaoa_prob = qaoa_solution["probability"]
+    melhor_por_custo = None
+    melhor_por_probabilidade = None
 
-        # -------------------------------------------------------------
-        # 5. EXIBIÇÃO E LOG DOS RESULTADOS E VETORES
-        # -------------------------------------------------------------
-        print("\n===========================================================")
-        print("=== RELATÓRIO DE RESULTADOS E VETORES ENCONTRADOS ===")
-        print(f"  -> Custo Mínimo Real (CA):          {ca_cost:.4f}")
-        print(f"  -> Rota/Vetor de Solução (CA):      {ca_paths}")
-        print("  ---------------------------------------------------------")
-        print(f"  -> Energia Fundamental QAOA (QA):   {opt_energy:.4f}")
-        print(f"  -> Vetor do Estado Medido (QAOA):   {qaoa_vector}")
-        print(f"  -> Probabilidade do Estado (QAOA):  {qaoa_prob * 100:.2f}%")
-        print(f"  -> Approximation Ratio (\u03b1):       {approx_ratio:.4f}")
-        print("  ---------------------------------------------------------")
-        print(f"  -> Tempo Algoritmo Clássico (CA):   {format_timespan(t_ca)}")
-        print(f"  -> Tempo de Setup do Circuito (QA): {format_timespan(t_setup)}")
-        print(f"  -> Tempo da Otimização Variacional: {format_timespan(t_optimization)}")
-        print(f"  -> TEMPO TOTAL DO EXPERIMENTO:      {format_timespan(total_experiment_time)}")
-        print("===========================================================\n")
+    if registros_validos:
+        melhor_por_custo = min(registros_validos, key=lambda r: r["custo"])
+        melhor_por_probabilidade = max(registros_validos, key=lambda r: r["probabilidade"])
 
-        # -------------------------------------------------------------
-        # 6. SALVAR GRÁFICOS E ARQUIVOS AUXILIARES
-        # -------------------------------------------------------------
-        if save_outputs:
-            images_dir = get_images_path()
+    top_estados = sorted(
+        registros,
+        key=lambda r: r["probabilidade"],
+        reverse=True,
+    )[:top_k]
 
-            plt.figure(figsize=(8, 5))
-            plt.plot(range(1, len(history) + 1), history, marker='o', linewidth=2, label=f"QAOA ({optimizer_method})")
-            plt.axhline(y=ca_cost, color='r', linestyle='--', label=f"Ótimo Clássico CA ({ca_cost:.2f})")
-            plt.title(f"Convergência do CV-QAOA (N={N_cities}, p={p_layers})\nTempo Total: {format_timespan(total_experiment_time)}", fontsize=11)
-            plt.xlabel("Avaliação da Função Objetivo", fontsize=10)
-            plt.ylabel("Energia <H>", fontsize=10)
-            plt.grid(True, linestyle=":", alpha=0.6)
-            plt.legend()
-            
-            plot_path = images_dir / f"convergence_{optimizer_method.lower()}_N{N_cities}_p{p_layers}_mi{max_iter}.png"
-            plt.savefig(plot_path, dpi=300, bbox_inches="tight")
-            plt.close()
-
-            print(f"[OK] Log completo salvo em: {log_path}")
-            print(f"[OK] Gráfico salvo em: {plot_path}")
-
-        # if save_outputs:
-            # Pega a primeira rota de menor custo do CA (ex: ca_paths[0])
-            best_ca_route = ca_paths[0] if isinstance(ca_paths, list) else ca_paths
-
-            orig_img, route_img = gb.plot_graph_and_route(
-                solution_vector=best_ca_route,
-                prefix=f"N{N_cities}"
-            )
-            print(f"[OK] Grafo original salvo em: {orig_img}")
-            print(f"[OK] Grafo com rota gerado em: {route_img}")
-
-    print(f"\n\n=== FINALIZADO EXPERIMENTO CV-QAOA ({N_cities} CIDADES) ===")
-    print(f"=== Otimizador: {optimizer_method} | Camadas: {p_layers} | Seed: {seed} | MaxIter: {max_iter} ===")
-    print(f"===========================================================\n")
     return {
-        "N_cities": N_cities,
-        "p_layers": p_layers,
-        "optimizer": optimizer_method,
-        "ca_cost": ca_cost,
-        "ca_vector": ca_paths,
-        "qaoa_energy": opt_energy,
-        "qaoa_vector": qaoa_vector,
-        "qaoa_probability": qaoa_prob,
-        "approx_ratio": approx_ratio,
-        "history": history,
-        "time_total": format_timespan(total_experiment_time)
+        "energia": float(energia),
+        "prob_total": prob_total,
+        "vazamento": vazamento,
+        "melhor_por_custo": melhor_por_custo,
+        "melhor_por_probabilidade": melhor_por_probabilidade,
+        "top_estados": top_estados,
     }
 
 
-if __name__ == "__main__":
-    run_experiment(
-        N_cities=4, 
-        p_layers=1, 
-        max_iter=10, 
-        optimizer_method="COBYLA"
+def objective_function(params, n_qumodes, d_matrix, lambda_penalty, cutoff_dim):
+    diagnostico = analisar_circuito(
+        params,
+        n_qumodes,
+        d_matrix,
+        lambda_penalty,
+        cutoff_dim,
+        prob_min=0.0,
+        top_k=0,
+        fix_start=True,
     )
+    return diagnostico["energia"]
+
+
+def otimizar_multistart(N, distancias, penalidade, fock_cutoff, n_restarts=5):
+    """Executa várias inicializações e retorna o melhor resultado."""
+    n_params = n_params_ansatz(N)
+    bounds = [(-1.0, 1.0)] * n_params
+
+    melhor_resultado = None
+
+    for seed in range(n_restarts):
+        rng = np.random.default_rng(seed)
+        params_iniciais = rng.uniform(-0.1, 0.1, n_params)
+
+        resultado = minimize(
+            objective_function,
+            params_iniciais,
+            args=(N, distancias, penalidade, fock_cutoff),
+            method="Powell",
+            bounds=bounds,
+            options={"maxiter": 300, "disp": False},
+        )
+
+        if melhor_resultado is None or resultado.fun < melhor_resultado.fun:
+            melhor_resultado = resultado
+
+        print(f"Restart {seed}: energia = {resultado.fun:.8f}")
+
+    return melhor_resultado
+
+
+if __name__ == "__main__":
+    # Number = 3
+    path_root = BASE_DIR / "resultados"
+    path_root.mkdir(exist_ok=True)
+
+    
+    for N in [4,5,6,7,8]:
+        start = time.perf_counter()
+        fock_cutoff = N
+        penalidade = 500.0
+
+        graph = GraphBuilder(N)
+        distancias = graph.matrix
+
+        best_cost, best_path = tsp_bruteforce(distancias)
+        
+        resultado_otimizacao = otimizar_multistart(
+            N,
+            distancias,
+            penalidade,
+            fock_cutoff,
+            n_restarts=5,
+        )
+
+        diagnostico = analisar_circuito(
+            resultado_otimizacao.x,
+            N,
+            distancias,
+            penalidade,
+            fock_cutoff,
+            prob_min=1e-6,
+            top_k=10,
+            fix_start=True,
+        )
+        total = time.perf_counter() - start
+        path = path_root / f"resultados_{N}.txt"
+        with open(path, "w", encoding="utf-8") as file:
+            print(f"Tempo de execução: {total}", file=file)
+            print(f"Matriz de adjacencia:\n{distancias}", file=file)
+
+            print("\n=== brute force ===", file=file)
+            print(f"Best Cost: {best_cost}\tBest Path: {best_path}", file=file)
+
+            print("\n=== VQE ===", file=file)
+            
+            print(f"Parâmetros ótimos encontrados: {resultado_otimizacao.x}", file=file)
+            
+            print(f"Energia esperada mínima encontrada <H>: {diagnostico['energia']}", file=file)
+            
+            print(f"Probabilidade total dentro do cutoff: {diagnostico['prob_total']}", file=file)
+
+            print(f"Vazamento fora do cutoff: {diagnostico['vazamento']}", file=file)
+
+            print(f"\nMelhor rota válida por custo entre estados relevantes: {diagnostico['melhor_por_custo']}", file=file)
+
+            print(f"\nRota válida mais provável: {diagnostico['melhor_por_probabilidade']}", file=file)
+
+            print("\nTop estados medidos:", file=file)
+            for item in diagnostico['top_estados']:
+                print(item, file=file)

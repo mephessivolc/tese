@@ -17,6 +17,8 @@ x-common-env: &common-env
   PATH: /opt/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
   MPLCONFIGDIR: /home/${LOCAL_USER:-clovis-caface}/.cache/matplotlib
   PYTHONPATH: /workspace:/workspace/code:/workspace/code/src
+  NUMBA_CACHE_DIR: "/workspace/.cache/numba"
+  XDG_CACHE_HOME: "/workspace/.cache"
   
 services:
   local:
@@ -45,7 +47,7 @@ services:
     init: true
     user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
     working_dir: /workspace
-    command: ["python", "/workspace/code/src/teste.py"]
+    command: ["sleep", "infinity"]
     restart: unless-stopped
     environment:
       <<: *common-env

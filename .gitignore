@@ -13,6 +13,9 @@ __pycache__/
 .vscode
 .texlive
 
+.cache/
+antigos/
+
 
 ############################
 # LaTeX – arquivos auxiliares

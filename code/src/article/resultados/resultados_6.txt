@@ -1,0 +1,44 @@
+Tempo de execução: 41407.76579293003
+Matriz de adjacencia:
+[[0 2 8 1 1 6]
+ [2 0 6 3 8 4]
+ [8 6 0 8 1 8]
+ [1 3 8 0 7 1]
+ [1 8 1 7 0 9]
+ [6 4 8 1 9 0]]
+
+=== brute force ===
+Best Cost: 14	Best Path: (0, 3, 5, 1, 2, 4, 0)
+
+=== VQE ===
+Parâmetros ótimos encontrados: [-9.99951621e-01 -7.37791261e-03  6.01596179e-02 -9.99951621e-01
+  7.70432880e-02 -1.32535264e-02 -9.99951638e-01 -5.90118189e-01
+  4.69546614e-02  9.99999644e-01 -1.55968788e-02  9.35458357e-02
+  9.99951621e-01  2.73037484e-01  4.75780908e-02  9.99960558e-01
+  9.78514755e-03  2.96766608e-02  8.00162897e-01  2.16591382e-02
+ -5.01339417e-01 -4.52447496e-01  6.15740227e-01  3.59091019e-01
+ -2.22726269e-01 -3.14098482e-01  1.62311265e-01 -7.15262253e-01
+ -2.21211934e-02 -2.97129955e-01  9.99951621e-01 -9.99951621e-01
+ -7.34151663e-01  4.16308492e-01 -9.80179284e-01  1.18798517e-01
+  3.45337481e-01  9.99947917e-01 -4.99464899e-01  3.77860605e-01
+  9.99953419e-01 -5.21713695e-02  7.07654256e-01  8.91507110e-01
+ -9.89497076e-01 -4.38880229e-05]
+Energia esperada mínima encontrada <H>: 4243.373497029692
+Probabilidade total dentro do cutoff: 0.31772364557484517
+Vazamento fora do cutoff: 0.6822763544251549
+
+Melhor rota válida por custo entre estados relevantes: {'estado': (0, 3, 2, 5, 1, 4), 'rota': (0, 4, 2, 1, 5, 3, 0), 'custo': 14.0, 'probabilidade': 0.00016776394222129963, 'valido': True}
+
+Rota válida mais provável: {'estado': (0, 5, 2, 3, 1, 4), 'rota': (0, 4, 2, 3, 5, 1, 0), 'custo': 17.0, 'probabilidade': 0.0011436976919791686, 'valido': True}
+
+Top estados medidos:
+{'estado': (0, 5, 2, 3, 2, 3), 'rota': None, 'custo': 4500.0, 'probabilidade': 0.0019152483179587412, 'valido': False}
+{'estado': (0, 5, 2, 2, 2, 3), 'rota': None, 'custo': 4500.0, 'probabilidade': 0.0018875318870628156, 'valido': False}
+{'estado': (0, 5, 2, 3, 2, 2), 'rota': None, 'custo': 4500.0, 'probabilidade': 0.0017755865537951486, 'valido': False}
+{'estado': (0, 5, 2, 3, 3, 3), 'rota': None, 'custo': 4500.0, 'probabilidade': 0.0017703360893492378, 'valido': False}
+{'estado': (0, 5, 2, 2, 2, 2), 'rota': None, 'custo': 8000.0, 'probabilidade': 0.0017536624222828595, 'valido': False}
+{'estado': (0, 5, 3, 3, 2, 3), 'rota': None, 'custo': 4500.0, 'probabilidade': 0.001741837465648239, 'valido': False}
+{'estado': (0, 5, 2, 2, 3, 3), 'rota': None, 'custo': 4500.0, 'probabilidade': 0.0017340858835671255, 'valido': False}
+{'estado': (0, 5, 3, 2, 2, 3), 'rota': None, 'custo': 4500.0, 'probabilidade': 0.0016990141728156043, 'valido': False}
+{'estado': (0, 5, 2, 3, 3, 2), 'rota': None, 'custo': 4500.0, 'probabilidade': 0.0016263899328296714, 'valido': False}
+{'estado': (0, 5, 3, 3, 2, 2), 'rota': None, 'custo': 4500.0, 'probabilidade': 0.0016154496016526588, 'valido': False}

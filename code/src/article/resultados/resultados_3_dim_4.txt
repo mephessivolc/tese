@@ -1,0 +1,35 @@
+Tempo de execução: 126.47974068904296
+Matriz de adjacencia:
+[[0 2 7 2]
+ [2 0 4 1]
+ [7 4 0 2]
+ [2 1 2 0]]
+
+=== brute force ===
+Best Cost: 10	Best Path: (0, 1, 2, 3, 0)
+
+=== VQE ===
+Parâmetros ótimos encontrados: [-0.99995162 -0.13550757  0.06277162  0.99995162 -0.04400908  0.04577579
+ -0.99995162  0.43546849 -0.04497629  0.99995162  0.06338449 -0.07001234
+ -0.78907628  0.07270062  0.31616415  0.39170163  0.68270506 -0.41772762
+ -0.00522258  0.18002431  0.99995162  0.32769882 -0.01113309  0.23606871
+ -0.63105222 -0.84345957  0.70881883  0.99999745  0.62526283  0.99986753]
+Energia esperada mínima encontrada <H>: 2269.342636783521
+Probabilidade total dentro do cutoff: 0.47840249126236245
+Vazamento fora do cutoff: 0.5215975087376375
+
+Melhor rota válida por custo entre estados relevantes: {'estado': (0, 1, 2, 3), 'rota': (0, 1, 2, 3, 0), 'custo': 10.0, 'probabilidade': 0.008763063402704685, 'valido': True}
+
+Rota válida mais provável: {'estado': (0, 3, 2, 1), 'rota': (0, 3, 2, 1, 0), 'custo': 10.0, 'probabilidade': 0.08006175606687475, 'valido': True}
+
+Top estados medidos:
+{'estado': (0, 3, 2, 1), 'rota': (0, 3, 2, 1, 0), 'custo': 10.0, 'probabilidade': 0.08006175606687475, 'valido': True}
+{'estado': (0, 3, 2, 2), 'rota': None, 'custo': 2000.0, 'probabilidade': 0.07588125374389589, 'valido': False}
+{'estado': (0, 3, 1, 2), 'rota': (0, 2, 3, 1, 0), 'custo': 12.0, 'probabilidade': 0.06653782054612442, 'valido': True}
+{'estado': (0, 3, 1, 1), 'rota': None, 'custo': 2000.0, 'probabilidade': 0.06563875270200899, 'valido': False}
+{'estado': (0, 3, 2, 3), 'rota': None, 'custo': 2000.0, 'probabilidade': 0.045763443112235784, 'valido': False}
+{'estado': (0, 3, 1, 3), 'rota': None, 'custo': 2000.0, 'probabilidade': 0.04335856987727247, 'valido': False}
+{'estado': (0, 3, 1, 0), 'rota': None, 'custo': 2000.0, 'probabilidade': 0.040780223207717015, 'valido': False}
+{'estado': (0, 3, 3, 1), 'rota': None, 'custo': 2000.0, 'probabilidade': 0.039375337276919026, 'valido': False}
+{'estado': (0, 3, 0, 1), 'rota': None, 'custo': 2000.0, 'probabilidade': 0.039049687630153915, 'valido': False}
+{'estado': (0, 3, 3, 2), 'rota': None, 'custo': 2000.0, 'probabilidade': 0.03632304496464274, 'valido': False}

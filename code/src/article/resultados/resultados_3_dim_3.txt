@@ -1,0 +1,33 @@
+Tempo de execução: 48.375105157960206
+Matriz de adjacencia:
+[[0 6 3]
+ [6 0 6]
+ [3 6 0]]
+
+=== brute force ===
+Best Cost: 15	Best Path: (0, 1, 2, 0)
+
+=== VQE ===
+Parâmetros ótimos encontrados: [ 0.99995794  0.11976376  0.06284582  0.97312628  0.03166666  0.04575606
+  0.99995162 -0.48445989 -0.04511191  1.          0.08637173  0.63647723
+ -0.79457476  0.26924517 -0.49145079  0.99998729  0.6574217   0.21526132
+  0.18930502  0.48266434 -0.55735846 -0.52953227]
+Energia esperada mínima encontrada <H>: 1370.8941612476774
+Probabilidade total dentro do cutoff: 0.31691673988215346
+Vazamento fora do cutoff: 0.6830832601178465
+
+Melhor rota válida por custo entre estados relevantes: {'estado': (0, 1, 2), 'rota': (0, 1, 2, 0), 'custo': 15.0, 'probabilidade': 0.5124411249826779, 'valido': True}
+
+Rota válida mais provável: {'estado': (0, 1, 2), 'rota': (0, 1, 2, 0), 'custo': 15.0, 'probabilidade': 0.5124411249826779, 'valido': True}
+
+Top estados medidos:
+{'estado': (0, 1, 2), 'rota': (0, 1, 2, 0), 'custo': 15.0, 'probabilidade': 0.5124411249826779, 'valido': True}
+{'estado': (0, 0, 2), 'rota': None, 'custo': 2000.0, 'probabilidade': 0.17652572560890314, 'valido': False}
+{'estado': (0, 2, 2), 'rota': None, 'custo': 2000.0, 'probabilidade': 0.1427637131665298, 'valido': False}
+{'estado': (0, 1, 1), 'rota': None, 'custo': 2000.0, 'probabilidade': 0.055425727546950465, 'valido': False}
+{'estado': (0, 0, 0), 'rota': None, 'custo': 4500.0, 'probabilidade': 0.024393055373060347, 'valido': False}
+{'estado': (0, 2, 1), 'rota': (0, 2, 1, 0), 'custo': 15.0, 'probabilidade': 0.021098626032326855, 'valido': True}
+{'estado': (0, 2, 0), 'rota': None, 'custo': 2000.0, 'probabilidade': 0.01603241161973635, 'valido': False}
+{'estado': (2, 1, 2), 'rota': None, 'custo': 2500.0, 'probabilidade': 0.0155261062574229, 'valido': False}
+{'estado': (0, 0, 1), 'rota': None, 'custo': 2000.0, 'probabilidade': 0.006973893722433009, 'valido': False}
+{'estado': (2, 2, 2), 'rota': None, 'custo': 5000.0, 'probabilidade': 0.004787588920040618, 'valido': False}
