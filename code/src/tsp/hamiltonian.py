@@ -1,6 +1,10 @@
+# tsp/hamiltonian.py
 import numpy as np
 from scipy import sparse
 from typing import Tuple
+
+# Usaremos o BruteForce da raiz para os testes do módulo
+from brute_force import BruteForce
 
 
 class Hamiltonian:
@@ -17,7 +21,7 @@ class Hamiltonian:
         lmbda : float, optional
             Fator de penalização para rotas inválidas (cidades repetidas).
         """
-        self.dist_matrix = dist_matrix
+        self.dist_matrix = np.array(dist_matrix, dtype=float)
         self.N = len(dist_matrix)
         self.lmbda = lmbda
         # O cutoff dimension precisa acomodar os estados |1> ate |N> (índices 0..N)
@@ -95,24 +99,26 @@ class Hamiltonian:
 
         H_total_sparse = H_dist_sparse + self.lmbda * H_penalty_sparse
 
-        # Converte para denso apenas no retorno final para compatibilidade com o Strawberry Fields
+        # Converte para denso apenas no retorno final
         return H_dist_sparse.toarray(), H_penalty_sparse.toarray(), H_total_sparse.toarray()
 
 
 if __name__ == "__main__":
     from graphs import GraphBuilder
-    from brute_force import tsp_bruteforce_all
 
     N = 3
     gb = GraphBuilder(n=N, seed=42)
 
-    print("--- TESTANDO CONSTRUÇÃO DO HAMILTONIANO ---")
+    print("==========================================================")
+    print("      TESTANDO CONSTRUÇÃO DO HAMILTONIANO (TSP)           ")
+    print("==========================================================")
     print("Matriz de Adjacência:")
     print(gb.matrix)
-    print("-------------------------------------------\n")
+    print("----------------------------------------------------------\n")
 
-    # Calculando Ground Truth pelo CA
-    ca_best_cost, ca_paths, _ = tsp_bruteforce_all(gb.matrix)
+    # Calculando Ground Truth pelo BruteForce unificado
+    bf = BruteForce(gb.matrix, num_vehicles=1)
+    exact_cost, exact_route = bf.solve()
 
     # Construindo o Hamiltoniano
     hamiltonian_builder = Hamiltonian(gb.matrix, lmbda=100.0)
@@ -123,11 +129,12 @@ if __name__ == "__main__":
     e0 = np.min(eigenvalues)
 
     print(f"Dimensão da Matriz Global: {H_tot.shape[0]} x {H_tot.shape[1]}")
-    print(f"Custo Mínimo Exato (CA): {ca_best_cost:.4f}")
-    print(f"Menor Autovalor de H_total (E0 no QA): {e0:.4f}")
+    print(f"Custo Mínimo Exato (Força Bruta): {exact_cost:.4f} (Rota: {exact_route})")
+    print(f"Menor Autovalor de H_total (E0 Quântico): {e0:.4f}")
     
-    # Validação se E0 do Hamiltoniano bate com a melhor rota do CA
-    if np.isclose(e0, ca_best_cost):
-        print("\n[SUCESSO] A energia fundamental do Hamiltoniano coincide perfeitamente com o CA!")
+    # Validação se E0 do Hamiltoniano bate com a melhor rota da Força Bruta
+    if np.isclose(e0, exact_cost):
+        print("\n[SUCESSO] A energia fundamental do Hamiltoniano coincide perfeitamente com a Força Bruta!")
     else:
-        print("\n[ATENÇÃO] Houve divergência entre E0 e o CA. Verifique o valor de lambda ou o cutoff.")
+        print("\n[ATENÇÃO] Houve divergência entre E0 e a Força Bruta. Verifique o valor de lambda ou o cutoff.")
+    print("==========================================================")

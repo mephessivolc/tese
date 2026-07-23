@@ -1,0 +1,2 @@
+experiment_id,problem_type,timestamp,seed,n_cities,num_vehicles,p_layers,max_iter,momentum_mass,lmbda,exact_cost,exact_route,exact_time_sec,ground_state_energy,solver_name,quantum_cost,quantum_route,quantum_time_sec,approx_ratio,success_probability,evaluations_count
+TSP_N4_s42_20260723_225121,TSP,20260723_225121,42,4,1,1,60,1.0,50.0,24.05,"[0, 1, 2, 3, 0]",4.982948303222656e-05,24.05,CV-VQE,3.470997094083865e-32,"[4, 4, 0, 0]",6.050256729125977,6.928844752129578e+32,7.708167659658695e-35,60
