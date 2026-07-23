@@ -4,7 +4,7 @@ from strawberryfields.ops import Dgate, Rgate, BSgate
 from scipy.optimize import minimize
 
 from graphs import GraphBuilder
-from brute_force import tsp_bruteforce
+from tsp.brute_force import tsp_bruteforce
 
 
 def n_params_ansatz(n_qumodes):
