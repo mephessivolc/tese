@@ -1,3 +1,7 @@
+# Explicação da construção do Hamiltoniano usado para o VRP
+
+## Forma Matricial
+
 A modelagem matemática do seu código do VRP baseia-se na **Codificação por Quadraturas Contínuas no Espaço de Fase** $(\hat{x}, \hat{p})$.
 
 Em vez de usar estados discretos da base de Fock ($\ket{1}, \ket{2}, \dots$) em matrizes globais de Hilbert, este algoritmo mapeia o problema diretamente nas **expectativas do espaço de fase quântico**:
@@ -8,7 +12,7 @@ Onde cada qumode $i \in \{1, 2, \dots, N-1\}$ corresponde unicamente a uma **cid
 
 ---
 
-## 1. As Variáveis Contínuas e a Discretização
+### 1. As Variáveis Contínuas e a Discretização
 
 Os autovalores contínuos lidos nas quadraturas $(\hat{x}_i, \hat{p}_i)$ são mapeados para variáveis discretas de tempo $\tilde{x}_i \in \{1, 2, \dots, T\}$ e veículo $\tilde{p}_i \in \{1, 2, \dots, V\}$ através de um operador de arredondamento limitado (*clipping*):
 
@@ -24,7 +28,7 @@ Onde:
 
 ---
 
-## 2. A Função Indicadora da Rota (Decodificação)
+### 2. A Função Indicadora da Rota (Decodificação)
 
 Para converter as atribuições $\tilde{x}_i$ e $\tilde{p}_i$ em uma rota real no grafo, define-se uma matriz binária indicadora implícita $y_{i, v, k}$:
 
@@ -38,7 +42,7 @@ Dado um veículo $v$, seja $R(v) = (u_0, u_1, u_2, \dots, u_{m_v}, u_{m_v + 1})$
 
 ---
 
-## 3. O Hamiltoniano do VRP
+### 3. O Hamiltoniano do VRP
 
 O Hamiltoniano total avaliado no estado quântico é a soma do custo das distâncias do grafo com o termo de penalidade de colisão:
 
