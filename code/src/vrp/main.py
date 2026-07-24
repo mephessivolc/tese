@@ -28,9 +28,9 @@ from vrp.solver import Solver as VqeSolver
 def run(
     n_cities: int = 3,
     num_vehicles: int = 2,
-    lmbda: float = 100.0,
     layers: int = 1,
     maxiter: int = 100,
+    lmbda: float = 100.0,
     optimizer_method: str = "COBYLA",
     seed: int = 42,
     save_outputs: bool = True
@@ -40,7 +40,9 @@ def run(
     Pode ser importado por outros scripts (ex: main principal da raiz).
     """
     logger = ExperimentLogger(problem_type="VRP")
-    logger.info(f"Iniciando Experimento VRP (N={n_cities}, V={num_vehicles}, Layers={layers}, Seed={seed})")
+    logger.info(f"Iniciando Experimento VRP (N={n_cities}, Veihicles={num_vehicles}, Layers={layers}, MaxIter={maxiter})")
+
+    constructor_info_name = f"N{n_cities}_Vehicles{num_vehicles}_Layers={layers}_MaxIter={maxiter}"
 
     # 1. GERAÇÃO DO GRAFO (Inclui o depósito como nó 0)
     logger.info("1. Gerando matriz de adjacência do grafo (Depósito + Cidades)...")
@@ -83,7 +85,7 @@ def run(
 
     # 5. ESTRUTURAÇÃO DO RESULTADO (ExperimentResult)
     now_str = datetime.now().strftime("%Y%m%d_%H%M%S")
-    exp_id = f"VRP_N{n_cities}_V{num_vehicles}_s{seed}_{now_str}"
+    exp_id = f"VRP_{constructor_info_name}_{now_str}"
 
     opt_params = vqe_res.get("opt_params", None)
     if isinstance(opt_params, np.ndarray):
@@ -138,6 +140,7 @@ def run(
     # 6. SALVAMENTO DE ARTEFATOS E GRÁFICOS (result/vrp/)
     if save_outputs:
         figures_dir = Path(logger.get_figures_dir("VRP"))
+        figure_path = figures_dir / f"convergence_{constructor_info_name}.png"
 
         # a) Salva via ExperimentLogger (JSON e registro no CSV acumulativo)
         logger.save_experiment(experiment_res)
@@ -145,7 +148,7 @@ def run(
         # b) Plot do Grafo e Rotas do VRP
         gb.plot_graph_and_route(
             solution_vector=vqe_res["solution_vector"],
-            prefix=f"vqe_N{n_cities}_V{num_vehicles}_s{seed}"
+            prefix=f"vqe_{constructor_info_name}"
         )
 
         # c) Plot e Salvamento da Curva de Convergência
@@ -158,7 +161,7 @@ def run(
         plt.grid(True, linestyle=':', alpha=0.6)
         plt.legend()
         plt.tight_layout()
-        plt.savefig(figures_dir / f"convergence_N{n_cities}_V{num_vehicles}_s{seed}.png", dpi=300)
+        plt.savefig(figure_path, dpi=300)
         plt.close()
 
         logger.info("Artefatos salvos com sucesso na pasta 'result/vrp/'")
@@ -170,9 +173,9 @@ if __name__ == "__main__":
     run(
         n_cities=3,
         num_vehicles=2,
-        lmbda=100.0,
         layers=1,
         maxiter=50,
+        lmbda=100.0,
         optimizer_method="COBYLA",
         seed=42,
         save_outputs=True

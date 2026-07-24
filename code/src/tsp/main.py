@@ -39,7 +39,9 @@ def run(
     Pode ser importado por outros scripts (ex: main principal da raiz).
     """
     logger = ExperimentLogger(problem_type="TSP")
-    logger.info(f"Iniciando Experimento TSP (N={n_cities}, Layers={layers}, Seed={seed})")
+    logger.info(f"Iniciando Experimento TSP (N={n_cities}, Layers={layers}, MaxIter={maxiter})")
+
+    constructor_info_name = f"N{n_cities}_Layers{layers}_MaxIter={maxiter}"
 
     # 1. GERAÇÃO DO GRAFO
     logger.info("1. Gerando matriz de adjacência do grafo...")
@@ -77,7 +79,7 @@ def run(
 
     # 5. ESTRUTURAÇÃO DO RESULTADO (ExperimentResult)
     now_str = datetime.now().strftime("%Y%m%d_%H%M%S")
-    exp_id = f"TSP_N{n_cities}_s{seed}_{now_str}"
+    exp_id = f"TSP_{constructor_info_name}_{now_str}"
 
     opt_params = vqe_res["opt_params"]
     if isinstance(opt_params, np.ndarray):
@@ -139,7 +141,7 @@ def run(
         # b) Plot do Grafo e Trajeto TSP
         gb.plot_graph_and_route(
             solution_vector=vqe_res["solution_vector"],
-            prefix=f"vqe_N{n_cities}_s{seed}"
+            prefix=f"vqe_{constructor_info_name}"
         )
 
         # c) Plot e Salvamento da Curva de Convergência
@@ -152,7 +154,7 @@ def run(
         plt.grid(True, linestyle=':', alpha=0.6)
         plt.legend()
         plt.tight_layout()
-        plt.savefig(figures_dir / f"convergence_N{n_cities}_s{seed}.png", dpi=300)
+        plt.savefig(figures_dir / f"convergence_{constructor_info_name}.png", dpi=300)
         plt.close()
 
         logger.info("Artefatos salvos com sucesso na pasta 'result/tsp/'")

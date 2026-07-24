@@ -5,27 +5,43 @@ from vrp.main import run as run_vrp
 def main():
     print("=== INICIANDO BATCH DE EXPERIMENTOS CV-VQE ===")
 
-    # 1. Executa TSP com 4 cidades
-    res_tsp = run_tsp(
-        n_cities=4,
-        maxiter=60,
-        optimizer_method="COBYLA",
-        seed=42
-    )
+    for city in [4]: # [4, 5, 6]:
+            iter = 25
+        # for iter in range(25, 201, 25):
+            for layer in [1]: # [1,2,3,4,5]:
 
-    # 2. Executa VRP com 4 cidades e 2 veículos
-    res_vrp = run_vrp(
-        n_cities=4,
-        num_vehicles=2,
-        maxiter=60,
-        optimizer_method="COBYLA",
-        seed=42
-    )
+                # 1. Executa TSP com 4 cidades
+                res_tsp = run_tsp(
+                    n_cities=city,
+                    layers=layer,
+                    maxiter=iter,
+                    optimizer_method="COBYLA",
+                    seed=42
+                )
 
-    # Exemplo de acesso direto aos resultados sem reescrever nada
-    print(f"\n[Resumo Final]")
-    print(f"Custo TSP (VQE): {res_tsp['quantum_cost']:.4f}")
-    print(f"Custo VRP (VQE): {res_vrp['quantum_cost']:.4f}")
+                list_resp_vrp = []
+                # for vehicle in range(i):
+                vehicle = 2
+                # 2. Executa VRP com 4 cidades e 2 veículos
+                res_vrp = run_vrp(
+                    n_cities=city,
+                    num_vehicles=vehicle,
+                    layers=layer,
+                    maxiter=iter,
+                    optimizer_method="COBYLA",
+                    seed=42
+                    )
+
+                list_resp_vrp.append(f"{vehicle}: {res_vrp['quantum_cost']:.4f}")
+
+
+                # Exemplo de acesso direto aos resultados sem reescrever nada
+                print(f"\n[Resumo da Simulação]")
+                print(f"Custo TSP (VQE): {res_tsp['quantum_cost']:.4f}")
+
+                print(f"Custo VRP (VQE):")
+                for r in list_resp_vrp:
+                    print(r)
 
 if __name__ == "__main__":
     main()
