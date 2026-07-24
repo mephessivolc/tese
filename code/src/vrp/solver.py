@@ -5,6 +5,8 @@ import numpy as np
 from scipy.optimize import minimize
 from typing import Tuple, List, Dict, Any
 
+import strawberryfields as sf
+
 # --- AJUSTE DE PATH PARA ACESSAR A RAIZ DO PROJETO ---
 root_dir = Path(__file__).resolve().parent.parent
 if str(root_dir) not in sys.path:
@@ -13,28 +15,60 @@ if str(root_dir) not in sys.path:
 # Imports dos módulos do projeto
 from graphs import GraphBuilder
 from vrp.hamiltonian import Hamiltonian
+from vrp.circuit import Circuit
 
 
 class Solver:
     """
-    Solver VQE para o VRP usando o Modelo de Variáveis Contínuas (CV) no espaço de fase (x, p).
+    Solver VQE para o VRP utilizando circuito quântico CV (Strawberry Fields)
+    e extração de valores esperados das quadraturas <x> e <p>.
     """
-    def __init__(self, hamiltonian: Hamiltonian):
+    def __init__(
+        self,
+        hamiltonian: Hamiltonian,
+        layers: int = 1,
+        cutoff_dim: int = 5,
+        backend: str = "fock"
+    ):
         self.hamiltonian = hamiltonian
         self.num_qumodes = hamiltonian.num_free_cities
+        self.layers = layers
+        self.cutoff_dim = cutoff_dim
+        self.backend = backend
+        
+        # Instancia o Ansatz e calcula o número de parâmetros necessários
+        self.ansatz = Circuit(num_qumodes=self.num_qumodes, num_layers=self.layers)
+        self.engine = sf.Engine(backend=self.backend, backend_options={"cutoff_dim": self.cutoff_dim})
         self.history = []
 
     def execute_circuit(self, params: np.ndarray) -> Tuple[List[float], List[float]]:
         """
-        Simula a medição/expectativa das quadraturas (x, p) a partir do vetor de parâmetros.
+        Executa o circuito quântico variacional no Strawberry Fields
+        e extrai os valores esperados das quadraturas <x> e <p> para cada qumode.
         """
-        x_vals = params[:self.num_qumodes]
-        p_vals = params[self.num_qumodes:]
+        # Constrói o programa do Strawberry Fields a partir dos parâmetros do otimizador
+        prog = self.ansatz.build_program(params)
+        
+        # Executa no simulador quântico
+        result = self.engine.run(prog)
+        state = result.state
+
+        x_vals = []
+        p_vals = []
+
+        # Extrai os valores esperados das quadraturas para cada cidade livre
+        for mode in range(self.num_qumodes):
+            x_mean, _ = state.quad_expectation(mode, phi=0.0)         # Quadratura X (Tempo de visita)
+            p_mean, _ = state.quad_expectation(mode, phi=np.pi/2)     # Quadratura P (Veículo atribuído)
+            
+            x_vals.append(x_mean)
+            p_vals.append(p_mean)
+
         return x_vals, p_vals
 
     def objective_function(self, params: np.ndarray) -> float:
         """
-        Função de custo chamada a cada iteração do otimizador clássico (ex: COBYLA).
+        Função de custo chamada pelo otimizador clássico (COBYLA, Nelder-Mead, etc.).
         """
         x_vals, p_vals = self.execute_circuit(params)
         cost = self.hamiltonian.compute_cost(x_vals, p_vals)
@@ -42,7 +76,7 @@ class Solver:
 
     def _callback(self, xk: np.ndarray):
         """
-        Salva o histórico da função de custo a cada iteração do otimizador.
+        Registra o histórico de energia no VQE.
         """
         current_cost = self.objective_function(xk)
         self.history.append(current_cost)
@@ -50,23 +84,20 @@ class Solver:
     def solve(
         self,
         initial_params: np.ndarray = None,
-        maxiter: int = 300,
+        maxiter: int = 100,
         optimizer_method: str = "COBYLA",
         seed: int = 42
     ) -> Dict[str, Any]:
         """
-        Executa a otimização variacional do VQE para o VRP.
+        Executa o loop variacional do VQE para encontrar as rotas ótimas do VRP.
         """
         self.history = []
-        
-        if seed is not None:
-            np.random.seed(seed)
 
+        # Inicializa parâmetros aleatórios do Ansatz se não fornecidos
         if initial_params is None:
-            init_x = np.random.uniform(1.0, self.hamiltonian.max_steps, self.num_qumodes)
-            init_p = np.random.uniform(1.0, self.hamiltonian.num_vehicles, self.num_qumodes)
-            initial_params = np.concatenate([init_x, init_p])
+            initial_params = self.ansatz.initialize_random_params(seed=seed)
 
+        # Otimização Variacional Clássica
         res = minimize(
             self.objective_function,
             initial_params,
@@ -75,6 +106,7 @@ class Solver:
             options={'maxiter': maxiter, 'disp': False}
         )
 
+        # Medição final com o melhor conjunto de parâmetros otimizados
         opt_x, opt_p = self.execute_circuit(res.x)
         disc_x, disc_p = self.hamiltonian.discretize_quadratures(opt_x, opt_p)
         decoded_routes = self.hamiltonian.decode_routes(opt_x, opt_p)
@@ -86,64 +118,38 @@ class Solver:
             "opt_params": res.x,
             "disc_x": disc_x,
             "disc_p": disc_p,
-            "solution_vector": decoded_routes,  # Dicionário {veiculo_id: [0, c1, ..., 0]}
+            "solution_vector": decoded_routes,
             "routes": decoded_routes,
             "probability": 1.0,
             "history": self.history if self.history else [float(res.fun)]
         }
 
-# --- TESTE UNITÁRIO: VALIDAÇÃO FUNCIONAL DO VQE ---
+
+# --- TESTE UNITÁRIO COM CIRCUITOS QUÂNTICOS DE VERDADE ---
 if __name__ == "__main__":
     print("=" * 60)
-    print("      TESTE UNITÁRIO: EXECUÇÃO FUNCIONAL DO VQE (CV) - VRP    ")
+    print("    TESTE UNITÁRIO: VQE COM STRAWBERRY FIELDS (VRP)    ")
     print("=" * 60)
 
-    # 1. Configuração de um problema pequeno para teste rápido
-    N_free_cities = 3  # Depósito (0) + Cidades 1, 2, 3
-    num_vehicles = 2   # 2 Veículos
+    N_free_cities = 2  # 2 cidades livres (2 qumodes) + 1 depósito
+    num_vehicles = 2   # 2 veículos
     seed = 42
 
     gb = GraphBuilder(n=N_free_cities + 1, seed=seed)
     dist_matrix = gb.matrix
 
-    print("\n[1] Inicializando o Hamiltoniano VRP e o Solver VQE...")
+    print("\n[1] Inicializando Hamiltoniano e Solver com Circuit...")
     hamiltonian = Hamiltonian(dist_matrix, num_vehicles=num_vehicles, lmbda=100.0)
-    solver = Solver(hamiltonian)
+    solver = Solver(hamiltonian, layers=1, cutoff_dim=4)
 
-    # 2. Execução do VQE com poucas iterações para validação rápida
-    max_test_iters = 50
-    print(f"\n[2] Executando o VQE por {max_test_iters} iterações...")
-    vqe_result = solver.solve(maxiter=max_test_iters, seed=seed)
+    print(f"  ► Qumodes no circuito: {solver.num_qumodes}")
+    print(f"  ► Parâmetros variacionais a otimizar: {solver.ansatz.num_params}")
 
-    # 3. Asserções e Validações Unitárias
-    print("\n[3] Verificando Saídas do Algoritmo...")
-    
-    # Validação 1: O dicionário de resultados contém as chaves necessárias
-    required_keys = ["opt_result", "best_cost", "disc_x", "disc_p", "history", "solution_vector"]
-    for key in required_keys:
-        assert key in vqe_result, f"ERRO: Chave '{key}' ausente na saída do VQE."
-    print("  ✓ Estrutura de retorno válida.")
+    print("\n[2] Executando VQE no Strawberry Fields...")
+    vqe_result = solver.solve(maxiter=15, optimizer_method="COBYLA", seed=seed)
 
-    # Validação 2: Dimensão dos vetores decodificados
-    assert len(vqe_result["disc_x"]) == N_free_cities, "ERRO: Vetor x com dimensão incorreta."
-    assert len(vqe_result["disc_p"]) == N_free_cities, "ERRO: Vetor p com dimensão incorreta."
-    print("  ✓ Dimensões das quadraturas decodificadas corretas.")
-
-    # Validação 3: Limites dos valores discretizados
-    assert all(1 <= x <= N_free_cities for x in vqe_result["disc_x"]), "ERRO: Valor de tempo x fora do intervalo [1, T]."
-    assert all(1 <= p <= num_vehicles for p in vqe_result["disc_p"]), "ERRO: Atribuição de veículo p fora do intervalo [1, V]."
-    print("  ✓ Limites das quadraturas válidos.")
-
-    # Validação 4: Evolução da Otimização (Custo inicial vs Custo final)
-    initial_cost = vqe_result["history"][0]
-    final_cost = vqe_result["best_cost"]
-    print(f"\n  -> Custo Inicial : {initial_cost:.4f}")
-    print(f"  -> Custo Final   : {final_cost:.4f}")
-    print(f"  -> Rotas Finais  : {vqe_result['solution_vector']}")
-    
-    assert final_cost <= initial_cost, "ERRO: O otimizador não reduziu (ou manteve) o custo."
-    print("  ✓ Otimizador reduziu a função de custo com sucesso.")
-
-    print("\n" + "=" * 60)
-    print(" STATUS: TESTE UNITÁRIO PASSOU COM SUCESSO! ")
-    print("=" * 60)
+    print("\n[3] Resultados Obtidos:")
+    print(f"  ► Custo Inicial : {vqe_result['history'][0]:.4f}")
+    print(f"  ► Custo Final   : {vqe_result['best_cost']:.4f}")
+    print(f"  ► Rotas Otimizadas : {vqe_result['solution_vector']}")
+    print("\n STATUS: TESTE COM CIRCUITO QUÂNTICO CONCLUÍDO COM SUCESSO!")

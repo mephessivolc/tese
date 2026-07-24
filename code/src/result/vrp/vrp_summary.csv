@@ -1,2 +1,0 @@
-experiment_id,problem_type,timestamp,seed,n_cities,num_vehicles,p_layers,max_iter,momentum_mass,lmbda,exact_cost,exact_route,exact_time_sec,ground_state_energy,solver_name,quantum_cost,quantum_route,quantum_time_sec,approx_ratio,success_probability,evaluations_count
-VRP_N4_V2_s42_20260723_225122,VRP,20260723_225122,42,4,2,1,60,1.0,100.0,27.349999999999998,"{'1': [0, 1, 4, 2, 0], '2': [0, 3, 0]}",0.00029587745666503906,27.349999999999998,CV-VQE,27.349999999999998,"{'1': [0, 3, 0], '2': [0, 1, 4, 2, 0]}",0.028436660766601562,1.0,1.0,52

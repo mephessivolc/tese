@@ -1,7 +1,7 @@
 {
-    "experiment_id": "TSP_N4_s42_20260723_225121",
+    "experiment_id": "TSP_N4_s42_20260724_040122",
     "problem_type": "TSP",
-    "timestamp": "20260723_225121",
+    "timestamp": "20260724_040122",
     "seed": 42,
     "n_cities": 4,
     "num_vehicles": 1,
@@ -17,7 +17,7 @@
         3,
         0
     ],
-    "exact_time_sec": 4.982948303222656e-05,
+    "exact_time_sec": 4.410743713378906e-05,
     "ground_state_energy": 24.05,
     "solver_name": "CV-VQE",
     "quantum_cost": 3.470997094083865e-32,
@@ -27,7 +27,7 @@
         0,
         0
     ],
-    "quantum_time_sec": 6.050256729125977,
+    "quantum_time_sec": 6.018957853317261,
     "approx_ratio": 6.928844752129578e+32,
     "success_probability": 7.708167659658695e-35,
     "evaluations_count": 60,

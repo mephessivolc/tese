@@ -1,5 +1,5 @@
 # tsp/circuit.py
-from typing import List, Dict, Any, Union
+from typing import Dict, Any
 import numpy as np
 import strawberryfields as sf
 from strawberryfields.ops import Dgate, Rgate, BSgate, Sgate
