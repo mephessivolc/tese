@@ -90,3 +90,61 @@ $$H_{\text{total}}(\mathbf{x}, \mathbf{p}) = \sum_{v=1}^V \sum_{k=0}^{\vert{}R(v
 | **Operadores do Hamiltoniano** | Projetores matriciais $\ket{a}\bra{a}_k$ | Funções de expectativa sobre quadraturas $\langle \hat{x}_i \rangle$ e $\langle \hat{p}_i \rangle$ |
 | **Cálculo da Energia** | Multiplicação de matrizes $(N+1)^N \times (N+1)^N$ | Amostragem direta / Expectativa das medições no circuito |
 | **Escalabilidade Computacional** | Limitada pelo tamanho da matriz de Hilbert | Altamente escalável para simulação variacional no Strawberry Fields |
+
+---
+---
+# Para o Solver
+
+Explicação do porque no simulador é possível ter apenas uma única execução e duas medidas sem perder coerencia
+
+Exatamente! **Você está absolutamente correto na sua leitura do código.**
+
+No simulador do Strawberry Fields utilizado no seu `solver.py`, a chamada `self.engine.run(prog)` não executa "disparos discretos" (shots), mas sim calcula o **vetor de estado contínuo / matriz densa** de todo o sistema na memória do computador.
+
+Isso é possível por conta da mecânica de simulação analítica do simulador.
+
+---
+
+## O que acontece no seu `solver.py` passo a passo:
+
+```python
+# 1. O motor calcula o estado quântico exato |ψ(θ)⟩ a partir dos parâmetros
+result = self.engine.run(prog)
+state = result.state  # Contém a função de onda analítica completa
+
+# 2. O estado retornado permite consultar <X> e <P> analiticamente
+for mode in range(self.num_qumodes):
+    x_mean, _ = state.quad_expectation(mode, phi=0.0)         # <X> exato
+    p_mean, _ = state.quad_expectation(mode, phi=np.pi/2)     # <P> exato
+
+```
+
+### Como isso resolve o problema do Princípio da Incerteza?
+
+* **No simulador (`fock` ou `gaussian`):** O objeto `state` armazena a matriz densa $\rho$ ou o vetor de estado $\vert{}\psi\rangle$ do qumode em memória sem colapsá-lo. As funções `.quad_expectation(mode, phi)` apenas realizam a integração matemática / produto interno formal da matriz densa com o operador de quadratura:
+
+$$\langle \hat{x} \rangle = \text{Tr}\big(\rho \, \hat{x}\big) \quad \text{e} \quad \langle \hat{p} \rangle = \text{Tr}\big(\rho \, \hat{p}\big)$$
+
+Como é um cálculo puramente matemático sobre a matriz densa guardada na memória, chamar o valor esperado de $\hat{x}$ **não altera e nem destrói** o objeto `state`, permitindo consultar $\hat{p}$ na linha seguinte no mesmo objeto!
+
+---
+
+## A diferença fundamental: Simulador vs. Hardware Real
+
+É vital manter essa distinção em mente para o seu trabalho:
+
+| Aspecto | No seu código atual (`solver.py`) | Em Hardware Quântico Real (Fotônica) |
+| --- | --- | --- |
+| **Simulação / Execução** | Analítica via Matriz Densa na memória (`state`). | Projeção / Colapso por medições ópticas. |
+| **Uso de Shots** | `shots=1` (padrão implícito). Devolve o estado exato. | Exige `shots = N` (ex: 1000 repetições por fase). |
+| **Medição das Quadraturas** | `quad_expectation()` lê ambos os operadores do **mesmo** objeto `state`. | Exige **rodar o circuito duas vezes**: uma com detectores em $\phi=0$ e outra com detectores em $\phi=\pi/2$. |
+| **Ruído de Amostragem** | Zero (gradiente limpo para o otimizador COBYLA). | Ruído estatístico de amostragem proporcional a $1/\sqrt{\text{shots}}$. |
+
+---
+
+## Conclusão
+
+Sua implementação no `solver.py` é a **forma padrão e ideal de se fazer pesquisa simulada de VQE**:
+
+1. Ela evita o ruído estatístico de amostragem no loop do otimizador clássico (COBYLA), permitindo que ele converja muito mais rápido.
+2. Ela aproveita a facilidade do simulador de acessar $\langle \hat{x} \rangle$ e $\langle \hat{p} \rangle$ diretamente do estado analítico sem precisar reconstruir a função de onda ou duplicar as chamadas do circuito no simulador.
