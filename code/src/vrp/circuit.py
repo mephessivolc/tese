@@ -1,4 +1,5 @@
-
+# vrp/circuit.py
+from typing import Tuple, List
 import numpy as np
 import strawberryfields as sf
 from strawberryfields import ops
@@ -7,89 +8,98 @@ from strawberryfields import ops
 class Circuit:
     """
     Ansatz de Variáveis Contínuas (CV) integrado ao Strawberry Fields para o VRP.
-    
-    A arquitetura segue o modelo de Circuito Neural Quântico CV:
-      1. Squeezing (Sgate): Ajusta flutuações e covariância nos qumodes.
-      2. Interferômetro / Beam Splitters (BSgate): Emaranha as variáveis do VRP.
-      3. Displacement (Dgate): Desloca a expectativa das variáveis no espaço de fase.
-      4. Kerr Gate (Kgate): Introduz não-gaussianidade essencial para otimização NP-difícil.
+    Suporta camadas variacionais compostas por Squeezing, Beam Splitter, 
+    Displacement e Kerr Gates para explorar o espaço de fase (x, p).
     """
 
-    def __init__(self, num_qumodes: int, num_layers: int = 1):
+    def __init__(self, num_qumodes: int, num_layers: int = 1, reps: int = 1):
         self.num_qumodes = num_qumodes
         self.num_layers = num_layers
+        self.reps = reps
         self.num_params = self._calculate_total_params()
 
     def _calculate_total_params(self) -> int:
-        """Calcula o total exato de parâmetros variacionais necessários."""
-        # Por camada:
-        # - Sgate: 2 parâmetros (r, phi) por qumode
-        # - BSgate: 2 parâmetros (theta, phi) por par de qumodes
-        # - Dgate: 2 parâmetros (r, phi) por qumode
-        # - Kgate: 1 parâmetro (kappa) por qumode
+        """Calcula o total de parâmetros variacionais independentes do circuito."""
         sgate_params = 2 * self.num_qumodes
         bs_pairs = (self.num_qumodes * (self.num_qumodes - 1)) // 2
         bs_params = 2 * bs_pairs
         dgate_params = 2 * self.num_qumodes
         kgate_params = 1 * self.num_qumodes
 
-        params_per_layer = sgate_params + bs_params + dgate_params + kgate_params
-        return params_per_layer * self.num_layers
+        params_per_block = sgate_params + bs_params + dgate_params + kgate_params
+        return params_per_block * self.num_layers * self.reps
 
-    def build_program(self, params: np.ndarray) -> sf.Program:
+    def build_program(self) -> Tuple[sf.Program, Tuple]:
         """
-        Constrói o objeto `sf.Program` do Strawberry Fields pronto para execução.
-
-        Args:
-            params (np.ndarray): Vetor 1D de parâmetros variacionais otimizados pelo VQE.
-
-        Returns:
-            sf.Program: Programa Strawberry Fields configurado.
+        Constrói o programa simbólico do Strawberry Fields.
+        Retorna o objeto Program e a tupla de variáveis de parâmetros simbólicos.
         """
-        if len(params) != self.num_params:
-            raise ValueError(
-                f"Esperado {self.num_params} parâmetros, mas foram fornecidos {len(params)}."
-            )
-
         prog = sf.Program(self.num_qumodes)
-        param_idx = 0
-
+        
         with prog.context as q:
-            # Loop sobre as camadas (layers) do Ansatz
+            # Cria os parâmetros simbólicos declarados no motor do Strawberry Fields
+            params_sym = prog.params(*[f"theta_{i}" for i in range(self.num_params)])
+            param_idx = 0
+
             for layer in range(self.num_layers):
+                for rep in range(self.reps):
 
-                # 1. Camada de Squeezing (Sgate)
-                for i in range(self.num_qumodes):
-                    r = params[param_idx]
-                    phi = params[param_idx + 1]
-                    ops.Sgate(r, phi) | q[i]
-                    param_idx += 2
-
-                # 2. Camada de Emaranhamento Interferométrico (BSgate)
-                for i in range(self.num_qumodes):
-                    for j in range(i + 1, self.num_qumodes):
-                        theta = params[param_idx]
-                        phi_bs = params[param_idx + 1]
-                        ops.BSgate(theta, phi_bs) | (q[i], q[j])
+                    # 1. Squeezing Gate S(r, phi) - Controla a incerteza do espaço de fase
+                    for i in range(self.num_qumodes):
+                        ops.Sgate(params_sym[param_idx], params_sym[param_idx + 1]) | q[i]
                         param_idx += 2
 
-                # 3. Camada de Deslocamento (Dgate)
-                for i in range(self.num_qumodes):
-                    mag = params[param_idx]
-                    phase = params[param_idx + 1]
-                    ops.Dgate(mag, phase) | q[i]
-                    param_idx += 2
+                    # 2. Beam Splitter Gate BS(theta, phi) - Cria emaranhamento entre qumodes
+                    for i in range(self.num_qumodes):
+                        for j in range(i + 1, self.num_qumodes):
+                            ops.BSgate(params_sym[param_idx], params_sym[param_idx + 1]) | (q[i], q[j])
+                            param_idx += 2
 
-                # 4. Camada Não-Gaussiana (Kgate)
-                for i in range(self.num_qumodes):
-                    kappa = params[param_idx]
-                    ops.Kgate(kappa) | q[i]
-                    param_idx += 1
+                    # 3. Displacement Gate D(r, phi) - Desloca a média de (x, p)
+                    for i in range(self.num_qumodes):
+                        ops.Dgate(params_sym[param_idx], params_sym[param_idx + 1]) | q[i]
+                        param_idx += 2
 
-        return prog
+                    # 4. Kerr Gate K(kappa) - Aplica transformação não-linear no espaço de fase
+                    for i in range(self.num_qumodes):
+                        ops.Kgate(params_sym[param_idx]) | q[i]
+                        param_idx += 1
+
+        return prog, params_sym
 
     def initialize_random_params(self, seed: int = 42) -> np.ndarray:
-        """Gera valores iniciais pequenos para os parâmetros variacionais."""
+        """
+        Gera o vetor inicial de parâmetros numéricos contínuos com escalas adequadas.
+        Escalas pequenas evitam instabilidade no espaço de Fock durante a simulação.
+        """
         rng = np.random.default_rng(seed)
-        # Valores pequenos evitam estouro numérico na simulação Fock
-        return rng.normal(loc=0.0, scale=0.1, size=self.num_params)
+        params = np.zeros(self.num_params, dtype=np.float32)
+
+        # Preenche os parâmetros com ruído suave gaussiano
+        param_idx = 0
+        for _ in range(self.num_layers * self.reps):
+            # Squeezing r ~ N(0, 0.05), phi ~ Uniforme(0, 2pi)
+            for _ in range(self.num_qumodes):
+                params[param_idx] = rng.normal(0.0, 0.05)
+                params[param_idx + 1] = rng.uniform(0, 2 * np.pi)
+                param_idx += 2
+
+            # Beam Splitter theta ~ Uniforme(0, pi/4), phi ~ Uniforme(0, 2pi)
+            bs_pairs = (self.num_qumodes * (self.num_qumodes - 1)) // 2
+            for _ in range(bs_pairs):
+                params[param_idx] = rng.uniform(0, np.pi / 4)
+                params[param_idx + 1] = rng.uniform(0, 2 * np.pi)
+                param_idx += 2
+
+            # Displacement r ~ N(1.0, 0.2) para impulsionar a Posição x/Momento p
+            for _ in range(self.num_qumodes):
+                params[param_idx] = rng.normal(1.0, 0.2)
+                params[param_idx + 1] = rng.uniform(0, 2 * np.pi)
+                param_idx += 2
+
+            # Kerr kappa ~ N(0, 0.01) - Pequeno para conter a oscilação do Fock
+            for _ in range(self.num_qumodes):
+                params[param_idx] = rng.normal(0.0, 0.01)
+                param_idx += 1
+
+        return params

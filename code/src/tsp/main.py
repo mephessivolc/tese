@@ -28,6 +28,7 @@ from tsp.solver import Solver as VqeSolver
 def run(
     n_cities: int = 3,
     lmbda: float = 50.0,
+    lmbda_empty: float = 20.0,
     layers: int = 1,
     maxiter: int = 50,
     optimizer_method: str = "COBYLA",
@@ -99,6 +100,7 @@ def run(
         max_iter=maxiter,
         momentum_mass=1.0,  # Valor padrão do operador momento contínuo
         lmbda=lmbda,
+        lmbda_empty=lmbda_empty,
 
         # Solução Exata
         exact_cost=exact_cost,

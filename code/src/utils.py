@@ -83,7 +83,7 @@ def print_experiment_summary(
     print(f"      RESUMO DO EXPERIMENTO [{problem_type.upper()} - N={n_cities}]")
     print("="*55)
     print(f" • Custo Exato (Força Bruta): {exact_cost:.2f} ({format_timespan(exact_time)})")
-    print(f" • Custo Quântico (CV-QAOA):  {quantum_cost:.2f} ({format_timespan(quantum_time)})")
+    print(f" • Custo Quântico (CV):  {quantum_cost:.2f} ({format_timespan(quantum_time)})")
     print(f" • Desvio Relativo (GAP):     {gap:+.2f}%")
     print(f" • Avaliações de Função (nfev): {evals}")
     print("="*55 + "\n")

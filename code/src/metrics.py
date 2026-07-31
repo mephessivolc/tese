@@ -23,6 +23,7 @@ class ExperimentResult:
     max_iter: int
     momentum_mass: float     # Massa M do operador momento no espaço contínuo
     lmbda: float             # Constante de penalidade no Hamiltoniano
+    lmbda_empty: float
 
     # --- Solução Exata (Ground Truth via Força Bruta) ---
     exact_cost: float
