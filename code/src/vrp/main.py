@@ -246,7 +246,7 @@ if __name__ == "__main__":
         lmbda_empty=100.0,
         optimizer_method="ADAM",
         lr=0.001,
-        device="cpu",
+        device="cuda",
         seed=42,
         save_outputs=True
     )

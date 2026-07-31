@@ -1,0 +1,31 @@
+name: tese
+
+x-common-build: &common-build
+  context: .
+  dockerfile: Dockerfile
+  args:
+    USERNAME: ${LOCAL_USER:-clovis-caface}
+    USER_UID: ${LOCAL_UID:-1000}
+    USER_GID: ${LOCAL_GID:-1000}
+
+services:
+  app:
+    build:
+      <<: *common-build
+    image: tese-tf:latest
+    init: true
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    working_dir: /workspace
+    command: ["sleep", "infinity"]
+    restart: unless-stopped
+    environment:
+      HOME: /home/${LOCAL_USER:-clovis-caface}
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONUNBUFFERED: "1"
+      PIP_DISABLE_PIP_VERSION_CHECK: "1"
+      VIRTUAL_ENV: /opt/venv
+      PATH: /opt/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      PYTHONPATH: /workspace:/workspace/code:/workspace/code/src
+      TF_CPP_MIN_LOG_LEVEL: "2"
+    volumes:
+      - .:/workspace
