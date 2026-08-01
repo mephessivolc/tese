@@ -68,38 +68,33 @@ class Circuit:
         return prog, params_sym
 
     def initialize_random_params(self, seed: int = 42) -> np.ndarray:
-        """
-        Gera o vetor inicial de parâmetros numéricos contínuos com escalas adequadas.
-        Escalas pequenas evitam instabilidade no espaço de Fock durante a simulação.
-        """
         rng = np.random.default_rng(seed)
         params = np.zeros(self.num_params, dtype=np.float32)
 
-        # Preenche os parâmetros com ruído suave gaussiano
         param_idx = 0
         for _ in range(self.num_layers * self.reps):
-            # Squeezing r ~ N(0, 0.05), phi ~ Uniforme(0, 2pi)
+            # Squeezing r pequeno
             for _ in range(self.num_qumodes):
-                params[param_idx] = rng.normal(0.0, 0.05)
+                params[param_idx] = rng.normal(0.0, 0.02)
                 params[param_idx + 1] = rng.uniform(0, 2 * np.pi)
                 param_idx += 2
 
-            # Beam Splitter theta ~ Uniforme(0, pi/4), phi ~ Uniforme(0, 2pi)
+            # Beam Splitter
             bs_pairs = (self.num_qumodes * (self.num_qumodes - 1)) // 2
             for _ in range(bs_pairs):
-                params[param_idx] = rng.uniform(0, np.pi / 4)
+                params[param_idx] = rng.uniform(0, np.pi / 8)
                 params[param_idx + 1] = rng.uniform(0, 2 * np.pi)
                 param_idx += 2
 
-            # Displacement r ~ N(1.0, 0.2) para impulsionar a Posição x/Momento p
+            # Displacement magnitude r ~ 1.5 para posicionar as quadraturas na faixa útil [1, N]
             for _ in range(self.num_qumodes):
-                params[param_idx] = rng.normal(1.0, 0.2)
-                params[param_idx + 1] = rng.uniform(0, 2 * np.pi)
+                params[param_idx] = rng.normal(1.5, 0.1)
+                params[param_idx + 1] = np.pi / 4  # Ângulo de 45 deg para empurrar tanto x quanto p
                 param_idx += 2
 
-            # Kerr kappa ~ N(0, 0.01) - Pequeno para conter a oscilação do Fock
+            # Kerr kappa muito pequeno para evitar instabilidade numéica
             for _ in range(self.num_qumodes):
-                params[param_idx] = rng.normal(0.0, 0.01)
+                params[param_idx] = rng.normal(0.0, 0.005)
                 param_idx += 1
 
         return params

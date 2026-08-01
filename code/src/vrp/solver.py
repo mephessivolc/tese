@@ -75,7 +75,6 @@ class Solver:
         lr: float = 0.01,
         maxiter: int = 100
     ) -> np.ndarray:
-        """Loop de Otimização baseado em Gradientes Suaves Contínuos via TensorFlow."""
         with tf.device(self.device_str):
             weights = tf.Variable(initial_params, dtype=tf.float32)
 
@@ -84,36 +83,28 @@ class Solver:
                 optimizer = tf.keras.optimizers.Adam(learning_rate=lr)
             elif opt_name == "RMSPROP":
                 optimizer = tf.keras.optimizers.RMSprop(learning_rate=lr)
-            elif opt_name == "SGD":
-                optimizer = tf.keras.optimizers.SGD(learning_rate=lr)
-            elif opt_name == "ADAGRAD":
-                optimizer = tf.keras.optimizers.Adagrad(learning_rate=lr)
             else:
                 optimizer = tf.keras.optimizers.Adam(learning_rate=lr)
 
             for step in range(maxiter):
                 with tf.GradientTape() as tape:
+                    # 1. Executa o circuito simbólico mantendo a diferenciação
                     x_tens, p_tens = self._execute_tf_circuit(weights)
                     
-                    # Converte tensores para listas contínuas sem quebrar a suavidade
-                    x_list = [x_tens[i] for i in range(self.num_qumodes)]
-                    p_list = [p_tens[i] for i in range(self.num_qumodes)]
-                    
-                    # Custo suave contínuo para diferenciação via autodiff
-                    x_float = [float(x.numpy()) for x in x_list]
-                    p_float = [float(p.numpy()) for p in p_list]
-                    
-                    smooth_cost_val = self.hamiltonian.compute_continuous_cost(x_float, p_float)
-                    continuous_cost_tf = tf.convert_to_tensor(smooth_cost_val, dtype=tf.float32)
+                    # 2. Avalia a perda contínua diretamente em TensorFlow (SEM .numpy())
+                    continuous_loss = self.hamiltonian.compute_continuous_cost_tf(x_tens, p_tens)
 
-                # Aplicação dos gradientes nos parâmetros do circuito
-                grads = tape.gradient(continuous_cost_tf, [weights])
+                # 3. Calcula e aplica os gradientes reais do circuito
+                grads = tape.gradient(continuous_loss, [weights])
+                
                 if grads[0] is not None:
                     optimizer.apply_gradients(zip(grads, [weights]))
 
-                # Grava o custo discreto real na história para acompanhamento do usuário
-                discrete_cost = self.hamiltonian.compute_cost(x_float, p_float)
-                self.history.append(float(discrete_cost))
+                # 4. Registra a métrica discreta apenas para acompanhamento humano no gráfico
+                x_fl = [float(val) for val in x_tens.numpy()]
+                p_fl = [float(val) for val in p_tens.numpy()]
+                discrete_cost = self.hamiltonian.compute_cost(x_fl, p_fl)
+                self.history.append(discrete_cost)
 
             return weights.numpy()
 

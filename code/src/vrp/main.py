@@ -243,9 +243,9 @@ if __name__ == "__main__":
         reps=2,
         maxiter=500,
         lmbda=50.0,
-        lmbda_empty=100.0,
+        lmbda_empty=1000.0,
         optimizer_method="ADAM",
-        lr=0.001,
+        lr=0.1,
         device="cuda",
         seed=42,
         save_outputs=True
