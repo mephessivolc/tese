@@ -1,3 +1,4 @@
+# vrp/hamiltonian.py
 import tensorflow as tf
 import numpy as np
 from typing import Tuple, List, Dict
@@ -17,41 +18,46 @@ class Hamiltonian:
         self.lmbda = lmbda
         self.lmbda_empty = lmbda_empty
         self.max_steps = self.num_free_cities
-        self.cutoff_dim = self.num_free_cities
 
     def compute_continuous_cost_tf(self, x_tens: tf.Tensor, p_tens: tf.Tensor) -> tf.Tensor:
-        """
-        Calcula o custo contínuo mantendo 100% das operações no Grafo de Autodiff do TensorFlow.
-        Isso garante que tape.gradient() calcule gradientes reais e não-nulos.
-        """
-        # 1. Penalidade por extrapolação dos limites [1, max_steps] e [1, num_vehicles]
+        # 1. Manter quadraturas dentro do intervalo útil [1, max_steps] e [1, num_vehicles]
         out_x = tf.reduce_sum(tf.square(tf.maximum(0.0, 1.0 - x_tens)) + tf.square(tf.maximum(0.0, x_tens - float(self.max_steps))))
         out_p = tf.reduce_sum(tf.square(tf.maximum(0.0, 1.0 - p_tens)) + tf.square(tf.maximum(0.0, p_tens - float(self.num_vehicles))))
         
-        # 2. Penalidade Suave de Colisão (Gaussiana suave)
+        # 2. Repulsão Inversa Ativa (Evita atração para a mesma posição no espaço de fase)
         col_penalty = 0.0
         for i in range(self.num_free_cities):
             for j in range(i + 1, self.num_free_cities):
-                diff_p = p_tens[i] - p_tens[j]
-                diff_x = x_tens[i] - x_tens[j]
-                # Atrai se estiverem no mesmo veículo e mesmo instante
-                col_penalty += tf.exp(-0.5 * (tf.square(diff_p) + tf.square(diff_x)))
+                dist_sq = tf.square(p_tens[i] - p_tens[j]) + tf.square(x_tens[i] - x_tens[j])
+                col_penalty += 1.0 / (dist_sq + 0.1)
 
-        # 3. Penalidade Suave por Veículo Ocioso
+        # 3. Penalidade por Veículo Vazio
         empty_penalty = 0.0
         for v in range(1, self.num_vehicles + 1):
-            coverage = tf.reduce_sum(tf.exp(-0.5 * tf.square(p_tens - float(v))))
-            empty_penalty += tf.exp(-2.0 * coverage)
+            cov = tf.reduce_sum(tf.exp(-tf.square(p_tens - float(v))))
+            empty_penalty += tf.exp(-1.5 * cov)
 
-        # 4. Custo Estável de Distância Contínua (Relaxamento)
-        dist_cost = 0.0
+        # 4. TERMO NOVO: Aproximação Suave da Distância (Soft Distance)
+        # Guia o Adam a aproximar cidades que estão perto no grafo
+        soft_dist_cost = 0.0
         for i in range(self.num_free_cities):
-            city_id = i + 1
-            d_depot = float(self.dist_matrix[0, city_id] + self.dist_matrix[city_id, 0])
-            dist_cost += 0.5 * d_depot * tf.square(x_tens[i])
+            for j in range(i + 1, self.num_free_cities):
+                # Probabilidade diferenciável de estarem no mesmo veículo (p próximo)
+                same_vehicle_prob = tf.exp(-tf.square(p_tens[i] - p_tens[j]))
+                # Probabilidade diferenciável de serem visitadas em sequência (x consecutivo)
+                adj_step_prob = tf.exp(-tf.square(tf.abs(x_tens[i] - x_tens[j]) - 1.0))
+                
+                # Custo da matriz de adjacência (índice + 1 devido ao depósito no nó 0)
+                d_ij = self.dist_matrix[i + 1, j + 1]
+                soft_dist_cost += d_ij * same_vehicle_prob * adj_step_prob
 
-        # Custo Total como Tensor Diferenciável
-        total_loss = 20.0 * (out_x + out_p) + self.lmbda * col_penalty + self.lmbda_empty * empty_penalty + 0.1 * dist_cost
+        # Custo Total Diferenciável
+        total_loss = (
+            10.0 * (out_x + out_p) 
+            + self.lmbda * col_penalty 
+            + self.lmbda_empty * empty_penalty 
+            + soft_dist_cost
+        )
         return total_loss
 
     def discretize_quadratures(self, x_vals: List[float], p_vals: List[float]) -> Tuple[List[int], List[int]]:

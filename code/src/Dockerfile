@@ -5,6 +5,14 @@ FROM ${BASE_IMAGE}
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
+ENV MPLCONFIGDIR=/tmp/matplotlib
+RUN mkdir -p /tmp/matplotlib && chmod -R 777 /tmp /tmp/matplotlib
+
+RUN useradd -m -s /bin/bash -u 1000 vscode \
+    && apt-get update && apt-get install -y sudo \
+    && echo "vscode ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /workspace
 
 COPY requirements.txt /tmp/requirements.txt

@@ -69,7 +69,7 @@ def run(
     num_vehicles: int = 2,
     layers: int = 1,
     reps: int = 1,
-    maxiter: int = 100,
+    maxiter: int = 500,
     lmbda: float = 100.0,
     lmbda_empty: float = 150.0,
     optimizer_method: str = "ADAM",
@@ -125,7 +125,7 @@ def run(
     t_vqe = time.time() - t0
 
     vqe_cost = float(vqe_res["best_cost"])
-    nfev = len(vqe_res["history"])
+    nfev = len(vqe_res["cost_history"])
     approx_ratio = float(exact_cost / vqe_cost) if vqe_cost != 0 else 0.0
 
     # 5. APRESENTAÇÃO LEGÍVEL PARA HUMANOS (INTERPRETAÇÃO FINAL)
@@ -187,8 +187,12 @@ def run(
         success_probability=1.0,
         evaluations_count=nfev,
         optimal_params=opt_params,
-        cost_history=vqe_res["history"]
+        cost_history=vqe_res["cost_history"]
     )
+
+    # Anexa o histórico da perda contínua no dicionário exportado
+    exp_dict = experiment_res.to_dict()
+    exp_dict["continuous_loss_history"] = vqe_res["continuous_loss_history"]
 
     print_experiment_summary(
         problem_type="vrp",
@@ -212,17 +216,31 @@ def run(
             prefix=f"vqe_{constructor_info_name}"
         )
 
-        # c) Plot da Curva de Convergência da Energia
+        # c) Plot da Curva de Convergência (Dual Axis: Perda Contínua Suave vs. Custo Discreto)
         conv_path = figures_dir / f"convergence_{constructor_info_name}.png"
-        plt.figure(figsize=(8, 4.5))
-        plt.axhline(y=exact_cost, color='r', linestyle='--', label=f'Ground Truth Exato ({exact_cost:.2f})')
-        plt.plot(vqe_res["history"], label=f'Convergência CV-VQE ({optimizer_method})', color='green', alpha=0.8)
-        plt.title(f"Convergência CV-VQE - VRP (Cidades={n_cities}, Veículos={num_vehicles})")
-        plt.xlabel("Iterações / Avaliações")
-        plt.ylabel("Custo Discreto H_total")
-        plt.grid(True, linestyle=':', alpha=0.6)
-        plt.legend()
-        plt.tight_layout()
+        fig, ax1 = plt.subplots(figsize=(9, 5))
+
+        color = 'tab:blue'
+        ax1.set_xlabel('Iterações / Passo do Gradiente', fontsize=11)
+        ax1.set_ylabel('Perda Contínua (Loss Suave)', color=color, fontsize=11)
+        ax1.plot(vqe_res["continuous_loss_history"], color=color, linewidth=1.8, label='Perda Contínua (TF Loss)')
+        ax1.tick_params(axis='y', labelcolor=color)
+        ax1.grid(True, linestyle=':', alpha=0.6)
+
+        ax2 = ax1.twinx()  
+        color = 'tab:green'
+        ax2.set_ylabel('Custo Discreto do VRP (H_total)', color=color, fontsize=11)
+        ax2.plot(vqe_res["cost_history"], color=color, linestyle='--', linewidth=1.8, alpha=0.85, label='Custo Discreto (Rotas)')
+        ax2.axhline(y=exact_cost, color='red', linestyle=':', label=f'Ground Truth ({exact_cost:.2f})')
+        ax2.tick_params(axis='y', labelcolor=color)
+
+        # Combina legendas dos dois eixos
+        lines_1, labels_1 = ax1.get_legend_handles_labels()
+        lines_2, labels_2 = ax2.get_legend_handles_labels()
+        ax1.legend(lines_1 + lines_2, labels_1 + labels_2, loc='upper right')
+
+        plt.title(f"Convergência CV-VQE - VRP (N={n_cities}, Veículos={num_vehicles})", fontsize=12)
+        fig.tight_layout()
         plt.savefig(conv_path, dpi=300)
         plt.close()
 
@@ -232,21 +250,31 @@ def run(
 
         logger.info("Todos os artefatos e gráficos foram salvos na pasta 'result/vrp/'")
 
-    return experiment_res.to_dict()
+    return exp_dict
 
 
 if __name__ == "__main__":
-    run(
-        n_cities=5,
-        num_vehicles=2,
-        layers=2,
-        reps=2,
-        maxiter=500,
-        lmbda=50.0,
-        lmbda_empty=1000.0,
-        optimizer_method="ADAM",
-        lr=0.1,
-        device="cuda",
-        seed=42,
-        save_outputs=True
-    )
+    import os
+    # Silencia logs do C++ do TensorFlow
+    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
+    import tensorflow as tf
+
+    vehicle = [2, 3, 4]
+    layer = [1, 2, 3,]
+    rep = [1, 2, 3]
+    for v, l, r in zip(vehicle, layer, rep):
+        run(
+            n_cities=5,
+            num_vehicles=v,
+            layers=l,
+            reps=r,
+            maxiter=500,
+            lmbda=10.0,
+            lmbda_empty=10.0,
+            optimizer_method="ADAM",   # Corrigido de cobyla para ADAM
+            lr=0.01,                   # LR ajustado para saltos adequados no espaço de fase
+            device="cuda",
+            seed=42,
+            save_outputs=True
+        )

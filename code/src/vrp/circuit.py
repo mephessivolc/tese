@@ -1,71 +1,57 @@
 # vrp/circuit.py
-from typing import Tuple, List
 import numpy as np
 import strawberryfields as sf
 from strawberryfields import ops
+from typing import Tuple, List
 
 
 class Circuit:
-    """
-    Ansatz de Variáveis Contínuas (CV) integrado ao Strawberry Fields para o VRP.
-    Suporta camadas variacionais compostas por Squeezing, Beam Splitter, 
-    Displacement e Kerr Gates para explorar o espaço de fase (x, p).
-    """
-
     def __init__(self, num_qumodes: int, num_layers: int = 1, reps: int = 1):
         self.num_qumodes = num_qumodes
         self.num_layers = num_layers
         self.reps = reps
-        self.num_params = self._calculate_total_params()
+        self.num_params = self._calculate_num_params()
 
-    def _calculate_total_params(self) -> int:
-        """Calcula o total de parâmetros variacionais independentes do circuito."""
-        sgate_params = 2 * self.num_qumodes
-        bs_pairs = (self.num_qumodes * (self.num_qumodes - 1)) // 2
-        bs_params = 2 * bs_pairs
-        dgate_params = 2 * self.num_qumodes
-        kgate_params = 1 * self.num_qumodes
+    def _calculate_num_params(self) -> int:
+        params_per_rep = (
+            2 * self.num_qumodes + 
+            2 * ((self.num_qumodes * (self.num_qumodes - 1)) // 2) + 
+            2 * self.num_qumodes + 
+            self.num_qumodes
+        )
+        return params_per_rep * self.num_layers * self.reps
 
-        params_per_block = sgate_params + bs_params + dgate_params + kgate_params
-        return params_per_block * self.num_layers * self.reps
-
-    def build_program(self) -> Tuple[sf.Program, Tuple]:
-        """
-        Constrói o programa simbólico do Strawberry Fields.
-        Retorna o objeto Program e a tupla de variáveis de parâmetros simbólicos.
-        """
+    def build_program(self) -> Tuple[sf.Program, List]:
         prog = sf.Program(self.num_qumodes)
         
+        # CORREÇÃO AQUI: Usar 'prog.params' (instância) e não 'sf.Program.params' (classe)
+        params = [prog.params(f"p_{i}") for i in range(self.num_params)]
+        
+        param_idx = 0
         with prog.context as q:
-            # Cria os parâmetros simbólicos declarados no motor do Strawberry Fields
-            params_sym = prog.params(*[f"theta_{i}" for i in range(self.num_params)])
-            param_idx = 0
+            for _ in range(self.num_layers * self.reps):
+                # 1. Squeezing Gate
+                for i in range(self.num_qumodes):
+                    ops.Sgate(params[param_idx], params[param_idx + 1]) | q[i]
+                    param_idx += 2
 
-            for layer in range(self.num_layers):
-                for rep in range(self.reps):
-
-                    # 1. Squeezing Gate S(r, phi) - Controla a incerteza do espaço de fase
-                    for i in range(self.num_qumodes):
-                        ops.Sgate(params_sym[param_idx], params_sym[param_idx + 1]) | q[i]
+                # 2. Interferômetro (Beam Splitters)
+                for i in range(self.num_qumodes):
+                    for j in range(i + 1, self.num_qumodes):
+                        ops.BSgate(params[param_idx], params[param_idx + 1]) | (q[i], q[j])
                         param_idx += 2
 
-                    # 2. Beam Splitter Gate BS(theta, phi) - Cria emaranhamento entre qumodes
-                    for i in range(self.num_qumodes):
-                        for j in range(i + 1, self.num_qumodes):
-                            ops.BSgate(params_sym[param_idx], params_sym[param_idx + 1]) | (q[i], q[j])
-                            param_idx += 2
+                # 3. Displacement Gate (Posicionamento no Espaço de Fase)
+                for i in range(self.num_qumodes):
+                    ops.Dgate(params[param_idx], params[param_idx + 1]) | q[i]
+                    param_idx += 2
 
-                    # 3. Displacement Gate D(r, phi) - Desloca a média de (x, p)
-                    for i in range(self.num_qumodes):
-                        ops.Dgate(params_sym[param_idx], params_sym[param_idx + 1]) | q[i]
-                        param_idx += 2
+                # 4. Kerr Gate (Não-linearidade)
+                for i in range(self.num_qumodes):
+                    ops.Kgate(params[param_idx]) | q[i]
+                    param_idx += 1
 
-                    # 4. Kerr Gate K(kappa) - Aplica transformação não-linear no espaço de fase
-                    for i in range(self.num_qumodes):
-                        ops.Kgate(params_sym[param_idx]) | q[i]
-                        param_idx += 1
-
-        return prog, params_sym
+        return prog, params
 
     def initialize_random_params(self, seed: int = 42) -> np.ndarray:
         rng = np.random.default_rng(seed)
@@ -73,28 +59,30 @@ class Circuit:
 
         param_idx = 0
         for _ in range(self.num_layers * self.reps):
-            # Squeezing r pequeno
+            # Squeezing pequeno
             for _ in range(self.num_qumodes):
-                params[param_idx] = rng.normal(0.0, 0.02)
-                params[param_idx + 1] = rng.uniform(0, 2 * np.pi)
+                params[param_idx] = rng.normal(0.0, 0.01)
+                params[param_idx + 1] = 0.0
                 param_idx += 2
 
-            # Beam Splitter
+            # Beam Splitters
             bs_pairs = (self.num_qumodes * (self.num_qumodes - 1)) // 2
             for _ in range(bs_pairs):
                 params[param_idx] = rng.uniform(0, np.pi / 8)
-                params[param_idx + 1] = rng.uniform(0, 2 * np.pi)
+                params[param_idx + 1] = 0.0
                 param_idx += 2
 
-            # Displacement magnitude r ~ 1.5 para posicionar as quadraturas na faixa útil [1, N]
-            for _ in range(self.num_qumodes):
-                params[param_idx] = rng.normal(1.5, 0.1)
-                params[param_idx + 1] = np.pi / 4  # Ângulo de 45 deg para empurrar tanto x quanto p
+            # Quebra de simetria inicial no espaço de fase (x, p)
+            for mode_i in range(self.num_qumodes):
+                r_target = 1.0 + (mode_i * 0.3)
+                phi_target = (mode_i * np.pi) / (2 * max(1, self.num_qumodes - 1))
+                params[param_idx] = r_target
+                params[param_idx + 1] = phi_target
                 param_idx += 2
 
-            # Kerr kappa muito pequeno para evitar instabilidade numéica
+            # Kerr inicial zerado
             for _ in range(self.num_qumodes):
-                params[param_idx] = rng.normal(0.0, 0.005)
+                params[param_idx] = 0.0
                 param_idx += 1
 
         return params
