@@ -12,6 +12,7 @@ __pycache__/
 .devcontainer
 .vscode
 .texlive
+run.txt
 
 .cache/
 antigos/
