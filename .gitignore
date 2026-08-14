@@ -20,7 +20,7 @@ result/
 docker-compose.override.yml
 
 ############################
-# LaTeX – arquivos auxiliares
+# LaTeX - arquivos auxiliares
 ############################
 *.aux
 *.bbl
@@ -43,7 +43,7 @@ docker-compose.override.yml
 *.vrb
 
 ############################
-# LaTeX – arquivos temporários/backup
+# LaTeX - arquivos temporarios/backup
 ############################
 *.bak
 *.backup
