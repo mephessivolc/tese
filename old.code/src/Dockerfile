@@ -6,14 +6,11 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 ENV MPLCONFIGDIR=/tmp/matplotlib
-ENV NUMBA_CACHE_DIR=/tmp
-ENV TMPDIR=/tmp
-
 RUN mkdir -p /tmp/matplotlib && chmod -R 777 /tmp /tmp/matplotlib
 
-RUN useradd -m -s /bin/bash -u 1025 clovis \
+RUN useradd -m -s /bin/bash -u 1000 vscode \
     && apt-get update && apt-get install -y sudo \
-    && echo "clovis ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
+    && echo "vscode ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /workspace

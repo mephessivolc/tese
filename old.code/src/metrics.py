@@ -8,25 +8,22 @@ import numpy as np
 @dataclass
 class ExperimentResult:
     """
-    Contrato de dados padronizado para armazenar os resultados de simulações TSP, VRP e CVRP.
+    Contrato de dados padronizado para armazenar os resultados de simulações TSP e VRP.
     """
     # --- Metadados do Experimento ---
     experiment_id: str
-    problem_type: str        # "TSP", "VRP" ou "CVRP"
-    variable_type: str
+    problem_type: str        # "TSP" ou "VRP"
     timestamp: str
     seed: int
 
-    # --- Parâmetros de Entrada / Hiperparâmetros do CVRP ---
+    # --- Parâmetros de Entrada / Hiperparâmetros ---
     n_cities: int
     num_vehicles: int
-    vehicle_capacity: Union[float, List[float]]  # Capacidade(s) do(s) veículo(s)
-    demands: List[float]                          # Demandas associadas aos nós (incluindo depósito = 0)
     p_layers: int
     max_iter: int
-    momentum_mass: float                          # Massa M do operador momento no espaço contínuo
-    lmbda: float                                  # Penalidade por colisão/posição no Hamiltoniano
-    lmbda_cap: float                              # Penalidade por excesso de capacidade no Hamiltoniano
+    momentum_mass: float     # Massa M do operador momento no espaço contínuo
+    lmbda: float             # Constante de penalidade no Hamiltoniano
+    lmbda_empty: float
 
     # --- Solução Exata (Ground Truth via Força Bruta) ---
     exact_cost: float
@@ -35,7 +32,7 @@ class ExperimentResult:
     ground_state_energy: float
 
     # --- Solução Quântica (QAOA ou VQE) ---
-    solver_name: str         # "QAOA" ou "CV-VQE"
+    solver_name: str         # "CV-QAOA" ou "CV-VQE"
     quantum_cost: float
     quantum_route: Union[List[int], Dict[int, List[int]]]
     quantum_time_sec: float
