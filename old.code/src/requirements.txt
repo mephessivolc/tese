@@ -1,5 +1,0 @@
-pandas
-scipy<1.14.0
-networkx
-matplotlib
-strawberryfields
